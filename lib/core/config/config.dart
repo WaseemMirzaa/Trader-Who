@@ -1,14 +1,12 @@
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+
+import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:go_router/go_router.dart';
+import 'package:traderwho/core/binding/binding.dart';
+import 'package:traderwho/features/auth/presentation/pages/pages.dart';
+import 'package:traderwho/features/splash/splash_page.dart';
 
-
-
-
-import '../di/di.dart';
-import '../services/services.dart';
 
 
 

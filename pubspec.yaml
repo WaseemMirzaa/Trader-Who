@@ -33,9 +33,7 @@ dependencies:
   get_it: ^8.0.3
   # Simplifies equality comparisons
   equatable: ^2.0.7
-  # GetX for state management, navigation, and dependency injection
-  get: ^4.6.6
-  # State management using BLoC architecture (to be replaced with GetX)
+  # State management using BLoC architecture
   flutter_bloc: ^9.1.1
   # Firebase core library for initialization
   firebase_core: ^3.13.0
@@ -80,23 +78,19 @@ dependencies:
   # Hive
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-
+  
   # Image Picker
   image_picker: ^1.1.2
   #Image picker for web
   image_picker_for_web: ^3.0.6
   # Infinite Scroll Pagination
   infinite_scroll_pagination: ^5.0.0
-  # Freezed Annotation
-  freezed_annotation: ^3.0.0
-  # Json Annotation
-  json_annotation: ^4.9.0
+  
+ 
   # Cached Network Image
   cached_network_image: ^3.4.1
-  # Webview Flutter
-  flutter_inappwebview: ^6.1.5
-  # Barcode Scanner
-  ai_barcode_scanner: ^6.0.1
+
+
 
   # Flutter SDK dependency
   flutter:
@@ -107,19 +101,14 @@ dependencies:
     sdk: flutter
   lottie: ^3.3.1
   file_picker: ^10.1.5
-  device_info_plus: ^11.4.0
+ 
   google_fonts: ^6.2.1
+  get: ^4.7.2
 
 # Developer-specific dependencies for testing and tooling
 dev_dependencies:
-  # Build Runner
-  build_runner: ^2.4.15
-  # Freezed
-  freezed: ^3.0.6
-  #Json Serializable
-  json_serializable: ^6.9.5
-  # Flavorizr
-  flutter_flavorizr: ^2.4.0
+
+  
   # Generates launcher icons for the application
   flutter_launcher_icons: ^0.14.3
   # Recommended lint rules for Flutter
