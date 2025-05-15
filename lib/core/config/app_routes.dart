@@ -7,11 +7,20 @@ class AppRoutes {
   /// Root
   static const String root = '/';
 
+   /// The onboarding screen route.
+  static const String onboarding = '/onboarding';
+
   /// The login screen route.
   static const String login = '/login';
 
+  /// The login screen route.
+  static const String newAccount = '/newaccount';
+
   /// The signup screen route.
   static const String signup = '/signup';
+
+  /// The home screen route.
+  static const String homePage = '/homepage';
 
   
 }

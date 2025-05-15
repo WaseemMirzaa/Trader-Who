@@ -11,6 +11,14 @@ class AppColor {
 
   /// Pure black color (#000000).
   static const Color black = Color(0xFF000000);
+  ///
+  static const Color purplecustomColor = Color(0xFF1E2A44);
+  ///
+  static const Color orangecustomColor = Color(0xFFFF7618);
+
+  ///Light peach
+  static const Color lightPeach = Color(0xFFFFE5DE);
+
 
   /// Deep navy blue color (#192C83).
   static const Color navyBlue = Color(0xFF192C83);

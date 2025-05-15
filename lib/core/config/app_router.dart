@@ -13,15 +13,30 @@ class AppRouter {
           page: () => const SplashPage(),
           binding: SplashBinding(), // Inject SplashController
         ),
-        // GetPage(
-        //   name: AppRoutes.login,
-        //   page: () => const LoginPage(),
-        //   binding: LoginBinding(), // Inject LoginController
-        // ),
-        // GetPage(
-        //   name: AppRoutes.signup,
-        //   page: () => const SignUpPage(),
-        //   binding: SignUpBinding(), // Inject SignUpController
-        // ),
+        GetPage(
+          name: AppRoutes.onboarding,
+          page: () => const OnBoardingPage(),
+          binding: OnBoardingBinding(), // Inject OnBoardingController
+        ),
+       GetPage(
+          name: AppRoutes.newAccount,
+          page: () => const NewAccountPage (),
+          binding: NewAccountBinding(), // Inject new accountController
+        ),
+        GetPage(
+          name: AppRoutes.login,
+          page: () => const LoginPage(),
+          binding: LoginBinding(), // Inject LoginController
+        ),
+        GetPage(
+          name: AppRoutes.signup,
+          page: () => const SignupPage(),
+          binding: SignUpBinding(), // Inject LoginController
+        ),
+         GetPage(
+          name: AppRoutes.homePage,
+          page: () => const HomePage(),
+          binding: HomePageBinding(), // Inject LoginController
+        ),
       ];
 }

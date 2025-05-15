@@ -7,7 +7,7 @@ part of 'binding.dart';
 class AppBinding extends Bindings {
   @override
   void dependencies() {
-    
+
     // Get.lazyPut<ApiService>(() => ApiService(), fenix: true);
     // Get.lazyPut<UserRepository>(() => UserRepository(), fenix: true);
   }
@@ -16,10 +16,22 @@ class AppBinding extends Bindings {
 class SplashBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<SplashController>(() => SplashController());
+    // Use put instead of lazyPut to ensure immediate initialization
+    Get.put<SplashController>(SplashController(), permanent: true);
   }
 }
-
+class OnBoardingBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<OnboardingController>(() => OnboardingController());
+  }
+}
+class NewAccountBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<NewAccountController>(() => NewAccountController());
+  }
+}
 
 class LoginBinding extends Bindings {
   @override
@@ -32,5 +44,12 @@ class SignUpBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<SignupController>(() => SignupController());
+  }
+}
+
+class HomePageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<HomepageController>(() => HomepageController());
   }
 }

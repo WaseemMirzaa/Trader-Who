@@ -1,47 +1,24 @@
 import 'package:flutter/material.dart';
-
 import '../theme/theme.dart';
 import 'custom_text.dart';
 
-/// A [CustomButton] widget that can be used throughout the app.
 class CustomButton extends StatelessWidget {
-  ///the text to be displayed on the button
   final String text;
-
-  ///the function to be called when the button is tapped
   final Function()? onTap;
-
-  ///the width of the button
   final double width;
-
-  ///the height of the button
   final double height;
-
-  ///whether the button should have a border
   final bool enableBorder;
-
-  ///the color of the border
   final Color? borderColor;
-
-  ///the color of the button
   final Color? color;
-
-  ///the color of the text
   final Color textColor;
-
-  ///the radius of the button
   final double radius;
-
-  ///the font size of the text
   final double? fontSize;
-
-  ///the font weight of the text
   final FontWeight? fontWeight;
-
-  ///the icon with text
   final bool enableIcon;
 
-  ///the constructor for the [CustomButton] widget
+  /// NEW: Widget for icon (e.g., SVG, Image, Icon)
+  final Widget? icon;
+
   const CustomButton({
     super.key,
     required this.text,
@@ -56,6 +33,7 @@ class CustomButton extends StatelessWidget {
     this.textColor = AppColor.white,
     this.enableBorder = false,
     this.enableIcon = false,
+    this.icon, // NEW
   });
 
   @override
@@ -68,35 +46,40 @@ class CustomButton extends StatelessWidget {
         padding: kH20,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(radius),
+          border: enableBorder
+              ? Border.all(color: borderColor ?? Colors.transparent)
+              : null,
         ),
-        child:
-            enableIcon
-                ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CustomText(
+        child: enableIcon
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (icon != null) ...[
+                    icon!,
+                    const SizedBox(width: 8),
+                  ],
+                  Flexible(
+                    child: CustomText(
                       text: text,
                       color: textColor,
                       fontSize: fontSize,
                       fontWeight: fontWeight,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: AppColor.white,
-                    ),
-                  ],
-                )
-                : Center(
-                  child: CustomText(
-                    text: text,
-                    color: textColor,
-                    fontSize: fontSize,
-                    fontWeight: fontWeight,
-                    overflow: TextOverflow.ellipsis,
                   ),
+                ],
+              )
+            : Center(
+                child: CustomText(
+                  text: text,
+                  color: textColor,
+                  fontSize: fontSize,
+                  fontWeight: fontWeight,
+                  overflow: TextOverflow.ellipsis,
                 ),
+              ),
       ),
     );
   }
