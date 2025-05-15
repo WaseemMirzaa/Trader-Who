@@ -1,0 +1,161 @@
+name: traderwho
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+# Application dependenciesform_validator
+dependencies:
+  # Networking library for HTTP requests
+  dio: ^5.8.0+1
+  # Utility for consistent spacing between widgets
+  gap: ^3.0.1
+  # Internationalization and localization support
+  intl: ^0.19.0
+  # Service locator for dependency injection
+  get_it: ^8.0.3
+  # Simplifies equality comparisons
+  equatable: ^2.0.7
+  # State management using BLoC architecture
+  flutter_bloc: ^9.1.1
+  # Firebase core library for initialization
+  firebase_core: ^3.13.0
+  # SVG rendering in Flutter
+  flutter_svg: ^2.1.0
+  # Form validation utilities
+  form_validator: ^2.1.1
+  # Firebase Performance monitoring with Dio integration
+  firebase_performance_dio: ^0.7.1
+  # Default iOS icons
+  cupertino_icons: ^1.0.8
+  # Fetch app metadata like version and build number
+  package_info_plus: ^8.3.0
+  # Firebase push notifications
+  firebase_messaging: ^15.2.5
+  # Permission handling for various platforms
+  permission_handler: ^12.0.0+1
+  # File selector for various platforms
+  file_selector: ^1.0.3
+  # Firebase Analytics for tracking events
+  firebase_analytics: ^11.4.5
+  # Firebase Crashlytics for error reporting
+  firebase_crashlytics: ^4.3.5
+  # Pull-to-refresh widget
+  liquid_pull_to_refresh: ^3.0.1
+  # Network connection checker
+  simple_connection_checker: ^0.3.4
+
+
+  # Navigation and routing library
+  go_router: ^15.1.1
+  # Logging utility
+  logger: ^2.5.0
+  # Functional programming utilities
+  dartz: ^0.10.1
+  # Path manipulation library
+  path: ^1.9.1
+  # Manages nested state dependencies
+  nested: ^1.0.0
+  # Table Calendar
+  table_calendar: ^3.1.3
+  # Hive
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  
+  # Image Picker
+  image_picker: ^1.1.2
+  #Image picker for web
+  image_picker_for_web: ^3.0.6
+  # Infinite Scroll Pagination
+  infinite_scroll_pagination: ^5.0.0
+  # Freezed Annotation
+  freezed_annotation: ^3.0.0
+  # Json Annotation
+  json_annotation: ^4.9.0
+  # Cached Network Image
+  cached_network_image: ^3.4.1
+  # Webview Flutter
+  flutter_inappwebview: ^6.1.5
+  # Barcode Scanner
+  ai_barcode_scanner: ^6.0.1
+
+  # Flutter SDK dependency
+  flutter:
+    sdk: flutter
+
+  # Enables localization support in Flutter
+  flutter_localizations:
+    sdk: flutter
+  lottie: ^3.3.1
+  file_picker: ^10.1.5
+  device_info_plus: ^11.4.0
+  google_fonts: ^6.2.1
+
+# Developer-specific dependencies for testing and tooling
+dev_dependencies:
+  # Build Runner
+  build_runner: ^2.4.15
+  # Freezed
+  freezed: ^3.0.6
+  #Json Serializable
+  json_serializable: ^6.9.5
+  # Flavorizr
+  flutter_flavorizr: ^2.4.0
+  # Generates launcher icons for the application
+  flutter_launcher_icons: ^0.14.3
+  # Recommended lint rules for Flutter
+  flutter_lints: ^5.0.0
+
+  # Testing framework for Flutter
+  flutter_test:
+    sdk: flutter
+
+# Flutter-specific settings
+flutter:
+  # Use Material Design icons
+  uses-material-design: true
+  # Enable code generation
+  generate: true
+
+  # List of assets used in the project
+  assets:
+    - assets/images/
+    - assets/svgs/
+    - assets/fonts/
+  fonts: # Added fonts section
+    - family: HelveticaNeue
+      fonts:
+        - asset: assets/fonts/HelveticaNeue-Regular.ttf
+        - asset: assets/fonts/HelveticaNeue-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/HelveticaNeue-Light.ttf
+          weight: 300
+
+# Configuration for asset management and code generation (if applicable)
+flutter_assets:
+  assets_path:
+    - assets/images/
+    - assets/svgs/
+    - assets/fonts/
+  output_path: lib/core/theme
+  filename: assets.dart
+  field_prefix:
+    from: assets
+    to:
