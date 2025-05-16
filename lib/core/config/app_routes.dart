@@ -22,5 +22,11 @@ class AppRoutes {
   /// The home screen route.
   static const String homePage = '/homepage';
 
+   /// The job screen route.
+  static const String jobPage = '/jobpage';
+
+     /// The trades screen route.
+  static const String tradesPage = '/tradespage';
+
   
 }

@@ -53,3 +53,15 @@ class HomePageBinding extends Bindings {
     Get.lazyPut<HomepageController>(() => HomepageController());
   }
 }
+class JobPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<JobController>(() => JobController());
+  }
+}
+class TradesPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<JobController>(() => JobController());
+  }
+}

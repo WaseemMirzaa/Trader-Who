@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/core/theme/assets.dart';
 
@@ -15,77 +14,72 @@ class CustomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            Assets.svgsHome,
-            colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
-            width: 24,
-            height: 24,
-          ),
-          activeIcon: SvgPicture.asset(
-            Assets.svgsHome,
-            colorFilter: const ColorFilter.mode(Colors.purple, BlendMode.srcIn),
-            width: 24,
-            height: 24,
-          ),
-          label: '',
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColor.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            Assets.svgsDetails,
-            colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
-            width: 24,
-            height: 24,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
           ),
-          activeIcon: SvgPicture.asset(
-            Assets.svgsDetails,
-            colorFilter: const ColorFilter.mode(Colors.purple, BlendMode.srcIn),
-            width: 24,
-            height: 24,
-          ),
-          label: '',
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            Assets.svgsChat,
-            colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
-            width: 24,
-            height: 24,
-          ),
-          activeIcon: SvgPicture.asset(
-            Assets.svgsChat,
-            colorFilter: const ColorFilter.mode(Colors.purple, BlendMode.srcIn),
-            width: 24,
-            height: 24,
-          ),
-          label: '',
+        child: BottomNavigationBar(
+          items: [
+            _buildNavItem(Assets.imagesHome, 0),
+            _buildNavItem(Assets.imagesDetails, 1),
+            _buildNavItem(Assets.imagesChat, 2),
+            _buildNavItem(Assets.imagesProfile, 3),
+          ],
+          currentIndex: currentIndex,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          onTap: onTap,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
         ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            Assets.svgsProfile,
-            colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+      ),
+    );
+  }
+
+  BottomNavigationBarItem _buildNavItem(String iconPath, int index) {
+    bool isSelected = currentIndex == index;
+    
+    return BottomNavigationBarItem(
+      icon: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Purple top bar indicator
+          Container(
+            height: 3,
+            width: 24,
+            decoration: BoxDecoration(
+              color: isSelected ? AppColor.darkBlue : Colors.transparent,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 6),
+          // Icon with grey/color states
+          Image.asset(
+            iconPath,
             width: 24,
             height: 24,
+            color: isSelected ? null : Colors.grey,
           ),
-          activeIcon: SvgPicture.asset(
-            Assets.svgsProfile,
-            colorFilter: const ColorFilter.mode(Colors.purple, BlendMode.srcIn),
-            width: 24,
-            height: 24,
-          ),
-          label: '',
-        ),
-      ],
-      currentIndex: currentIndex,
-      selectedItemColor: Colors.purple,
-      unselectedItemColor: Colors.grey,
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      onTap: onTap,
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: AppColor.white, // Set background to Appcolor.white
+        ],
+      ),
+      label: '',
     );
   }
 }

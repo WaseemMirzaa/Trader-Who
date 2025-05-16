@@ -1,0 +1,1 @@
+part 'trades_model.dart';

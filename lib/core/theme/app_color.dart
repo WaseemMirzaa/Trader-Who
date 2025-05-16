@@ -29,6 +29,11 @@ class AppColor {
   /// Bright teal color (#21E5B5).
   static const Color teal = Color(0xFF21E5B5);
 
+  ///
+  static const Color purple = Color(0xFF800080);
+  ///
+  static const Color darkBlue = Color(0xFF132241);
+
   /// Vibrant emerald green color (#06E3A1).
   static const Color emerald = Color(0xFF06E3A1);
 

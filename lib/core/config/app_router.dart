@@ -38,5 +38,15 @@ class AppRouter {
           page: () => const HomePage(),
           binding: HomePageBinding(), // Inject LoginController
         ),
+         GetPage(
+          name: AppRoutes.jobPage,
+          page: () => const JobPage(),
+          binding: JobPageBinding(), // Inject LoginController
+        ),
+         GetPage(
+          name: AppRoutes.tradesPage,
+          page: () => const TradesPage(),
+          binding: TradesPageBinding(), // Inject LoginController
+        ),
       ];
 }
