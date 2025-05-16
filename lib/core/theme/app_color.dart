@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 
 /// This [AppColor] defines a set of colors used throughout the app.
@@ -121,7 +121,6 @@ class AppColor {
   );
 }
 
-///[lightTheme]
 ThemeData lightTheme = ThemeData.light().copyWith(
   brightness: Brightness.light,
   colorScheme: ColorScheme.fromSwatch().copyWith(
@@ -130,13 +129,17 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   ),
   scaffoldBackgroundColor: AppColor.white,
   drawerTheme: const DrawerThemeData(backgroundColor: AppColor.white),
-  textTheme: GoogleFonts.lexendTextTheme(),
+  textTheme: const TextTheme(
+    displayLarge: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700),
+    displayMedium: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w400),
+    bodyLarge: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w300),
+    // ... Add other text styles as needed
+  ),
   progressIndicatorTheme: const ProgressIndicatorThemeData(
     color: AppColor.blue,
   ),
 );
 
-///[darkTheme]
 ThemeData darkTheme = ThemeData.dark().copyWith(
   brightness: Brightness.dark,
   colorScheme: ColorScheme.fromSwatch().copyWith(
@@ -145,7 +148,12 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   ),
   scaffoldBackgroundColor: AppColor.black,
   drawerTheme: const DrawerThemeData(backgroundColor: AppColor.black),
-  textTheme: GoogleFonts.lexendTextTheme(),
+  textTheme: const TextTheme(
+    displayLarge: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700),
+    displayMedium: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w400),
+    bodyLarge: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w300),
+    // ... Add other text styles as needed
+  ),
   progressIndicatorTheme: const ProgressIndicatorThemeData(
     color: AppColor.blue,
   ),

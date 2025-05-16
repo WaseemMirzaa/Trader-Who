@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/core/theme/assets.dart';
-
-
-
 
 class CustomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -23,10 +21,14 @@ class CustomNavBar extends StatelessWidget {
           icon: SvgPicture.asset(
             Assets.svgsHome,
             colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+            width: 24,
+            height: 24,
           ),
           activeIcon: SvgPicture.asset(
             Assets.svgsHome,
             colorFilter: const ColorFilter.mode(Colors.purple, BlendMode.srcIn),
+            width: 24,
+            height: 24,
           ),
           label: '',
         ),
@@ -34,10 +36,14 @@ class CustomNavBar extends StatelessWidget {
           icon: SvgPicture.asset(
             Assets.svgsDetails,
             colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+            width: 24,
+            height: 24,
           ),
           activeIcon: SvgPicture.asset(
             Assets.svgsDetails,
             colorFilter: const ColorFilter.mode(Colors.purple, BlendMode.srcIn),
+            width: 24,
+            height: 24,
           ),
           label: '',
         ),
@@ -45,10 +51,14 @@ class CustomNavBar extends StatelessWidget {
           icon: SvgPicture.asset(
             Assets.svgsChat,
             colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+            width: 24,
+            height: 24,
           ),
           activeIcon: SvgPicture.asset(
             Assets.svgsChat,
             colorFilter: const ColorFilter.mode(Colors.purple, BlendMode.srcIn),
+            width: 24,
+            height: 24,
           ),
           label: '',
         ),
@@ -56,10 +66,14 @@ class CustomNavBar extends StatelessWidget {
           icon: SvgPicture.asset(
             Assets.svgsProfile,
             colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+            width: 24,
+            height: 24,
           ),
           activeIcon: SvgPicture.asset(
             Assets.svgsProfile,
             colorFilter: const ColorFilter.mode(Colors.purple, BlendMode.srcIn),
+            width: 24,
+            height: 24,
           ),
           label: '',
         ),
@@ -71,6 +85,7 @@ class CustomNavBar extends StatelessWidget {
       showUnselectedLabels: false,
       onTap: onTap,
       type: BottomNavigationBarType.fixed,
+      backgroundColor: AppColor.white, // Set background to Appcolor.white
     );
   }
 }
