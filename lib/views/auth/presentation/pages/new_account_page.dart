@@ -14,74 +14,96 @@ class _NewAccountState extends State<NewAccountPage> {
       backgroundColor: AppColor.lightPeach,
       appBar: AppBar(
         centerTitle: true,
-        title: const CustomText(
+        title: CustomText(
           text: 'Create New Account',
           color: AppColor.black,
           fontWeight: FontWeight.bold,
+          fontSize: context.responsiveFontSize(16), 
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onTap: () {
-                       Get.toNamed(AppRoutes.signup);
-                      },
-              child: Container(
-                width: 175,
-                height: 150,
-                decoration: BoxDecoration(
-                  color: AppColor.white,
-                  borderRadius: BorderRadius.circular(20.0), 
-                ),
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center, 
-                  children: [
-                   Image.asset(
-                      Assets.imagesCustomer,
-                      height: 50, 
-                      width: 50,
-                    ), 
-                    const SizedBox(height: 8.0),
-                    const CustomText(
-                      text: 'Customer',
-                      color: AppColor.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            Container(
-              width: 175,
-              height: 150,
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: BorderRadius.circular(20.0), 
-              ),
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                 Image.asset(
-        Assets.imagesPeople, 
-        height: 50, 
-        width: 50,
-      ), 
-                  const SizedBox(height: 8.0),
-                  const CustomText(
-                    text: 'TradesPerson',
-                    color: AppColor.black,
-                    fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.signup);
+                },
+                child: Container(
+                  width: context.responsiveWidth(45), 
+                  height: context.responsiveHeight(20), 
+                  decoration: BoxDecoration(
+                    color: AppColor.white,
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
-                ],
+                  padding: EdgeInsets.all(context.responsiveWidth(4)), 
+                  margin: EdgeInsets.symmetric(
+                      vertical: context.responsiveHeight(1)), 
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        Assets.imagesCustomer,
+                        height: context.responsiveHeight(6), 
+                        width: context.responsiveWidth(12), 
+                      ),
+                      SizedBox(height: context.responsiveHeight(1)),
+                      CustomText(
+                        text: 'Customer',
+                        color: AppColor.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: context.responsiveFontSize(14),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+              
+              SizedBox(height: context.responsiveHeight(3)), 
+              
+              
+              GestureDetector(
+                onTap: () {
+                  
+                },
+                child: Container(
+                  width: context.responsiveWidth(45), 
+                  height: context.responsiveHeight(20), 
+                  decoration: BoxDecoration(
+                    color: AppColor.white,
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  padding: EdgeInsets.all(context.responsiveWidth(4)), 
+                  margin: EdgeInsets.symmetric(
+                      vertical: context.responsiveHeight(1)), 
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        Assets.imagesPeople,
+                        height: context.responsiveHeight(6), 
+                        width: context.responsiveWidth(12), 
+                      ),
+                      SizedBox(height: context.responsiveHeight(1)),
+                      CustomText(
+                        text: 'TradesPerson',
+                        color: AppColor.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: context.responsiveFontSize(14),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+              
+              SizedBox(height: context.responsiveHeight(5)),
+            ],
+          ),
         ),
       ),
     );

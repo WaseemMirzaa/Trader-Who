@@ -1,37 +1,51 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// Extension on `BuildContext` to simplify access to `MediaQuery` properties.
+/// Extension on `BuildContext` to simplify access to `MediaQuery` properties and
+/// provide responsive sizing for mobile devices.
 extension MediaQueryValues on BuildContext {
-  /// Retrieves the `MediaQueryData` for the current context, which contains
-  /// information about the device's screen and user preferences.
+  /// Retrieves the `MediaQueryData` for the current context.
   MediaQueryData get mediaQuery => MediaQuery.of(this);
 
   /// Retrieves the width of the screen.
-  double get mediaWidth => mediaQuery.size.width;
+  double get screenWidth => mediaQuery.size.width;
 
   /// Retrieves the height of the screen.
-  double get mediaHeight => mediaQuery.size.height;
+  double get screenHeight => mediaQuery.size.height;
 
-  /// Checks if the device is considered a mobile device based on its width.
-  /// Returns `true` if the screen width is less than 800 pixels.
-  bool get isMobile => mediaWidth < 800;
+  /// Checks if the device is considered a tablet based on screen width.
+  /// Returns `true` if the screen719width is greater than 600 pixels.
+   
+  bool get isTablet {
+    final shortestSide = mediaQuery.size.shortestSide;
+    return shortestSide > 600;  // More reliable check
+  }
 
-  /// Retrieves the size of the screen as a `Size` object.
-  /// This includes both width and height.
-  Size get size => mediaQuery.size;
+  /// Get a responsive width based on a percentage of screen width.
+  double responsiveWidth(double percentage) {
+    return screenWidth * (percentage / 100);
+  }
 
-  /// Retrieves the width of the screen from the `Size` object.
-  double get width => size.width;
+  /// Get a responsive height based on a percentage of screen height.
+  double responsiveHeight(double percentage) {
+    return screenHeight * (percentage / 100);
+  }
 
-  /// Retrieves the height of the screen from the `Size` object.
-  double get height => size.height;
+  /// Get a responsive font size based on screen width.
+  double responsiveFontSize(double baseFontSize) {
+    final scaleFactor = screenWidth / 375; // Reference width (e.g., iPhone 6)
+    return baseFontSize * scaleFactor.clamp(0.8, 1.2); // Clamp to avoid extreme scaling
+  }
 
-  /// Retrieves the Target Platform.
-  bool get isWebOrDesktop {
-    return kIsWeb ||
-        defaultTargetPlatform == TargetPlatform.windows ||
-        defaultTargetPlatform == TargetPlatform.macOS ||
-        defaultTargetPlatform == TargetPlatform.linux;
+  /// Get a constrained width for forms or containers.
+  double get constrainedWidth {
+    return isTablet ? 400 : screenWidth * 0.9;
+  }
+
+  /// Get responsive padding based on screen size.
+  EdgeInsets responsivePadding({double horizontal = 5, double vertical = 5}) {
+    return EdgeInsets.symmetric(
+      horizontal: responsiveWidth(horizontal),
+      vertical: responsiveHeight(vertical),
+    );
   }
 }

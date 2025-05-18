@@ -61,12 +61,12 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: 'Email/Phone',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email or phone';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Please enter your email or phone';
+                      //   }
+                      //   return null;
+                      // },
                     ),
                     const Gap(20),
 
@@ -79,15 +79,15 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: 'Password',
                       obscureText: true,
                       showPasswordToggle: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Please enter your password';
+                      //   }
+                      //   if (value.length < 6) {
+                      //     return 'Password must be at least 6 characters';
+                      //   }
+                      //   return null;
+                      // },
                     ),
                     const Gap(10),
 
