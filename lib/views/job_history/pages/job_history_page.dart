@@ -9,6 +9,7 @@ class JobHistoryPage extends StatefulWidget {
 
 class _JobHistoryPageState extends State<JobHistoryPage> {
   final TextEditingController _searchController = TextEditingController();
+    String _selectedTab = 'New Jobs';
   final List<JobHistory> _allJobs = [
     JobHistory(
       title: 'Plumbing',
@@ -17,25 +18,25 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
       price: 50.0,
       preferredTime: 'Today,4:00-6:00 PM',
       address: '123 Main St, Springfield',
-      status: 'Completed',
+      status: 'Accepted',
     ),
     JobHistory(
-      title: 'Bathroom Installation',
-      svgIcon: Assets.svgsPlumbing,
+      title: 'Electrical',
+      svgIcon: Assets.svgsElectric,
       jobType: 'Plumbing',
       price: 65.0,
       preferredTime: 'Afternoon',
       address: '456 Oak Ave, Springfield',
-      status: 'Accepted',
+      status: 'Waiting for porposal',
     ),
     JobHistory(
-      title: 'Pipe Leak Fix',
+      title: 'Electrical',
       svgIcon: Assets.svgsElectric,
       jobType: 'Electricity',
       price: 45.0,
       preferredTime: 'Evening',
       address: '789 Pine Rd, Springfield',
-      status: 'Pending',
+      status: 'Waiting for porposal',
     ),
   ];
   List<JobHistory> _filteredJobs = [];
@@ -97,11 +98,49 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SearchBarTile(
-                    controller: _searchController,
-                    onSearch: _onSearch,
-                    hintText: 'Search by job title',
-                    width: double.infinity,
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: CustomToggleButton(
+                            text: 'New Jobs',
+                            isActive: _selectedTab == 'New Jobs',
+                            onTap: () {
+                              setState(() {
+                                _selectedTab = 'New Jobs';
+                                _filteredJobs = _allJobs.where((job) => 
+                                  job.status != 'Completed').toList();
+                              });
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: CustomToggleButton(
+                            text: 'Completed',
+                            isActive: _selectedTab == 'Completed',
+                            onTap: () {
+                              setState(() {
+                                _selectedTab = 'Completed';
+                                _filteredJobs = _allJobs.where((job) => 
+                                  job.status == 'Completed').toList();
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 25),
                   MediaQuery.removePadding(
@@ -115,7 +154,7 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
                         crossAxisCount: _calculateCrossAxisCount(context),
                         crossAxisSpacing: 15,
                         mainAxisSpacing: 15,
-                        childAspectRatio: 1.5,
+                        childAspectRatio: 2,
                       ),
                       itemBuilder: (context, index) {
                         return JobHistoryCard(

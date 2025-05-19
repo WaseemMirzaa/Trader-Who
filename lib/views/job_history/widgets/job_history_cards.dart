@@ -35,7 +35,8 @@ class JobHistoryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomCircleAvatar(
-                  circleColor: AppColor.orangecustomColor,
+                 circleColor: Colors.transparent,  
+                 backgroundColor: AppColor.lightCyan,
                   radius: 24,
                   child: SvgPicture.asset(
                     job.svgIcon,
@@ -69,7 +70,7 @@ class JobHistoryCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              '${job.jobType} – Fixed Price: \$${job.price}',
+                              'Small Job– Fixed Price: \$${job.price}',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: AppColor.darkGray,
@@ -166,7 +167,7 @@ class JobHistoryCard extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text: job.preferredTime,
+                        text: job.address,
                         style: TextStyle(
                           fontSize: 14,
                           color: AppColor.darkGray,

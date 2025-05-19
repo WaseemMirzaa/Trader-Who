@@ -16,6 +16,9 @@ class AppColor {
   ///
   static const Color orangecustomColor = Color(0xFFFF7618);
 
+  /// Light cyan color (#E5F2F2).
+static const Color lightCyan = Color(0xFFE5F2F2);
+
   ///Light peach
   static const Color lightPeach = Color(0xFFFFE5DE);
 

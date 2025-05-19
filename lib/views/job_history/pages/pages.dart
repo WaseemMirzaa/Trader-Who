@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/custom_nav_bar.dart';
+import 'package:traderwho/core/shared_widgets/custom_toggle_button.dart';
 import 'package:traderwho/core/shared_widgets/search_bar_tile.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/core/theme/assets.dart';

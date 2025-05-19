@@ -134,6 +134,10 @@ class Assets {
   /// assets/images/tilers.png
   static const String imagesTilers = "assets/images/tilers.png";
 
+  /// Assets for imagesTimeGoing
+  /// assets/images/time-going.PNG
+  static const String imagesTimeGoing = "assets/images/time-going.PNG";
+
   /// Assets for imagesTrade
   /// assets/images/trade.png
   static const String imagesTrade = "assets/images/trade.png";
