@@ -99,6 +99,7 @@ dependencies:
  
   google_fonts: ^6.2.1
   get: ^4.7.2
+  google_maps_flutter: ^2.12.2
 
 # Developer-specific dependencies for testing and tooling
 dev_dependencies:

@@ -9,7 +9,6 @@ class TradesPage extends StatefulWidget {
 }
 
 class _TradesPageState extends State<TradesPage> {
-  int _selectedIndex = 0;
   final TextEditingController _searchController = TextEditingController();
   final List<TradesPerson> _tradesPeople = [
     TradesPerson(
@@ -39,10 +38,10 @@ class _TradesPageState extends State<TradesPage> {
     // Add more sample data...
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _onSearch() {
@@ -56,18 +55,12 @@ class _TradesPageState extends State<TradesPage> {
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: AppColor.lightPeach,
-      appBar: const TradesPeopleAppbar(),
+      appBar: const TradesPeopleAppbar(currentScreen: TradesPage),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -88,7 +81,7 @@ class _TradesPageState extends State<TradesPage> {
                   SearchBarTile(
                     controller: _searchController,
                     onSearch: _onSearch,
-                    hintText: 'Search by name or trade...',
+                    hintText: 'Search by names',
                     width: double.infinity,
                   ),
                   const SizedBox(height: 25),
@@ -108,7 +101,14 @@ class _TradesPageState extends State<TradesPage> {
                         return TradesPeopleCard(
                           person: _tradesPeople[index],
                           onTap: () {
-                            // Handle card tap
+                           Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TradePersonDetailsPage(
+                                  person: _tradesPeople[index],
+                                ),
+                              ),
+                            );
                           },
                         );
                       },
@@ -121,10 +121,7 @@ class _TradesPageState extends State<TradesPage> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
+     
     );
   }
 }

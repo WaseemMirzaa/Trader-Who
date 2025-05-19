@@ -21,13 +21,6 @@ class _JobPageState extends State<JobPage> {
     {'value': 'large', 'label': 'Large Jobs: Custom Quote Required'},
   ];
 
-  static const List<String> _titles = ['Home', 'Details', 'Chat', 'Profile'];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   void dispose() {
@@ -186,10 +179,7 @@ class _JobPageState extends State<JobPage> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
+       bottomNavigationBar: const CustomNavBar(),
     );
   }
 }

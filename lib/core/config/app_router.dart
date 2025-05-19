@@ -47,6 +47,13 @@ class AppRouter {
           name: AppRoutes.tradesPage,
           page: () => const TradesPage(),
           binding: TradesPageBinding(), // Inject LoginController
-        ),
+        ), 
+         GetPage(
+          name: AppRoutes.jobHistoryPage,
+          page: () => const JobHistoryPage(),
+          binding: JobHistoryPageBinding(), // Inject LoginController
+        ), 
+        
+         
       ];
 }

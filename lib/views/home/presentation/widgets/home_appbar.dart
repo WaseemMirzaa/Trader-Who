@@ -58,10 +58,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         Assets.svgsNotification,
                         width: 24,
                         height: 24,
-                        colorFilter: const ColorFilter.mode(
-                          AppColor.orangecustomColor, 
-                          BlendMode.srcIn,
-                        ),
+                       
                       ),
                     ],
                   ),

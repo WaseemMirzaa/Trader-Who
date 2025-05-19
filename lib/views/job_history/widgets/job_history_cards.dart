@@ -1,0 +1,185 @@
+part of 'widgets.dart';
+
+class JobHistoryCard extends StatelessWidget {
+  final JobHistory job;
+  final VoidCallback? onTap;
+
+  const JobHistoryCard({
+    super.key,
+    required this.job,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomCircleAvatar(
+                  circleColor: AppColor.orangecustomColor,
+                  radius: 24,
+                  child: SvgPicture.asset(
+                    job.svgIcon,
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        job.title,
+                        style: const TextStyle(
+                          color: AppColor.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis, // Truncate long titles
+                        maxLines: 1, // Limit to one line
+                      ),
+                      kGap10, // Assuming this is a SizedBox(height: 10)
+                      Row(
+                        children: [
+                          Image.asset(
+                            Assets.imagesPounds,
+                            width: 16,
+                            height: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              '${job.jobType} – Fixed Price: \$${job.price}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColor.darkGray,
+                              ),
+                              overflow: TextOverflow.ellipsis, // Truncate long text
+                              maxLines: 1, // Limit to one line
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  constraints: const BoxConstraints(maxWidth: 100), // Limit status width
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColor.midGray.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColor.midGray,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    job.status,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColor.midGray,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis, // Truncate long status
+                    maxLines: 1, // Limit to one line
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Preferred Time Row
+            Row(
+              children: [
+                SvgPicture.asset(
+                  Assets.svgsTime,
+                  width: 16,
+                  height: 16,
+                ),
+                const SizedBox(width: 4),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: 'Preferred Time: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColor.darkGray,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: job.preferredTime,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColor.darkGray,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Address Section
+             Row(
+              children: [
+                SvgPicture.asset(
+                  Assets.svgsLocation,
+                  width: 16,
+                  height: 16,
+                ),
+                const SizedBox(width: 4),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: 'Address: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColor.darkGray,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: job.preferredTime,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColor.darkGray,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

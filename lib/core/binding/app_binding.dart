@@ -7,7 +7,7 @@ part of 'binding.dart';
 class AppBinding extends Bindings {
   @override
   void dependencies() {
-
+  Get.lazyPut(() => NavigationController(),fenix: true);
     // Get.lazyPut<ApiService>(() => ApiService(), fenix: true);
     // Get.lazyPut<UserRepository>(() => UserRepository(), fenix: true);
   }
@@ -63,5 +63,11 @@ class TradesPageBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<JobController>(() => JobController());
+  }
+}
+class JobHistoryPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<JobHistoryPageController>(() => JobHistoryPageController());
   }
 }

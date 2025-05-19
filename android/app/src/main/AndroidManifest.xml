@@ -3,6 +3,8 @@
         android:label="traderwho"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+          <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBD7O6PQXXb5wrigZ6WOTn2VwTRFxCb9KU"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -26,6 +26,10 @@ class AppColor {
   /// Dark gray color (#202224).
   static const Color darkGray = Color(0xFF202224);
 
+  /// Light gray color (#EDEEF1).
+static const Color customLightGray = Color(0xFFEDEEF1);
+
+
   /// Bright teal color (#21E5B5).
   static const Color teal = Color(0xFF21E5B5);
 

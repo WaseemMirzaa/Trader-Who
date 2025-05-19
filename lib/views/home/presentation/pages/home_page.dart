@@ -8,7 +8,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+ 
 
   // List of services with their image paths
   final List<Map<String, String>> services = [
@@ -26,26 +26,7 @@ class _HomePageState extends State<HomePage> {
     {'title': 'Flooring', 'image': Assets.imagesFlooring},
   ];
 
-  static const List<String> _titles = [
-    'Home',
-    'Details',
-    'Chat',
-    'Profile',
-  ];
-
-  // Define all pages for each navigation item
-  final List<Widget> _pages = [
-    const Center(child: Text('Home Content', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Details Content', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Chat Content', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Profile Content', style: TextStyle(fontSize: 24))),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -105,10 +86,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
+    bottomNavigationBar: const CustomNavBar(),
     );
   }
 }

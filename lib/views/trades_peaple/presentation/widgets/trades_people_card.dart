@@ -13,7 +13,15 @@ class TradesPeopleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap ?? () {
+        // Default onTap behavior if no callback is provided
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TradePersonDetailsPage(person: person),
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -52,38 +60,36 @@ class TradesPeopleCard extends StatelessWidget {
                           ),
                         ),
                         // Moved price section here with dollar icon
-                        Row(
-                          children: [
-                            Image.asset(
-                              Assets.imagesPounds,
-                              width: 16,
-                              height: 16,
-                            
-                            ),
-                            const SizedBox(width: 4),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text:'Price: ' ,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                   TextSpan(
-                                    text: '£${person.price}',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: AppColor.mutedGray,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                     Row(
+  mainAxisSize: MainAxisSize.min, // Fit content
+  children: [
+    // Dollar icon and price
+    SvgPicture.asset(
+     Assets.svgsDollar, // Replace with your SVG path
+      width: 18,
+      height: 18,
+      // Optional: tint the SVG
+    ),
+    const SizedBox(width: 4), // Space between icon and text
+    Text(
+      'Price: ',
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+    ),
+   
+    Text(
+      '£${person.price}',
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: AppColor.mutedGray,
+      ),
+    ),
+  ],
+)
                       ],
                     ),
                   ],

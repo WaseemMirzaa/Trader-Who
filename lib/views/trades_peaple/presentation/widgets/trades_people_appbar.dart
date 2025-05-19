@@ -1,7 +1,9 @@
 part of 'widgets.dart';
 
 class TradesPeopleAppbar extends StatefulWidget implements PreferredSizeWidget {
-  const TradesPeopleAppbar({super.key});
+  final Type? currentScreen; // To track the current screen
+
+  const TradesPeopleAppbar({super.key,required this.currentScreen});
 
   @override
   State<TradesPeopleAppbar> createState() => _TradesPeopleAppbarState();
@@ -11,8 +13,34 @@ class TradesPeopleAppbar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _TradesPeopleAppbarState extends State<TradesPeopleAppbar> {
-  bool _isNomapTapped = false;
-  bool _isMapTapped = false;
+  late bool _isNomapTapped;
+  late bool _isMapTapped;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set initial state based on currentScreen
+    _isNomapTapped = widget.currentScreen != MapScreen;
+    _isMapTapped = widget.currentScreen == MapScreen;
+  }
+
+  void _navigateToMapScreen(BuildContext context) {
+    if (widget.currentScreen != MapScreen) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MapScreen()),
+      );
+    }
+  }
+
+  void _navigateToTradesPage(BuildContext context) {
+    if (widget.currentScreen != TradesPage) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const TradesPage()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +50,11 @@ class _TradesPeopleAppbarState extends State<TradesPeopleAppbar> {
       toolbarHeight: 120,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () {
+          if (Navigator.canPop(context)) {
+            Navigator.of(context).pop();
+          }
+        },
       ),
       flexibleSpace: Container(
         margin: EdgeInsets.zero,
@@ -37,7 +69,7 @@ class _TradesPeopleAppbarState extends State<TradesPeopleAppbar> {
               color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: SafeArea(
@@ -70,9 +102,8 @@ class _TradesPeopleAppbarState extends State<TradesPeopleAppbar> {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: AppColor.midGray, 
+                            color: AppColor.midGray,
                             borderRadius: BorderRadius.circular(16),
-                            
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -80,14 +111,17 @@ class _TradesPeopleAppbarState extends State<TradesPeopleAppbar> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    _isNomapTapped = !_isNomapTapped;
+                                    _isNomapTapped = true;
                                     _isMapTapped = false;
                                   });
+                                  _navigateToTradesPage(context);
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(
-                                    color: _isNomapTapped ? AppColor.darkBlue : Colors.transparent,
+                                    color: _isNomapTapped
+                                        ? AppColor.darkBlue
+                                        : Colors.transparent,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: SvgPicture.asset(
@@ -102,14 +136,17 @@ class _TradesPeopleAppbarState extends State<TradesPeopleAppbar> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    _isMapTapped = !_isMapTapped;
+                                    _isMapTapped = true;
                                     _isNomapTapped = false;
                                   });
+                                  _navigateToMapScreen(context);
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(
-                                    color: _isMapTapped ? AppColor.darkBlue : Colors.transparent,
+                                    color: _isMapTapped
+                                        ? AppColor.darkBlue
+                                        : Colors.transparent,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: SvgPicture.asset(
@@ -134,4 +171,4 @@ class _TradesPeopleAppbarState extends State<TradesPeopleAppbar> {
       ),
     );
   }
-}
+} 

@@ -28,5 +28,8 @@ class AppRoutes {
      /// The trades screen route.
   static const String tradesPage = '/tradespage';
 
+       /// The job history screen route.
+  static const String jobHistoryPage = '/jobhistorypage';
+
   
 }

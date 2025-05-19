@@ -1,19 +1,17 @@
+// custom_nav_bar.dart
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/core/theme/assets.dart';
 
 class CustomNavBar extends StatelessWidget {
-  final int currentIndex;
-  final Function(int) onTap;
-
-  const CustomNavBar({
-    super.key,
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const CustomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final navController = NavigationController.to;
+    
     return Container(
       decoration: BoxDecoration(
         color: AppColor.white,
@@ -34,33 +32,32 @@ class CustomNavBar extends StatelessWidget {
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
-        child: BottomNavigationBar(
+        child: Obx(() => BottomNavigationBar(
           items: [
             _buildNavItem(Assets.imagesHome, 0),
             _buildNavItem(Assets.imagesDetails, 1),
             _buildNavItem(Assets.imagesChat, 2),
             _buildNavItem(Assets.imagesProfile, 3),
           ],
-          currentIndex: currentIndex,
+          currentIndex: navController.currentIndex.value,
           showSelectedLabels: false,
           showUnselectedLabels: false,
-          onTap: onTap,
+          onTap: navController.changePage,
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.transparent,
           elevation: 0,
-        ),
+        )),
       ),
     );
   }
 
   BottomNavigationBarItem _buildNavItem(String iconPath, int index) {
-    bool isSelected = currentIndex == index;
-    
+    final isSelected = NavigationController.to.currentIndex.value == index;
+
     return BottomNavigationBarItem(
       icon: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Purple top bar indicator
           Container(
             height: 3,
             width: 24,
@@ -70,7 +67,6 @@ class CustomNavBar extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          // Icon with grey/color states
           Image.asset(
             iconPath,
             width: 24,
