@@ -2,19 +2,22 @@ part of 'models.dart';
 
 class JobHistory {
   final String title;
+  final String svgIcon;
   final String jobType;
   final double price;
   final String preferredTime;
   final String address;
   final String status;
-  final String svgIcon; 
+  final TradesPerson? tradesPerson; 
+
   JobHistory({
     required this.title,
+    required this.svgIcon,
     required this.jobType,
     required this.price,
     required this.preferredTime,
     required this.address,
     required this.status,
-    required this.svgIcon,
+    this.tradesPerson,
   });
 }

@@ -19,6 +19,12 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
       preferredTime: 'Today,4:00-6:00 PM',
       address: '123 Main St, Springfield',
       status: 'Accepted',
+    //   tradesPerson: TradesPerson(
+    //   name: 'John Smith',
+    //   imageUrl: 'path_to_image',
+      
+    //   // other fields...
+    // ),
     ),
     JobHistory(
       title: 'Electrical',

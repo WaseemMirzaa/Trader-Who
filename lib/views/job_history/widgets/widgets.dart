@@ -8,3 +8,4 @@ import 'package:traderwho/models/models.dart';
 
 part 'job_history_appbar.dart';
 part 'job_history_cards.dart';
+part 'job_history_detail_appbar.dart';
