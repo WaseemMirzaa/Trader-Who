@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-
 /// This [AppColor] defines a set of colors used throughout the app.
 /// A utility class that defines the color palette used throughout the application.
 /// Each color is represented as a static constant with a descriptive name.
@@ -11,17 +9,21 @@ class AppColor {
 
   /// Pure black color (#000000).
   static const Color black = Color(0xFF000000);
+
   ///
   static const Color purplecustomColor = Color(0xFF1E2A44);
+
   ///
   static const Color orangecustomColor = Color(0xFFFF7618);
 
+  /// Light gray color (#A4A4A4).
+  static const Color customsLightGray = Color(0xFFA4A4A4);
+
   /// Light cyan color (#E5F2F2).
-static const Color lightCyan = Color(0xFFE5F2F2);
+  static const Color lightCyan = Color(0xFFE5F2F2);
 
   ///Light peach
   static const Color lightPeach = Color(0xFFFFE5DE);
-
 
   /// Deep navy blue color (#192C83).
   static const Color navyBlue = Color(0xFF192C83);
@@ -30,14 +32,14 @@ static const Color lightCyan = Color(0xFFE5F2F2);
   static const Color darkGray = Color(0xFF202224);
 
   /// Light gray color (#EDEEF1).
-static const Color customLightGray = Color(0xFFEDEEF1);
-
+  static const Color customLightGray = Color(0xFFEDEEF1);
 
   /// Bright teal color (#21E5B5).
   static const Color teal = Color(0xFF21E5B5);
 
   ///
   static const Color purple = Color(0xFF800080);
+
   ///
   static const Color darkBlue = Color(0xFF132241);
 
@@ -142,9 +144,18 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   scaffoldBackgroundColor: AppColor.white,
   drawerTheme: const DrawerThemeData(backgroundColor: AppColor.white),
   textTheme: const TextTheme(
-    displayLarge: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700),
-    displayMedium: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w400),
-    bodyLarge: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w300),
+    displayLarge: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontWeight: FontWeight.w700,
+    ),
+    displayMedium: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontWeight: FontWeight.w400,
+    ),
+    bodyLarge: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontWeight: FontWeight.w300,
+    ),
     // ... Add other text styles as needed
   ),
   progressIndicatorTheme: const ProgressIndicatorThemeData(
@@ -161,9 +172,18 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   scaffoldBackgroundColor: AppColor.black,
   drawerTheme: const DrawerThemeData(backgroundColor: AppColor.black),
   textTheme: const TextTheme(
-    displayLarge: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700),
-    displayMedium: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w400),
-    bodyLarge: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w300),
+    displayLarge: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontWeight: FontWeight.w700,
+    ),
+    displayMedium: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontWeight: FontWeight.w400,
+    ),
+    bodyLarge: TextStyle(
+      fontFamily: 'HelveticaNeue',
+      fontWeight: FontWeight.w300,
+    ),
     // ... Add other text styles as needed
   ),
   progressIndicatorTheme: const ProgressIndicatorThemeData(

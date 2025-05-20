@@ -14,10 +14,10 @@ extension MediaQueryValues on BuildContext {
 
   /// Checks if the device is considered a tablet based on screen width.
   /// Returns `true` if the screen719width is greater than 600 pixels.
-   
+
   bool get isTablet {
     final shortestSide = mediaQuery.size.shortestSide;
-    return shortestSide > 600;  // More reliable check
+    return shortestSide > 600; // More reliable check
   }
 
   /// Get a responsive width based on a percentage of screen width.
@@ -33,7 +33,8 @@ extension MediaQueryValues on BuildContext {
   /// Get a responsive font size based on screen width.
   double responsiveFontSize(double baseFontSize) {
     final scaleFactor = screenWidth / 375; // Reference width (e.g., iPhone 6)
-    return baseFontSize * scaleFactor.clamp(0.8, 1.2); // Clamp to avoid extreme scaling
+    return baseFontSize *
+        scaleFactor.clamp(0.8, 1.2); // Clamp to avoid extreme scaling
   }
 
   /// Get a constrained width for forms or containers.
