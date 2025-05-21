@@ -1,6 +1,5 @@
 part of 'pages.dart';
 
-
 class TradesPage extends StatefulWidget {
   const TradesPage({super.key});
 
@@ -14,9 +13,10 @@ class _TradesPageState extends State<TradesPage> {
     TradesPerson(
       name: 'James Michael',
       expertise: 'Electrician',
-      description: 'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after  turning on \n garbage disposal.',
+      description:
+          'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after  turning on \n garbage disposal.',
       price: '50',
-      imageUrl:Assets.imagesTradePeople,
+      imageUrl: Assets.imagesChatAvatar,
       rating: 4.5,
     ),
     TradesPerson(
@@ -24,15 +24,15 @@ class _TradesPageState extends State<TradesPage> {
       expertise: 'Plumber',
       description: 'Specialist in pipe repairs and bathroom installations',
       price: '65',
-      imageUrl:Assets.imagesField,
+      imageUrl: Assets.imagesChatRichard,
       rating: 4.8,
     ),
-     TradesPerson(
+    TradesPerson(
       name: 'David',
       expertise: 'Plumber',
       description: 'Specialist in pipe repairs and bathroom installations',
       price: '65',
-      imageUrl:Assets.imagesField,
+      imageUrl: Assets.imagesChatRobert,
       rating: 4.0,
     ),
     // Add more sample data...
@@ -50,24 +50,29 @@ class _TradesPageState extends State<TradesPage> {
   }
 
   int _calculateCrossAxisCount(BuildContext context) {
-    return MediaQuery.of(context).size.width > 800 ? 3 : 
-           MediaQuery.of(context).size.width > 600 ? 2 : 1;
+    return MediaQuery.of(context).size.width > 800
+        ? 3
+        : MediaQuery.of(context).size.width > 600
+        ? 2
+        : 1;
   }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: AppColor.lightPeach,
+    return GradientScaffold(
       appBar: const TradesPeopleAppbar(currentScreen: TradesPage),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: screenSize.width > 800 ? 1200 : 
-                       screenSize.width > 600 ? 800 : 
-                       screenSize.width * 0.99,
+              maxWidth:
+                  screenSize.width > 800
+                      ? 1200
+                      : screenSize.width > 600
+                      ? 800
+                      : screenSize.width * 0.99,
               minHeight: screenSize.height,
             ),
             child: SingleChildScrollView(
@@ -96,17 +101,19 @@ class _TradesPageState extends State<TradesPage> {
                         crossAxisCount: _calculateCrossAxisCount(context),
                         crossAxisSpacing: 15,
                         mainAxisSpacing: 15,
-                        childAspectRatio: 1.5),
+                        childAspectRatio: 1.5,
+                      ),
                       itemBuilder: (context, index) {
                         return TradesPeopleCard(
                           person: _tradesPeople[index],
                           onTap: () {
-                           Navigator.push(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => TradePersonDetailsPage(
-                                  person: _tradesPeople[index],
-                                ),
+                                builder:
+                                    (context) => TradePersonDetailsPage(
+                                      person: _tradesPeople[index],
+                                    ),
                               ),
                             );
                           },
@@ -121,7 +128,6 @@ class _TradesPageState extends State<TradesPage> {
           ),
         ),
       ),
-     
     );
   }
 }

@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 
 import '../theme/app_color.dart';
 import '../theme/assets.dart';
 
-
 class SearchBarTile extends StatelessWidget {
-  final TextEditingController controller;
-  final VoidCallback onSearch;
+  final TextEditingController? controller;
+  final VoidCallback? onSearch;
   final String? hintText;
   final FocusNode? focusNode;
-  final double? width;  // <-- Add this
+  final double? width;
 
   const SearchBarTile({
     super.key,
-    required this.controller,
-    required this.onSearch,
-    required this.hintText,
+    this.controller,
+    this.onSearch,
+    this.hintText,
     this.focusNode,
-    this.width,  // <-- Add this
+    this.width,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectiveController = controller ?? TextEditingController();
+
     return Container(
-      width: width,  // <-- Apply custom width
+      width: width,
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
         color: AppColor.white,
@@ -35,12 +35,11 @@ class SearchBarTile extends StatelessWidget {
             color: AppColor.midGray.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Row(
         children: [
-          // Search icon
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: SvgPicture.asset(
@@ -50,13 +49,12 @@ class SearchBarTile extends StatelessWidget {
               height: 20,
             ),
           ),
-          // Search text field
           Expanded(
             child: TextField(
-              controller: controller,
+              controller: effectiveController,
               focusNode: focusNode,
               decoration: InputDecoration(
-                hintText: hintText,
+                hintText: hintText ?? 'Search...',
                 hintStyle: TextStyle(
                   color: AppColor.mutedGray,
                   fontSize: 13,
@@ -65,7 +63,7 @@ class SearchBarTile extends StatelessWidget {
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
               ),
-              onSubmitted: (value) => onSearch(),
+              onSubmitted: (value) => onSearch?.call(),
             ),
           ),
         ],

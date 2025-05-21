@@ -1,6 +1,5 @@
 part of 'pages.dart';
 
-
 class JobPage extends StatefulWidget {
   const JobPage({super.key});
 
@@ -12,7 +11,7 @@ class _JobPageState extends State<JobPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
   String? _selectedJobType;
 
   // Job type options
@@ -20,7 +19,6 @@ class _JobPageState extends State<JobPage> {
     {'value': 'small', 'label': 'Small Job: Fixed price estimate'},
     {'value': 'large', 'label': 'Large Jobs: Custom Quote Required'},
   ];
-
 
   @override
   void dispose() {
@@ -35,8 +33,7 @@ class _JobPageState extends State<JobPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: AppColor.lightPeach,
+    return GradientScaffold(
       appBar: const JobAppBar(),
       body: SafeArea(
         child: Center(
@@ -89,12 +86,13 @@ class _JobPageState extends State<JobPage> {
                     value: _selectedJobType,
                     hintText: 'Select job type',
                     fieldHeading: null,
-                    items: _jobTypes.map((jobType) {
-                      return DropdownMenuItem<String>(
-                        value: jobType['value'],
-                        child: Text(jobType['label']!),
-                      );
-                    }).toList(),
+                    items:
+                        _jobTypes.map((jobType) {
+                          return DropdownMenuItem<String>(
+                            value: jobType['value'],
+                            child: Text(jobType['label']!),
+                          );
+                        }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
                         _selectedJobType = newValue;
@@ -116,7 +114,7 @@ class _JobPageState extends State<JobPage> {
                   CustomTextField(
                     fillColor: AppColor.white,
                     controller: _locationController,
-                   
+
                     hintText: 'Auto-fill from GPS or manual entry',
                     hintStyle: const TextStyle(color: AppColor.midGray),
                     keyboardType: TextInputType.streetAddress,
@@ -162,7 +160,7 @@ class _JobPageState extends State<JobPage> {
                   CustomButton(
                     text: 'Find TradePeople',
                     onTap: () {
-                      Get.toNamed(AppRoutes.tradesPage); 
+                      Get.toNamed(AppRoutes.tradesPage);
                     },
                     width: double.infinity,
                     height: screenHeight * 0.06,
@@ -179,7 +177,7 @@ class _JobPageState extends State<JobPage> {
           ),
         ),
       ),
-       bottomNavigationBar: const CustomNavBar(),
+      bottomNavigationBar: const CustomNavBar(),
     );
   }
 }

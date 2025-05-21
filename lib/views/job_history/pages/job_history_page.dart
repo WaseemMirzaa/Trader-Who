@@ -92,8 +92,7 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: AppColor.lightPeach,
+    return GradientScaffold(
       appBar: const JobHistoryAppbar(),
       body: SafeArea(
         child: Center(

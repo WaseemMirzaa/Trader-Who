@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:traderwho/core/extensions/extensions.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/core/theme/assets.dart';
 import 'package:traderwho/core/theme/theme.dart';
 
 class CustomBottomSheet extends StatelessWidget {
@@ -25,10 +24,9 @@ class CustomBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Main Container with light gray background and height constraints
       constraints: BoxConstraints(
         minHeight: context.screenHeight * 0.40,
-        maxHeight: context.screenHeight * 0.6, // Half screen
+        maxHeight: context.screenHeight * 0.6,
       ),
       decoration: BoxDecoration(
         color: AppColor.customLightGray,
@@ -44,7 +42,6 @@ class CustomBottomSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Drag handle
           Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
             width: 40,
@@ -54,12 +51,9 @@ class CustomBottomSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          // White content container with controlled height
           Container(
             width: context.screenWidth * 0.9,
-            constraints: BoxConstraints(
-              maxHeight: context.screenHeight * 0.36, // 60% of bottom sheet height
-            ),
+            constraints: BoxConstraints(maxHeight: context.screenHeight * 0.36),
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -70,9 +64,8 @@ class CustomBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start, // Align avatar at top
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Profile picture
                       CustomCircleAvatar(
                         radius: 30,
                         circleColor: AppColor.orangecustomColor,
@@ -91,7 +84,7 @@ class CustomBottomSheet extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppColor.black
+                                color: AppColor.black,
                               ),
                             ),
                             Text(
@@ -104,13 +97,17 @@ class CustomBottomSheet extends StatelessWidget {
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                ...List.generate(5, (index) => Icon(
-                                      Icons.star,
-                                      color: index < rating.floor()
-                                          ? Colors.amber
-                                          : Colors.grey[300],
-                                      size: 16,
-                                    )),
+                                ...List.generate(
+                                  5,
+                                  (index) => Icon(
+                                    Icons.star,
+                                    color:
+                                        index < rating.floor()
+                                            ? Colors.amber
+                                            : Colors.grey[300],
+                                    size: 16,
+                                  ),
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   '$rating overall',
@@ -126,12 +123,12 @@ class CustomBottomSheet extends StatelessWidget {
                       ),
                     ],
                   ),
-                 
                   Text(
                     description,
                     style: const TextStyle(
                       fontSize: 15,
-                      height: 1.4, color: AppColor.mutedGray,
+                      height: 1.4,
+                      color: AppColor.mutedGray,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -151,68 +148,74 @@ class CustomBottomSheet extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 15,
                       height: 1.4,
-                       color: AppColor.mutedGray,
+                      color: AppColor.mutedGray,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          // Gap between content and button containers
           const SizedBox(height: 10),
-          // Button Container
           Container(
-  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-  decoration: const BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  ),
-  child: Row(
-    children: [
-      Expanded(
-        child: CustomButton(
-          text: 'Book Now',
-          onTap: () {},
-          height: 50,
-          color: AppColor.darkBlue,
-          textColor: Colors.white,
-          fontWeight: FontWeight.bold,
-          radius: 25,
-        ),
-      ),
-      kGap10,
-      IconButton(
-        icon: SizedBox(
-          width: 50,
-          height: 50,
-          child: Image.asset(
-            Assets.imagesCall,
-            fit: BoxFit.contain, // Ensure image fits within 50x50
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
+                    text: 'Book Now',
+                    onTap: () {},
+                    height: 50,
+                    color: AppColor.darkBlue,
+                    textColor: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    radius: 25,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {}, // Add call functionality here
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppColor.darkBlue, // Dark blue background
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        Assets.svgsCall,
+                        width: 25,
+                        height: 25,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {}, // Add message functionality here
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppColor.orangecustomColor, // Dark blue background
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        Assets.svgsMessage,
+                        width: 25,
+                        height: 25,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        iconSize: 50, // Match the desired image size
-        onPressed: () {},
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(), // Remove default constraints
-      ),
-      kGap10,
-      IconButton(
-        icon: SizedBox(
-          width: 50,
-          height: 50,
-          child: Image.asset(
-            Assets.imagesOrangeMessage,
-            fit: BoxFit.contain, // Ensure image fits within 50x50
-          ),
-        ),
-        iconSize: 50, // Match the desired image size
-        onPressed: () {},
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(), // Remove default constraints
-      ),
-    ],
-  ),
-),
         ],
       ),
     );

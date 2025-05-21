@@ -31,6 +31,8 @@ class AppColor {
   /// Dark gray color (#202224).
   static const Color darkGray = Color(0xFF202224);
 
+  static const Color customOffWhite = Color(0xFFEDEEF1);
+
   /// Light gray color (#EDEEF1).
   static const Color customLightGray = Color(0xFFEDEEF1);
 
@@ -94,6 +96,12 @@ class AppColor {
   /// Bright blue color (#4880FF).
   static const Color blue = Color(0xFF4880FF);
 
+  /// Light beige color (#E7E0DB).
+  static const Color lightBeige = Color(0xFFE7E0DB);
+
+  /// Darker gray color (#6D6D6D).
+  static const Color darkerGray = Color(0xFF6D6D6D);
+
   /// Royal blue color (#4379EE).
   static const Color royalBlue = Color(0xFF4379EE);
 
@@ -124,6 +132,15 @@ class AppColor {
   /// Deep blue color (#132241).
   static const Color deepBlue = Color(0xFF132241);
 
+  static const LinearGradient defaultGradient = LinearGradient(
+    colors: [
+      Color(0xFFFCF3ED), // #FCF3ED
+      Color(0xFFEFEFF0), // #EFEFF0
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
   /// Gradient from dark navy (#313649) to deep blue (#132241).
   static const LinearGradient navyGradient = LinearGradient(
     colors: [
@@ -141,7 +158,9 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     primary: AppColor.white,
     secondary: AppColor.white,
   ),
-  scaffoldBackgroundColor: AppColor.white,
+  scaffoldBackgroundColor: const Color(
+    0xFFFCF3ED,
+  ), // Fallback to one gradient color
   drawerTheme: const DrawerThemeData(backgroundColor: AppColor.white),
   textTheme: const TextTheme(
     displayLarge: TextStyle(
@@ -156,7 +175,6 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       fontFamily: 'HelveticaNeue',
       fontWeight: FontWeight.w300,
     ),
-    // ... Add other text styles as needed
   ),
   progressIndicatorTheme: const ProgressIndicatorThemeData(
     color: AppColor.blue,
@@ -169,7 +187,9 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
     primary: AppColor.black,
     secondary: AppColor.black,
   ),
-  scaffoldBackgroundColor: AppColor.black,
+  scaffoldBackgroundColor: const Color(
+    0xFFEFEFF0,
+  ), // Fallback to one gradient color
   drawerTheme: const DrawerThemeData(backgroundColor: AppColor.black),
   textTheme: const TextTheme(
     displayLarge: TextStyle(
@@ -184,7 +204,6 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
       fontFamily: 'HelveticaNeue',
       fontWeight: FontWeight.w300,
     ),
-    // ... Add other text styles as needed
   ),
   progressIndicatorTheme: const ProgressIndicatorThemeData(
     color: AppColor.blue,

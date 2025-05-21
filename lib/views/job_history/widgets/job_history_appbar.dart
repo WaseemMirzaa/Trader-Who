@@ -1,8 +1,6 @@
 part of 'widgets.dart';
 
-
 class JobHistoryAppbar extends StatefulWidget implements PreferredSizeWidget {
-  
   const JobHistoryAppbar({super.key});
 
   @override
@@ -61,11 +59,13 @@ class _JobHistoryAppbarState extends State<JobHistoryAppbar> {
                       // Right-aligned icon
                       Align(
                         alignment: Alignment.centerRight,
-                        child: SvgPicture.asset(
-                          Assets.svgsNotification,
-                          width: 24,
-                          height: 24,
-                          
+                        child: InkWell(
+                          onTap: () => Get.toNamed(AppRoutes.notificationPage),
+                          child: SvgPicture.asset(
+                            Assets.svgsNotification,
+                            width: 24,
+                            height: 24,
+                          ),
                         ),
                       ),
                     ],

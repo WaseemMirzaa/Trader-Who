@@ -1,9 +1,9 @@
 // app.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/binding/binding.dart';
 import 'package:traderwho/core/config/config.dart';
-
 
 import 'core/config/app_routes.dart';
 import 'core/theme/app_color.dart';
@@ -17,7 +17,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize global bindings
     AppBinding().dependencies();
-
+    Get.put(NavigationController());
     return SizerUtils(
       builder: (BuildContext context, Orientation orientation) {
         return GetMaterialApp(

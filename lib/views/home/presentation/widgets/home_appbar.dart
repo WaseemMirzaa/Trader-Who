@@ -54,11 +54,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                         ),
                       ),
-                      SvgPicture.asset(
-                        Assets.svgsNotification,
-                        width: 24,
-                        height: 24,
-                       
+                      InkWell(
+                        onTap: () => Get.toNamed(AppRoutes.notificationPage),
+                        child: SvgPicture.asset(
+                          Assets.svgsNotification,
+                          width: 24,
+                          height: 24,
+                        ),
                       ),
                     ],
                   ),

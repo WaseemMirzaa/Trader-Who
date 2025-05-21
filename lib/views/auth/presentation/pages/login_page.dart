@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-         iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
         child: Center(
@@ -51,12 +51,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Gap(150), 
+                    const Gap(150),
 
                     // Email/Phone Field
                     CustomTextField(
                       fillColor: AppColor.mediumGray,
-                       borderColor: AppColor.mediumGray,
+                      borderColor: AppColor.mediumGray,
                       controller: _emailController,
                       hintText: 'Email/Phone',
                       hintStyle: const TextStyle(color: AppColor.midGray),
@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                     // Password Field
                     CustomTextField(
                       fillColor: AppColor.mediumGray,
-                         hintStyle: const TextStyle(color: AppColor.midGray),
+                      hintStyle: const TextStyle(color: AppColor.midGray),
                       borderColor: AppColor.mediumGray,
                       controller: _passwordController,
                       hintText: 'Password',
@@ -91,7 +91,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const Gap(10),
 
-                  
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -99,7 +98,6 @@ class _LoginPageState extends State<LoginPage> {
                         Row(
                           children: [
                             Checkbox(
-                          
                               value: _rememberMe,
                               onChanged: (value) {
                                 setState(() {
@@ -107,17 +105,16 @@ class _LoginPageState extends State<LoginPage> {
                                 });
                               },
                               activeColor: AppColor.orangecustomColor,
-                              checkColor: AppColor.midGray,  
+                              checkColor: AppColor.midGray,
                             ),
                             const CustomText(
-                            
                               text: 'Remember me',
                               color: AppColor.midGray,
                               fontSize: 14,
                             ),
                           ],
                         ),
-                    
+
                         // Forgot Password
                         GestureDetector(
                           onTap: () {
@@ -154,105 +151,93 @@ class _LoginPageState extends State<LoginPage> {
 
                     // Or Divider
                     Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    SizedBox(
-      width: 50, // length of left divider
-      child: Divider(
-        color: AppColor.midGray,
-        thickness: 1,
-      ),
-    ),
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: CustomText(
-        text: 'Sign-in with Apple/Google',
-        color: Colors.white,
-        fontSize: 12,
-      ),
-    ),
-    SizedBox(
-      width: 50, // length of right divider
-      child: Divider(
-        color: AppColor.midGray,
-        thickness: 1,
-      ),
-    ),
-  ],
-),
-   kGap20,
-Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    SizedBox(
-      width: 140, // adjust width as needed
-      child: CustomButton(
-        text: 'Apple',
-        icon: SvgPicture.asset(
-          Assets.svgsApple,
-          height: 20,
-        ),
-        enableIcon: true,
-        color: Colors.white,
-        textColor: Colors.black,
-        onTap: () {},
-        radius: 18,
-        height: 50,
-      ),
-    ),
-    kGap20,
-    SizedBox(
-      width: 140, // adjust width as needed
-      child: CustomButton(
-        text: 'Google',
-        icon: SvgPicture.asset(
-          Assets.svgsGoogle,
-          height: 20,
-        ),
-        enableIcon: true,
-        color: Colors.white,
-        textColor: Colors.black,
-        onTap: () {},
-        radius: 18,
-        height: 50,
-      ),
-    ),
-  ],
-),
-     kGap20,  RichText(
-  textAlign: TextAlign.center,
-  text: TextSpan(
-    style: TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.normal,
-      color: AppColor.white,
-    ),
-    children: const [
-      TextSpan(text: 'By continuing, you agree to our\n'),
-      
-      TextSpan(
-        text: 'Terms of Service',
-        style: TextStyle(
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      TextSpan(text: ' – '),
-      TextSpan(
-        text: 'Privacy Policy',
-        style: TextStyle(
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      TextSpan(text: ' – '),
-      TextSpan(
-        text: 'Content Policy',
-        style: TextStyle(
-          decoration: TextDecoration.underline,
-        ),
-      ),
-    ],
-  ),
-),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 50, // length of left divider
+                          child: Divider(color: AppColor.midGray, thickness: 1),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: CustomText(
+                            text: 'Sign-in with Apple/Google',
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 50, // length of right divider
+                          child: Divider(color: AppColor.midGray, thickness: 1),
+                        ),
+                      ],
+                    ),
+                    kGap20,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 140, // adjust width as needed
+                          child: CustomButton(
+                            text: 'Apple',
+                            icon: SvgPicture.asset(
+                              Assets.svgsApple,
+                              height: 20,
+                            ),
+                            enableIcon: true,
+                            color: Colors.white,
+                            textColor: Colors.black,
+                            onTap: () {},
+                            radius: 18,
+                            height: 50,
+                          ),
+                        ),
+                        kGap20,
+                        SizedBox(
+                          width: 140, // adjust width as needed
+                          child: CustomButton(
+                            text: 'Google',
+                            icon: SvgPicture.asset(
+                              Assets.svgsGoogle,
+                              height: 20,
+                            ),
+                            enableIcon: true,
+                            color: Colors.white,
+                            textColor: Colors.black,
+                            onTap: () {},
+                            radius: 18,
+                            height: 50,
+                          ),
+                        ),
+                      ],
+                    ),
+                    kGap20,
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: AppColor.white,
+                        ),
+                        children: const [
+                          TextSpan(text: 'By continuing, you agree to our\n'),
+
+                          TextSpan(
+                            text: 'Privacy Policy',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          TextSpan(text: ' – '),
+                          TextSpan(
+                            text: 'Content Policy',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     const Gap(20),
                   ],
                 ),

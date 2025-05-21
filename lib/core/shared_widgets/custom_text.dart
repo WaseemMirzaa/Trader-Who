@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:traderwho/core/extensions/context_extension.dart';
 
-import '../extensions/extensions.dart';
 import '../theme/app_color.dart';
 
 /// A [CustomText] widget that provides a consistent style and behavior for displaying text in the app.
@@ -76,11 +74,7 @@ class CustomText extends StatelessWidget {
         fontFamily: fontFamily,
         fontSize: fontSize,
         fontWeight: fontWeight,
-        color:
-            color ??
-            (context.theme.brightness == Brightness.dark
-                ? AppColor.white
-                : AppColor.black),
+        color: color ?? AppColor.black,
         decoration: decoration,
         letterSpacing: letterSpacing,
         decorationColor: decorationColor,

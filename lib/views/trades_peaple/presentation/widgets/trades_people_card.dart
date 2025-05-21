@@ -4,24 +4,21 @@ class TradesPeopleCard extends StatelessWidget {
   final TradesPerson person;
   final VoidCallback? onTap;
 
-  const TradesPeopleCard({
-    super.key,
-    required this.person,
-    this.onTap,
-  });
+  const TradesPeopleCard({super.key, required this.person, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap ?? () {
-        // Default onTap behavior if no callback is provided
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TradePersonDetailsPage(person: person),
-          ),
-        );
-      },
+      onTap:
+          onTap ??
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TradePersonDetailsPage(person: person),
+              ),
+            );
+          },
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -43,10 +40,8 @@ class TradesPeopleCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    CustomCircleAvatar(
-                      radius: 24,
-                      imageUrl: person.imageUrl,
-                    ),
+                    // Updated CustomCircleAvatar with error handling
+                    _buildAvatarWithFallback(),
                     const SizedBox(width: 12),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,37 +54,33 @@ class TradesPeopleCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        // Moved price section here with dollar icon
-                     Row(
-  mainAxisSize: MainAxisSize.min, // Fit content
-  children: [
-    // Dollar icon and price
-    SvgPicture.asset(
-     Assets.svgsDollar, // Replace with your SVG path
-      width: 18,
-      height: 18,
-      // Optional: tint the SVG
-    ),
-    const SizedBox(width: 4), // Space between icon and text
-    Text(
-      'Price: ',
-      style: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
-    ),
-   
-    Text(
-      '£${person.price}',
-      style: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: AppColor.mutedGray,
-      ),
-    ),
-  ],
-)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              Assets.svgsDollar,
+                              width: 18,
+                              height: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Price: ',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              '£${person.price}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColor.mutedGray,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ],
@@ -105,12 +96,7 @@ class TradesPeopleCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                     Image.asset(
-                        Assets.imagesStars,
-                       
-                        width: 16,
-                        height: 16,
-                      ),
+                      Image.asset(Assets.imagesStars, width: 16, height: 16),
                       const SizedBox(width: 4),
                       Text(
                         person.rating.toString(),
@@ -138,10 +124,7 @@ class TradesPeopleCard extends StatelessWidget {
                   ),
                   TextSpan(
                     text: person.expertise,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: AppColor.mutedGray,
-                    ),
+                    style: TextStyle(fontSize: 18, color: AppColor.mutedGray),
                   ),
                 ],
               ),
@@ -149,14 +132,34 @@ class TradesPeopleCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               person.description,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColor.darkGray,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColor.darkGray),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvatarWithFallback() {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColor.midGray.withOpacity(0.2),
+      ),
+      child: ClipOval(
+        child: Image.asset(
+          person.imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Image.asset(
+              Assets.imagesChatThomas, // Fallback image
+              fit: BoxFit.cover,
+            );
+          },
         ),
       ),
     );

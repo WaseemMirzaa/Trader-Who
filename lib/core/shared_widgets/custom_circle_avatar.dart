@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/app_color.dart';
-import '../theme/assets.dart';
 import 'custom_circular_indicator.dart';
 
 /// A [CustomCircleAvatar] widget that displays a circular image or custom content with a border.

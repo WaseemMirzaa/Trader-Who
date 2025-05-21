@@ -7,7 +7,7 @@ class AppRoutes {
   /// Root
   static const String root = '/';
 
-   /// The onboarding screen route.
+  /// The onboarding screen route.
   static const String onboarding = '/onboarding';
 
   /// The login screen route.
@@ -22,14 +22,21 @@ class AppRoutes {
   /// The home screen route.
   static const String homePage = '/homepage';
 
-   /// The job screen route.
+  /// The job screen route.
   static const String jobPage = '/jobpage';
 
-     /// The trades screen route.
+  /// The trades screen route.
   static const String tradesPage = '/tradespage';
 
-       /// The job history screen route.
+  /// The job history screen route.
   static const String jobHistoryPage = '/jobhistorypage';
 
-  
+  /// The chat screen route.
+  static const String chatPage = '/chatpage';
+
+  /// The notification screen route.
+  static const String notificationPage = '/notificationpage';
+
+  /// The profile screen route.
+  static const String profilePage = '/profilePage';
 }

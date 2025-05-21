@@ -14,8 +14,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
   Widget build(BuildContext context) {
     final isWaitingForProposal = widget.job.status == 'Waiting for porposal';
 
-    return Scaffold(
-      backgroundColor: AppColor.lightPeach,
+    return GradientScaffold(
       appBar: JobHistoryDetailAppBar(
         job: widget.job,
         onBackPressed: () => Navigator.pop(context),

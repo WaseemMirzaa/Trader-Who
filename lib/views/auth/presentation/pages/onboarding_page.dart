@@ -27,7 +27,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
               children: [
                 Column(
                   children: [
-                     SizedBox(height: screenHeight * 0.10), 
+                    SizedBox(height: screenHeight * 0.10),
                     Image.asset(
                       Assets.imagesSplashscreen,
                       width: screenWidth > 600 ? 200 : screenWidth * 0.3,
@@ -50,7 +50,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     CustomButton(
                       text: 'Login',
                       onTap: () {
-                       Get.toNamed(AppRoutes.login);
+                        Get.toNamed(AppRoutes.login);
                       },
                       width: double.infinity,
                       height: screenHeight * 0.06,
@@ -61,7 +61,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                       radius: 25,
                     ),
                     const Gap(20), // Space between buttons
-                    
+
                     CustomButton(
                       text: 'Create New Account',
                       onTap: () {
@@ -78,41 +78,35 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                       radius: 24,
                     ),
                     const Gap(15), // Space before policy text
-                    
-                   RichText(
-  textAlign: TextAlign.center,
-  text: TextSpan(
-    style: TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.normal,
-      color: AppColor.white,
-    ),
-    children: const [
-      TextSpan(text: 'By continuing, you agree to our\n'),
-      TextSpan(
-        text: 'Terms of Service',
-        style: TextStyle(
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      TextSpan(text: ' – '),
-      TextSpan(
-        text: 'Privacy Policy',
-        style: TextStyle(
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      TextSpan(text: ' – '),
-      TextSpan(
-        text: 'Content Policy',
-        style: TextStyle(
-          decoration: TextDecoration.underline,
-        ),
-      ),
-    ],
-  ),
-),
-                    const Gap(20), 
+
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: AppColor.white,
+                        ),
+                        children: const [
+                          TextSpan(text: 'By continuing, you agree to our\n'),
+
+                          TextSpan(
+                            text: 'Privacy Policy',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          TextSpan(text: ' – '),
+                          TextSpan(
+                            text: 'Content Policy',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Gap(20),
                   ],
                 ),
               ],

@@ -8,8 +8,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
- 
-
   // List of services with their image paths
   final List<Map<String, String>> services = [
     {'title': 'Electricians', 'image': Assets.imagesElectricity},
@@ -26,12 +24,9 @@ class _HomePageState extends State<HomePage> {
     {'title': 'Flooring', 'image': Assets.imagesFlooring},
   ];
 
- 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.lightPeach,
+    return GradientScaffold(
       appBar: const HomeAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -45,7 +40,7 @@ class _HomePageState extends State<HomePage> {
                 text: 'Select Category',
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black, 
+                color: Colors.black,
               ),
             ),
             Expanded(
@@ -63,30 +58,26 @@ class _HomePageState extends State<HomePage> {
                     title: services[index]['title']!,
                     onTap: () {
                       // Handle tile tap
-                     
                     },
                   );
                 },
               ),
-              
             ),
             CustomButton(
-                      text: 'Next',
-                      onTap: () {
-                        
-                       Get.toNamed(AppRoutes.jobPage);
-                      
-                      },
-                      width: double.infinity,
-                      color: AppColor.darkBlue,
-                      textColor: AppColor.white,
-                      fontWeight: FontWeight.normal,
-                      radius: 25,
-                    ),
+              text: 'Next',
+              onTap: () {
+                Get.toNamed(AppRoutes.jobPage);
+              },
+              width: double.infinity,
+              color: AppColor.darkBlue,
+              textColor: AppColor.white,
+              fontWeight: FontWeight.normal,
+              radius: 25,
+            ),
           ],
         ),
       ),
-    bottomNavigationBar: const CustomNavBar(),
+      bottomNavigationBar: const CustomNavBar(),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../theme/theme.dart';
 import 'custom_text.dart';
 
@@ -30,7 +31,7 @@ class CustomButton extends StatelessWidget {
     this.fontWeight = FontWeight.w600,
     this.borderColor,
     this.color = AppColor.black,
-    this.textColor = AppColor.white,
+    this.textColor = const Color.fromARGB(255, 133, 105, 105),
     this.enableBorder = false,
     this.enableIcon = false,
     this.icon, // NEW
@@ -47,39 +48,38 @@ class CustomButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(radius),
-          border: enableBorder
-              ? Border.all(color: borderColor ?? Colors.transparent)
-              : null,
+          border:
+              enableBorder
+                  ? Border.all(color: borderColor ?? Colors.transparent)
+                  : null,
         ),
-        child: enableIcon
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (icon != null) ...[
-                    icon!,
-                    const SizedBox(width: 8),
-                  ],
-                  Flexible(
-                    child: CustomText(
-                      text: text,
-                      color: textColor,
-                      fontSize: fontSize,
-                      fontWeight: fontWeight,
-                      overflow: TextOverflow.ellipsis,
+        child:
+            enableIcon
+                ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (icon != null) ...[icon!, const SizedBox(width: 8)],
+                    Flexible(
+                      child: CustomText(
+                        text: text,
+                        color: textColor,
+                        fontSize: fontSize,
+                        fontWeight: fontWeight,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
+                  ],
+                )
+                : Center(
+                  child: CustomText(
+                    text: text,
+                    color: textColor,
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
-              )
-            : Center(
-                child: CustomText(
-                  text: text,
-                  color: textColor,
-                  fontSize: fontSize,
-                  fontWeight: fontWeight,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
       ),
     );
   }

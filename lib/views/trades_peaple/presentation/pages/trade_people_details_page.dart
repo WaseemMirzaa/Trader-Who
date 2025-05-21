@@ -12,8 +12,7 @@ class TradePersonDetailsPage extends StatefulWidget {
 class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.lightPeach,
+    return GradientScaffold(
       appBar: TradePersonDetailsAppBar(person: widget.person),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -36,10 +35,10 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                   height: 1.5,
                 ),
               ),
-             kGap10,
-              
+              kGap10,
+
               // Client Reviews/Testimonials Section
-            Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -56,11 +55,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.asset(
-                          Assets.imagesStars,
-                          width: 16,
-                          height: 16,
-                        ),
+                        Image.asset(Assets.imagesStars, width: 16, height: 16),
                         const SizedBox(width: 4),
                         Text(
                           widget.person.rating.toString(),
@@ -74,23 +69,19 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                   ),
                 ],
               ),
-            
-              
-             
+
               const SizedBox(height: 16),
-              
+
               // Star Rating (5 stars)
               Row(
-                children: List.generate(5, (index) => 
-                  Image.asset(
-                    Assets.imagesStars,
-                    width: 24,
-                    height: 24,
-                  ),
+                children: List.generate(
+                  5,
+                  (index) =>
+                      Image.asset(Assets.imagesStars, width: 24, height: 24),
                 ),
               ),
-             kGap10,
-              
+              kGap10,
+
               // Review Text
               Text(
                 "He always gives a perfect service. Great attention to detail and awesome\n"
@@ -102,7 +93,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Reviewer Name
               Text(
                 "Jason Rao",
@@ -113,18 +104,16 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               // Second Review (same pattern)
               Row(
-                children: List.generate(5, (index) => 
-                  Image.asset(
-                    Assets.imagesStars,
-                    width: 24,
-                    height: 24,
-                  ),
+                children: List.generate(
+                  5,
+                  (index) =>
+                      Image.asset(Assets.imagesStars, width: 24, height: 24),
                 ),
               ),
-             kGap10,
+              kGap10,
               Text(
                 "Another excellent review text would go here describing the\n"
                 "great service provided by the tradesperson.",

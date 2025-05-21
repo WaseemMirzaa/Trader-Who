@@ -4,11 +4,14 @@ import 'package:traderwho/core/config/app_routes.dart';
 
 class NavigationController extends GetxController {
   static NavigationController get to => Get.find();
-  
+
   final RxInt currentIndex = 0.obs;
   final List<String> routes = [
     AppRoutes.homePage,
     AppRoutes.jobHistoryPage,
+    AppRoutes.chatPage,
+    AppRoutes.profilePage,
+
     // Add other routes here
   ];
 

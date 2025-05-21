@@ -27,82 +27,94 @@ class _MapScreenState extends State<_MapScreenView> {
     super.initState();
     _loadMarkers();
   }
-void _showCustomBottomSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => CustomBottomSheet(
-      professionalName: "Stephen Saville",
-      profession: "Electrician",
-      rating: 4.7,
-      description: "Qualified electrician with extensive experience in both residential and commercial projects.",
-      qualifications: "NICEIC approved",
-    ),
-  );
-}
-  Future<BitmapDescriptor> _loadIcon(BuildContext context, String assetPath) async {
-  try {
-    final Uint8List bytes = await getBytesFromAsset(context, assetPath, 250); 
-    return BitmapDescriptor.fromBytes(bytes);
-  } catch (e) {
-    debugPrint('Error loading icon: $assetPath - $e');
-    return BitmapDescriptor.defaultMarker;
+
+  void _showCustomBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder:
+          (context) => CustomBottomSheet(
+            professionalName: "Stephen Saville",
+            profession: "Electrician",
+            rating: 4.7,
+            description:
+                "Qualified electrician with extensive experience in both residential and commercial projects.",
+            qualifications: "NICEIC approved",
+          ),
+    );
   }
-}
 
-Future<Uint8List> getBytesFromAsset(BuildContext context, String path, int width) async {
-  final ByteData data = await DefaultAssetBundle.of(context).load(path);
-  final ui.Codec codec = await ui.instantiateImageCodec(
-    data.buffer.asUint8List(),
-    targetWidth: width,
-  );
-  final ui.FrameInfo fi = await codec.getNextFrame();
-  return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-      .buffer
-      .asUint8List();
-}
+  Future<BitmapDescriptor> _loadIcon(
+    BuildContext context,
+    String assetPath,
+  ) async {
+    try {
+      final Uint8List bytes = await getBytesFromAsset(context, assetPath, 250);
+      return BitmapDescriptor.fromBytes(bytes);
+    } catch (e) {
+      debugPrint('Error loading icon: $assetPath - $e');
+      return BitmapDescriptor.defaultMarker;
+    }
+  }
 
-Future<void> _loadMarkers() async {
-  try {
-    final List<BitmapDescriptor> customIcons = await Future.wait([
-      _loadIcon(context, Assets.imagesMapicon),
-      _loadIcon(context, Assets.imagesTradeMapicon),
-      _loadIcon(context, Assets.imagesPlumberMapicon),
-      _loadIcon(context, Assets.imagesTradeHandMapicon),
-      _loadIcon(context, Assets.imagesTradeHomeMapicon),
-      _loadIcon(context, Assets.imagesElectricityMapicon),
-      _loadIcon(context, Assets.imagesElectricityMapicon),
-    ]);
+  Future<Uint8List> getBytesFromAsset(
+    BuildContext context,
+    String path,
+    int width,
+  ) async {
+    final ByteData data = await DefaultAssetBundle.of(context).load(path);
+    final ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: width,
+    );
+    final ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(
+      format: ui.ImageByteFormat.png,
+    ))!.buffer.asUint8List();
+  }
 
-    final List<LatLng> markerLocations = [
-      const LatLng(33.6844, 73.0479),
-      const LatLng(33.6900, 73.0500),
-      const LatLng(33.6800, 73.0400),
-      const LatLng(33.6860, 73.0550),
-      const LatLng(33.6780, 73.0450),
-      const LatLng(33.6920, 73.0600),
-      const LatLng(33.6750, 73.0350),
-    ];
+  Future<void> _loadMarkers() async {
+    try {
+      final List<BitmapDescriptor> customIcons = await Future.wait([
+        _loadIcon(context, Assets.imagesMapicon),
+        _loadIcon(context, Assets.imagesTradeMapicon),
+        _loadIcon(context, Assets.imagesPlumberMapicon),
+        _loadIcon(context, Assets.imagesTradeHandMapicon),
+        _loadIcon(context, Assets.imagesTradeHomeMapicon),
+        _loadIcon(context, Assets.imagesElectricityMapicon),
+        _loadIcon(context, Assets.imagesElectricityMapicon),
+      ]);
 
-    setState(() {
-        _markers = markerLocations.asMap().entries.map((entry) {
-          final index = entry.key;
-          return Marker(
-            markerId: MarkerId('marker_$index'),
-            position: entry.value,
-            icon: customIcons[index % customIcons.length],
-            infoWindow: InfoWindow(title: 'Location ${index + 1}'),
-            onTap: () => _showCustomBottomSheet(context),
-          );
-        }).toSet();
+      final List<LatLng> markerLocations = [
+        const LatLng(33.6844, 73.0479),
+        const LatLng(33.6900, 73.0500),
+        const LatLng(33.6800, 73.0400),
+        const LatLng(33.6860, 73.0550),
+        const LatLng(33.6780, 73.0450),
+        const LatLng(33.6920, 73.0600),
+        const LatLng(33.6750, 73.0350),
+      ];
+
+      setState(() {
+        _markers =
+            markerLocations.asMap().entries.map((entry) {
+              final index = entry.key;
+              return Marker(
+                markerId: MarkerId('marker_$index'),
+                position: entry.value,
+                icon: customIcons[index % customIcons.length],
+                infoWindow: InfoWindow(title: 'Location ${index + 1}'),
+                onTap: () => _showCustomBottomSheet(context),
+              );
+            }).toSet();
         _isLoading = false;
       });
     } catch (e) {
       debugPrint('Error loading markers: $e');
       _setDefaultMarkers();
     }
-}
+  }
 
   void _setDefaultMarkers() {
     final List<LatLng> markerLocations = [
@@ -116,14 +128,15 @@ Future<void> _loadMarkers() async {
     ];
 
     setState(() {
-      _markers = markerLocations.asMap().entries.map((entry) {
-        final index = entry.key;
-        return Marker(
-          markerId: MarkerId('marker_$index'),
-          position: entry.value,
-          infoWindow: InfoWindow(title: 'Location ${index + 1}'),
-        );
-      }).toSet();
+      _markers =
+          markerLocations.asMap().entries.map((entry) {
+            final index = entry.key;
+            return Marker(
+              markerId: MarkerId('marker_$index'),
+              position: entry.value,
+              infoWindow: InfoWindow(title: 'Location ${index + 1}'),
+            );
+          }).toSet();
       _isLoading = false;
     });
   }
@@ -134,30 +147,21 @@ Future<void> _loadMarkers() async {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.lightPeach,
+    return GradientScaffold(
       appBar: const TradesPeopleAppbar(currentScreen: MapScreen),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _center,
-                zoom: 15.0, // Increased zoom level
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : GoogleMap(
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: CameraPosition(
+                  target: _center,
+                  zoom: 15.0, // Increased zoom level
+                ),
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                markers: _markers,
               ),
-              myLocationEnabled: true,
-              myLocationButtonEnabled: false,
-              markers: _markers,
-            ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColor.darkBlue,
-        child: const Icon(Icons.my_location, color: Colors.white),
-        onPressed: () {
-          mapController.animateCamera(
-            CameraUpdate.newLatLngZoom(_center, 14.0),
-          );
-        },
-      ),
     );
   }
 }
