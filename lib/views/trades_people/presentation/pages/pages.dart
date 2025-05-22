@@ -10,7 +10,7 @@ import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/core/theme/assets.dart';
 import 'package:traderwho/core/theme/constant.dart';
 import 'package:traderwho/models/models.dart';
-import 'package:traderwho/views/trades_peaple/presentation/widgets/widgets.dart';
+import 'package:traderwho/views/trades_people/presentation/widgets/widgets.dart';
 
 part 'map_screen.dart';
 part 'trade_people_details_page.dart';

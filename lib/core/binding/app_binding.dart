@@ -96,3 +96,24 @@ class ProfilePageBinding extends Bindings {
     Get.lazyPut<ProfileController>(() => ProfileController());
   }
 }
+
+class MyAccountPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<MyaccountController>(() => MyaccountController());
+  }
+}
+
+class TradeHomePageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeHomeController>(() => TradeHomeController());
+  }
+}
+
+class TradeJobHistoryPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeJobHistoryController>(() => TradeJobHistoryController());
+  }
+}

@@ -10,6 +10,7 @@ class NewAccountPage extends StatefulWidget {
 class _NewAccountState extends State<NewAccountPage> {
   @override
   Widget build(BuildContext context) {
+    final navController = NavigationController.to;
     return GradientScaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -29,6 +30,7 @@ class _NewAccountState extends State<NewAccountPage> {
             children: [
               GestureDetector(
                 onTap: () {
+                  navController.setUserType(false);
                   Get.toNamed(AppRoutes.signup);
                 },
                 child: Container(
@@ -65,7 +67,9 @@ class _NewAccountState extends State<NewAccountPage> {
               SizedBox(height: context.responsiveHeight(3)),
 
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  navController.setUserType(true);
+                },
                 child: Container(
                   width: context.responsiveWidth(45),
                   height: context.responsiveHeight(20),

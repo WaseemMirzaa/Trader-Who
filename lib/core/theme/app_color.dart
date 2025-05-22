@@ -51,6 +51,8 @@ class AppColor {
   /// Charcoal gray color (#1B2431).
   static const Color charcoal = Color(0xFF1B2431);
 
+  static const Color green = Color(0xFF5FB765);
+
   /// Medium gray color (#757575).
   static const Color mediumGray = Color(0xFF757575);
 

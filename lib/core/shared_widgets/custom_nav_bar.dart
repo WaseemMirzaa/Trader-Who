@@ -1,4 +1,3 @@
-// custom_nav_bar.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
@@ -11,71 +10,97 @@ class CustomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navController = NavigationController.to;
-    
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColor.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+
+    return Obx(() {
+      // Only show nav bar if there are routes available
+      if (navController.currentRoutes.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Container(
+        decoration: BoxDecoration(
+          color: AppColor.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-        child: Obx(() => BottomNavigationBar(
-          items: [
-            _buildNavItem(Assets.imagesHome, 0),
-            _buildNavItem(Assets.imagesDetails, 1),
-            _buildNavItem(Assets.imagesChat, 2),
-            _buildNavItem(Assets.imagesProfile, 3),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
           ],
-          currentIndex: navController.currentIndex.value,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          onTap: navController.changePage,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        )),
-      ),
-    );
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          child: BottomNavigationBar(
+            items: List.generate(
+              navController.currentRoutes.length,
+              (index) => _buildNavItem(_getIconPath(index), index),
+            ),
+            currentIndex: navController.currentIndex.value.clamp(
+              0,
+              navController.currentRoutes.length - 1,
+            ),
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            onTap: navController.changePage,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+        ),
+      );
+    });
   }
 
   BottomNavigationBarItem _buildNavItem(String iconPath, int index) {
     final isSelected = NavigationController.to.currentIndex.value == index;
+    final navController = NavigationController.to;
+    final isDisabled = index >= navController.currentRoutes.length;
 
     return BottomNavigationBarItem(
-      icon: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 3,
-            width: 24,
-            decoration: BoxDecoration(
-              color: isSelected ? AppColor.darkBlue : Colors.transparent,
-              borderRadius: BorderRadius.circular(2),
+      icon: Container(
+        padding: const EdgeInsets.only(top: 4), // Space for the top indicator
+        decoration: BoxDecoration(
+          border:
+              isSelected
+                  ? const Border(
+                    top: BorderSide(color: AppColor.darkBlue, width: 3),
+                  )
+                  : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 4),
+            Image.asset(
+              iconPath,
+              width: 24,
+              height: 24,
+              color:
+                  isDisabled
+                      ? Colors.grey.withOpacity(0.3)
+                      : (isSelected ? AppColor.darkBlue : Colors.grey),
             ),
-          ),
-          const SizedBox(height: 6),
-          Image.asset(
-            iconPath,
-            width: 24,
-            height: 24,
-            color: isSelected ? null : Colors.grey,
-          ),
-        ],
+          ],
+        ),
       ),
       label: '',
     );
+  }
+
+  String _getIconPath(int index) {
+    const icons = [
+      Assets.imagesHome,
+      Assets.imagesDetails,
+      Assets.imagesChat,
+      Assets.imagesProfile,
+    ];
+    return index < icons.length ? icons[index] : Assets.imagesHome;
   }
 }

@@ -39,4 +39,19 @@ class AppRoutes {
 
   /// The profile screen route.
   static const String profilePage = '/profilePage';
+
+  /// The my account screen route.
+  static const String myAccountPage = '/myaccountpage';
+
+  /// The Trades home screen route.
+  static const String tradesHomePage = '/tradeshomepage';
+
+  /// The Trades home screen route.
+  static const String tradesJobHistoryPage = '/tradesjobhistorypage';
+
+  /// The Trades home screen route.
+  static const String tradesChatPage = '/tradeshomepage';
+
+  /// The Trades home screen route.
+  static const String tradesProfilePage = '/tradeshomepage';
 }

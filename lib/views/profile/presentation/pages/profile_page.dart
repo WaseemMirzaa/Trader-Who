@@ -5,7 +5,7 @@ class ProfileScreen extends StatelessWidget {
     {
       'title': 'My Account',
       'icon': Assets.svgsProfileIcon,
-      // 'route': AppRoutes.personalInfo,
+      'route': AppRoutes.myAccountPage,
     },
     {
       'title': 'Notifications',
@@ -20,6 +20,12 @@ class ProfileScreen extends StatelessWidget {
   ];
 
   ProfileScreen({super.key});
+  void _handleOptionTap(BuildContext context, Map<String, dynamic> option) {
+    final String? route = option['route'];
+    if (route != null) {
+      Navigator.pushNamed(context, route);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
                   return ProfileCard(
                     title: option['title'],
                     svgAsset: option['icon'],
-                    // onTap: () => _handleOptionTap(context, option),
+                    onTap: () => _handleOptionTap(context, option),
                   );
                 },
               ),

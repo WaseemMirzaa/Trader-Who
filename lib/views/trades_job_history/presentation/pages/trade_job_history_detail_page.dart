@@ -1,24 +1,38 @@
 part of 'pages.dart';
 
-class JobHistoryDetailPage extends StatefulWidget {
+class TradeJobHistoryDetailPage extends StatefulWidget {
   final JobHistory job;
 
-  const JobHistoryDetailPage({super.key, required this.job});
+  const TradeJobHistoryDetailPage({super.key, required this.job});
 
   @override
-  State<JobHistoryDetailPage> createState() => _JobHistoryDetailPageState();
+  State<TradeJobHistoryDetailPage> createState() =>
+      _TradeJobHistoryDetailPageState();
 }
 
-class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
+class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
+  void _showReassessBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder:
+          (context) => TradeJobHistoryBottomSheet(
+            title: 'Job Reassessment Submitted',
+            description: 'Please provide updated price and reason',
+            priceController: TextEditingController(),
+            reasonController: TextEditingController(),
+            onSubmit: () {
+              Navigator.pop(context); // Just close the bottom sheet
+            },
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isWaitingForProposal = widget.job.status == 'Waiting for porposal';
-
     return GradientScaffold(
-      appBar: JobHistoryDetailAppBar(
-        job: widget.job,
-        onBackPressed: () => Navigator.pop(context),
-      ),
+      appBar: TradeJobHistoryDetailAppbar(),
       body: Column(
         children: [
           // Scrollable main content
@@ -94,7 +108,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           widget.job.status,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: AppColor.midGray,
+                            color: AppColor.green,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -181,92 +195,85 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                     ],
                   ),
                   kGap10,
-                  // Conditionally show Tradesperson, Location, and Map
-                  if (!isWaitingForProposal) ...[
-                    // Tradesperson Section
-                    ...[
-                      const SizedBox(height: 12),
-                      TradesPeopleCard(person: widget.job.tradesPerson),
-                      const SizedBox(height: 20),
-                    ],
-                    CustomText(
-                      text: 'Location',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: AppColor.black,
-                    ),
-                    kGap10,
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          Assets.svgsLocation,
-                          width: 16,
-                          height: 16,
+                  // Tradesperson, Location, and Map
+                  ...[const SizedBox(height: 12), const SizedBox(height: 20)],
+                  CustomText(
+                    text: 'Location',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: AppColor.black,
+                  ),
+                  kGap10,
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        Assets.svgsLocation,
+                        width: 16,
+                        height: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: 'Address: ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColor.darkGray,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text: widget.job.address,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColor.darkGray,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 4),
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              const TextSpan(
-                                text: 'Address: ',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColor.darkGray,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextSpan(
-                                text: widget.job.address,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColor.darkGray,
-                                ),
-                              ),
-                            ],
-                          ),
+                      ),
+                    ],
+                  ),
+                  kGap10,
+                  // Map Container
+                  Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
-                    kGap10,
-                    // Map Container
-                    Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: GoogleMap(
-                          onMapCreated: (controller) {
-                            // Store controller if needed
-                          },
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(33.6844, 73.0479),
-                            zoom: 15.0,
-                          ),
-                          markers: {
-                            Marker(
-                              markerId: const MarkerId('job_location'),
-                              position: LatLng(33.6844, 73.0479),
-                              infoWindow: InfoWindow(title: widget.job.address),
-                            ),
-                          },
-                          myLocationEnabled: false,
-                          zoomControlsEnabled: false,
-                          scrollGesturesEnabled: false,
-                          tiltGesturesEnabled: false,
-                          rotateGesturesEnabled: false,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: GoogleMap(
+                        onMapCreated: (controller) {
+                          // Store controller if needed
+                        },
+                        initialCameraPosition: CameraPosition(
+                          target: LatLng(33.6844, 73.0479),
+                          zoom: 15.0,
                         ),
+                        markers: {
+                          Marker(
+                            markerId: const MarkerId('job_location'),
+                            position: LatLng(33.6844, 73.0479),
+                            infoWindow: InfoWindow(title: widget.job.address),
+                          ),
+                        },
+                        myLocationEnabled: false,
+                        zoomControlsEnabled: false,
+                        scrollGesturesEnabled: false,
+                        tiltGesturesEnabled: false,
+                        rotateGesturesEnabled: false,
                       ),
                     ),
-                  ],
+                  ),
                   const SizedBox(height: 80), // Padding for bottom content
                 ],
               ),
@@ -286,69 +293,60 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                 ),
               ],
             ),
-            child:
-                isWaitingForProposal
-                    ? CustomButton(
-                      text: 'Waiting for Accept the Job',
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const FeedbackScreen(),
-                          ),
-                        );
-                      },
-                      height: 50,
-                      color: AppColor.darkBlue,
-                      textColor: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      radius: 25,
-                    )
-                    : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: CustomButton(
-                            text: 'Cancel Job',
-                            onTap: () {},
-                            height: 50,
-                            color: AppColor.darkBlue,
-                            textColor: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            radius: 25,
-                          ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          text: 'Accept',
+                          onTap: () {
+                            _showReassessBottomSheet();
+                          },
+                          color: AppColor.darkBlue,
+                          textColor: AppColor.white,
+                          height: 50,
+                          radius: 30,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
-                        kGap10,
-                        IconButton(
-                          icon: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: Image.asset(
-                              Assets.imagesCall,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          iconSize: 50,
-                          onPressed: () {},
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
+                      ),
+                      kGap10,
+                      Expanded(
+                        child: CustomButton(
+                          text: 'Reassess Quote',
+                          onTap: () {
+                            _showReassessBottomSheet();
+                          },
+                          color: AppColor.orangecustomColor,
+                          textColor: AppColor.white,
+                          enableBorder: true,
+                          height: 50,
+                          radius: 30,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
-                        kGap10,
-                        IconButton(
-                          icon: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: Image.asset(
-                              Assets.imagesOrangeMessage,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          iconSize: 50,
-                          onPressed: () {},
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                CustomButton(
+                  text: ' \\',
+                  onTap: () {
+                    _showReassessBottomSheet();
+                  },
+                  color: AppColor.darkBlue,
+                  textColor: AppColor.white,
+                  height: 50,
+                  width: 50,
+                  radius: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ],
+            ),
           ),
         ],
       ),

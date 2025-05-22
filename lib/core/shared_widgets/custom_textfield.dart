@@ -5,9 +5,7 @@ import '../theme/app_color.dart';
 import '../theme/constant.dart';
 import 'custom_text.dart';
 
-/// A [CustomTextField] widget that provides a consistent design and functionality across the app.
 class CustomTextField extends StatefulWidget {
-  // Existing parameters...
   final bool enabled;
   final int? maxLines;
   final bool readOnly;
@@ -39,12 +37,10 @@ class CustomTextField extends StatefulWidget {
   final Color borderColor;
   final Color fillColor;
   final String? fieldHeading;
+  final String? leftLabel; // Used as hintText if hintText is null
   final double? height;
   final double? width;
   final bool autofocus;
-
-  /// [passwordToggleIconColor] is used to set the color of the password toggle icon.
-  /// Defaults to [AppColor.white] if not provided.
   final Color? passwordToggleIconColor;
 
   const CustomTextField({
@@ -80,10 +76,11 @@ class CustomTextField extends StatefulWidget {
     this.borderColor = AppColor.lightGray,
     this.fillColor = AppColor.veryLightGray,
     this.fieldHeading,
+    this.leftLabel,
     this.height = 60,
     this.width,
     this.autofocus = false,
-    this.passwordToggleIconColor = AppColor.white, // Default to white
+    this.passwordToggleIconColor = AppColor.white,
   });
 
   @override
@@ -106,20 +103,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        widget.fieldHeading != null
-            ? Padding(
-                padding: kOB10,
-                child: CustomText(
-                  text: widget.fieldHeading!,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: AppColor.mediumGray,
-                ),
-              )
-            : const SizedBox.shrink(),
+        if (widget.fieldHeading != null)
+          Padding(
+            padding: kOB10,
+            child: CustomText(
+              text: widget.fieldHeading!,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: AppColor.mediumGray,
+            ),
+          ),
         SizedBox(
           height: widget.height,
-          width: widget.width ?? double.maxFinite,
           child: TextFormField(
             onTap: widget.onTap,
             enabled: widget.enabled,
@@ -149,28 +144,44 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   }
                 },
             autofocus: widget.autofocus,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: widget.textColor,
+            ),
             decoration: InputDecoration(
               prefix: widget.prefix,
               suffix: widget.suffix,
               counterText: '',
               prefixIcon: widget.prefixIcon,
-              suffixIcon: widget.showPasswordToggle
-                  ? IconButton(
-                      onPressed: () => setState(() => _obscureText = !_obscureText),
-                      icon: Icon(
-                        _obscureText ? Icons.visibility_off : Icons.visibility,
-                        color: widget.passwordToggleIconColor ?? AppColor.white, // Use custom color or default to white
-                      ),
-                    )
-                  : widget.suffixIcon,
-              hintText: widget.hintText,
+              suffixIcon:
+                  widget.showPasswordToggle
+                      ? IconButton(
+                        onPressed:
+                            () => setState(() => _obscureText = !_obscureText),
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: widget.passwordToggleIconColor,
+                        ),
+                      )
+                      : widget.suffixIcon,
+              hintText:
+                  widget.hintText ??
+                  widget.leftLabel, // Use leftLabel as fallback
               errorMaxLines: widget.errorMaxLines,
-              contentPadding: widget.contentPadding ??
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              contentPadding:
+                  widget.contentPadding ??
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
               errorStyle: const TextStyle(color: AppColor.red),
-              hintStyle: widget.hintStyle ??
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              hintStyle:
+                  widget.hintStyle ??
+                  const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.mediumGray,
+                  ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: widget.borderColor),
                 borderRadius: BorderRadius.all(

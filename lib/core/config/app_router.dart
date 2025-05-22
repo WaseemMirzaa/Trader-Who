@@ -62,5 +62,30 @@ class AppRouter {
       page: () => ProfileScreen(),
       binding: ProfilePageBinding(),
     ),
+    GetPage(
+      name: AppRoutes.myAccountPage,
+      page: () => MyAccountPage(),
+      binding: MyAccountPageBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradesHomePage,
+      page: () => TradeHomePage(),
+      binding: TradeHomePageBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradesJobHistoryPage,
+      page: () => TradesJobHistoryPage(),
+      binding: TradeJobHistoryPageBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradesChatPage,
+      page: () => TradeHomePage(),
+      binding: TradeHomePageBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradesProfilePage,
+      page: () => TradeHomePage(),
+      binding: TradeHomePageBinding(),
+    ),
   ];
 }

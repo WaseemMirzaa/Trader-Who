@@ -4,12 +4,15 @@ import 'package:traderwho/controller/homepage_controller.dart';
 import 'package:traderwho/controller/job_controller.dart';
 import 'package:traderwho/controller/job_history_page_controller.dart';
 import 'package:traderwho/controller/login_controller.dart';
+import 'package:traderwho/controller/myaccount_controller.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/controller/new_account_controller.dart';
 import 'package:traderwho/controller/notification_controller.dart';
 import 'package:traderwho/controller/onboarding_controller.dart';
 import 'package:traderwho/controller/profile_controller.dart';
 import 'package:traderwho/controller/signup_controller.dart';
+import 'package:traderwho/controller/trade_home_controller.dart';
+import 'package:traderwho/controller/trade_job_history_controller.dart';
 import 'package:traderwho/views/splash/controller.dart';
 
 part 'app_binding.dart';

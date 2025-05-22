@@ -8,9 +8,10 @@ class JobHistory {
   final String preferredTime;
   final String address;
   final String status;
-  final TradesPerson? tradesPerson; 
+  final TradesPerson tradesPerson;
+  final bool showQuoteButtons; // New property
 
-  JobHistory({
+  const JobHistory({
     required this.title,
     required this.svgIcon,
     required this.jobType,
@@ -18,6 +19,31 @@ class JobHistory {
     required this.preferredTime,
     required this.address,
     required this.status,
-    this.tradesPerson,
+    required this.tradesPerson,
+    this.showQuoteButtons = false, // Default to Reject/Accept
   });
+
+  JobHistory copyWith({
+    String? title,
+    String? svgIcon,
+    String? jobType,
+    double? price,
+    String? preferredTime,
+    String? address,
+    String? status,
+    TradesPerson? tradesPerson,
+    bool? showQuoteButtons,
+  }) {
+    return JobHistory(
+      title: title ?? this.title,
+      svgIcon: svgIcon ?? this.svgIcon,
+      jobType: jobType ?? this.jobType,
+      price: price ?? this.price,
+      preferredTime: preferredTime ?? this.preferredTime,
+      address: address ?? this.address,
+      status: status ?? this.status,
+      tradesPerson: tradesPerson ?? this.tradesPerson,
+      showQuoteButtons: showQuoteButtons ?? this.showQuoteButtons,
+    );
+  }
 }
