@@ -95,7 +95,6 @@ class ChatPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const CustomNavBar(),
     );
   }
 }

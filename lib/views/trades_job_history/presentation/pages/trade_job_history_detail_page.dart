@@ -23,16 +23,115 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
             priceController: TextEditingController(),
             reasonController: TextEditingController(),
             onSubmit: () {
-              Navigator.pop(context); // Just close the bottom sheet
+              Navigator.pop(context);
             },
           ),
     );
   }
 
+  Widget _buildNewJobFooter() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomButton(
+                  text: 'Accept',
+                  onTap: _showReassessBottomSheet,
+                  color: AppColor.darkBlue,
+                  textColor: AppColor.white,
+                  height: 50,
+                  radius: 30,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              kGap10,
+              Expanded(
+                child: CustomButton(
+                  text: 'Reassess Quote',
+                  onTap: _showReassessBottomSheet,
+                  color: AppColor.orangecustomColor,
+                  textColor: AppColor.white,
+                  enableBorder: true,
+                  height: 50,
+                  radius: 30,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        CustomButton(
+          text: ' \\',
+          onTap: _showReassessBottomSheet,
+          color: AppColor.darkBlue,
+          textColor: AppColor.white,
+          height: 50,
+          width: 50,
+          radius: 30,
+          fontWeight: FontWeight.bold,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompletedJobFooter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Custom Feedback',
+          style: TextStyle(
+            fontSize: 16,
+            color: AppColor.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        kGap10, // Rating stars
+        Row(
+          children: List.generate(5, (index) {
+            return Icon(
+              Icons.star,
+              color:
+                  index < widget.job.tradesPerson.rating.floor()
+                      ? Colors.amber
+                      : Colors.grey,
+              size: 24,
+            );
+          }),
+        ),
+        const SizedBox(height: 12),
+
+        // Feedback text
+        const SizedBox(height: 8),
+        Text(
+          'He always give me a perfect service.',
+          style: TextStyle(fontSize: 14, color: AppColor.darkGray),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Jason Rao',
+          style: TextStyle(
+            fontSize: 14,
+            color: AppColor.darkGray,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isCompleted = widget.job.status.toLowerCase() == 'completed';
+
     return GradientScaffold(
-      appBar: TradeJobHistoryDetailAppbar(),
+      appBar: TradeJobHistoryDetailAppbar(status: widget.job.status),
       body: Column(
         children: [
           // Scrollable main content
@@ -106,7 +205,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                         ),
                         child: Text(
                           widget.job.status,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             color: AppColor.green,
                             fontWeight: FontWeight.bold,
@@ -161,42 +260,45 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                     style: TextStyle(fontSize: 14, color: AppColor.darkGray),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          Assets.imagesPipe,
-                          width: 70,
-                          height: 60,
-                          fit: BoxFit.cover,
+                  // Images Row (only show for completed jobs)
+                  if (isCompleted) ...[
+                    Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            Assets.imagesPipe,
+                            width: 70,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      kGap10,
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          Assets.imagesPipe,
-                          width: 70,
-                          height: 60,
-                          fit: BoxFit.cover,
+                        kGap10,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            Assets.imagesPipe,
+                            width: 70,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      kGap10,
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          Assets.imagesPipe,
-                          width: 70,
-                          height: 60,
-                          fit: BoxFit.cover,
+                        kGap10,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            Assets.imagesPipe,
+                            width: 70,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  kGap10,
-                  // Tradesperson, Location, and Map
-                  ...[const SizedBox(height: 12), const SizedBox(height: 20)],
+                      ],
+                    ),
+                    kGap10,
+                  ],
+                  // Location and Map
+                  const SizedBox(height: 20),
                   CustomText(
                     text: 'Location',
                     fontWeight: FontWeight.bold,
@@ -252,9 +354,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: GoogleMap(
-                        onMapCreated: (controller) {
-                          // Store controller if needed
-                        },
+                        onMapCreated: (controller) {},
                         initialCameraPosition: CameraPosition(
                           target: LatLng(33.6844, 73.0479),
                           zoom: 15.0,
@@ -274,80 +374,67 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 80), // Padding for bottom content
+                  // Feedback Section (only for completed jobs)
+                  if (isCompleted) ...[
+                    const SizedBox(height: 20),
+                    Text(
+                      'Custom Feedback',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColor.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    kGap10,
+                    Row(
+                      children: List.generate(5, (index) {
+                        return Icon(
+                          Icons.star,
+                          color:
+                              index < widget.job.tradesPerson.rating.floor()
+                                  ? Colors.amber
+                                  : Colors.grey,
+                          size: 24,
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'He always give me a perfect service.',
+                      style: TextStyle(fontSize: 14, color: AppColor.darkGray),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Jason Rao',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColor.darkGray,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 80),
                 ],
               ),
             ),
           ),
-          // Bottom action bar
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 10,
-                  offset: Offset(0, -5),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: CustomButton(
-                          text: 'Accept',
-                          onTap: () {
-                            _showReassessBottomSheet();
-                          },
-                          color: AppColor.darkBlue,
-                          textColor: AppColor.white,
-                          height: 50,
-                          radius: 30,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      kGap10,
-                      Expanded(
-                        child: CustomButton(
-                          text: 'Reassess Quote',
-                          onTap: () {
-                            _showReassessBottomSheet();
-                          },
-                          color: AppColor.orangecustomColor,
-                          textColor: AppColor.white,
-                          enableBorder: true,
-                          height: 50,
-                          radius: 30,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+          // Bottom action bar (only for non-completed jobs)
+          if (!isCompleted)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(0, -5),
                   ),
-                ),
-                const SizedBox(width: 10),
-                CustomButton(
-                  text: ' \\',
-                  onTap: () {
-                    _showReassessBottomSheet();
-                  },
-                  color: AppColor.darkBlue,
-                  textColor: AppColor.white,
-                  height: 50,
-                  width: 50,
-                  radius: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ],
+                ],
+              ),
+              child: _buildNewJobFooter(),
             ),
-          ),
         ],
       ),
     );

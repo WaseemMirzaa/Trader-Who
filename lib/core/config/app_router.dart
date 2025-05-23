@@ -87,5 +87,15 @@ class AppRouter {
       page: () => TradeHomePage(),
       binding: TradeHomePageBinding(),
     ),
+    GetPage(
+      name: AppRoutes.mainPageWithNavBar,
+      page: () => MainPageWithNavbar(),
+      binding: MainPageWithNavBarBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradeContainer,
+      page: () => TradeContainer(),
+      binding: TradeContainerBinding(),
+    ),
   ];
 }

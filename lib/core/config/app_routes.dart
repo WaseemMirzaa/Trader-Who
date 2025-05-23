@@ -54,4 +54,10 @@ class AppRoutes {
 
   /// The Trades home screen route.
   static const String tradesProfilePage = '/tradeshomepage';
+
+  /// The main navigation home screen route.
+  static const String mainPageWithNavBar = '/mainpagewithnavbar';
+
+  /// The trade  container home screen route.
+  static const String tradeContainer = '/tradecontainer';
 }

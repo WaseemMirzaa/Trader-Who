@@ -7,12 +7,14 @@ import 'package:traderwho/views/chat/presentation/pages/pages.dart';
 import 'package:traderwho/views/home/presentation/pages/pages.dart';
 import 'package:traderwho/views/job_history/pages/pages.dart';
 import 'package:traderwho/views/job_post/presentation/pages/pages.dart';
+import 'package:traderwho/views/main_page_with_navbar.dart';
 import 'package:traderwho/views/notifications/presentation/pages/pages.dart';
 import 'package:traderwho/views/profile/presentation/pages/pages.dart';
 import 'package:traderwho/views/splash/splash_page.dart';
 import 'package:traderwho/views/trades_home/presentation/pages/pages.dart';
 import 'package:traderwho/views/trades_job_history/presentation/pages/pages.dart';
 import 'package:traderwho/views/trades_people/presentation/pages/pages.dart';
+import 'package:traderwho/views/trades_people/presentation/widgets/widgets.dart';
 
 import 'app_routes.dart';
 

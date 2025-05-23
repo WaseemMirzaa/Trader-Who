@@ -2,10 +2,21 @@ part of 'widgets.dart';
 
 class TradeJobHistoryDetailAppbar extends StatelessWidget
     implements PreferredSizeWidget {
-  const TradeJobHistoryDetailAppbar({super.key});
+  final String status; // Add status parameter
+
+  const TradeJobHistoryDetailAppbar({
+    super.key,
+    required this.status, // Require status in constructor
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Determine title based on status
+    final String title =
+        status.toLowerCase() == 'completed'
+            ? 'Completed Job Details'
+            : 'New Job Details';
+
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -38,11 +49,11 @@ class TradeJobHistoryDetailAppbar extends StatelessWidget
               children: [
                 const SizedBox(height: 16),
                 // This is the row with centered TradeJobHistoryDetailAppbar and right-aligned notification
-                const Expanded(
+                Expanded(
                   child: Center(
                     child: Text(
-                      'New Job Details',
-                      style: TextStyle(
+                      title, // Use dynamic title
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,

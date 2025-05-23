@@ -1,29 +1,13 @@
-part of 'widgets.dart';
+part of '../../../trades_people/presentation/widgets/widgets.dart';
 
-class TradeHomeCard extends StatelessWidget {
+class MapViewCard extends StatelessWidget {
   final JobHistory job;
   final VoidCallback? onTap;
-  final VoidCallback? onReject;
-  final VoidCallback? onAccept;
 
-  const TradeHomeCard({
-    super.key,
-    required this.job,
-    this.onTap,
-    this.onReject,
-    this.onAccept,
-  });
+  const MapViewCard({super.key, required this.job, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    // Determine if job is completed
-    final bool isCompleted = job.status.toLowerCase() == 'completed';
-
-    // Determine button text based on showQuoteButtons
-    final String rejectText =
-        job.showQuoteButtons ? 'Not Interested' : 'Reject';
-    final String acceptText = job.showQuoteButtons ? 'Quote' : 'Accept';
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -33,6 +17,7 @@ class TradeHomeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
@@ -81,7 +66,7 @@ class TradeHomeCard extends StatelessWidget {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: 'Small Job - Fixed Price: ',
+                                    text: 'Estimated Price: ',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: AppColor.black,
@@ -108,7 +93,6 @@ class TradeHomeCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Container(
-                  constraints: const BoxConstraints(maxWidth: 100),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
                     vertical: 4,
@@ -116,55 +100,16 @@ class TradeHomeCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColor.midGray.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColor.midGray, width: 1),
                   ),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (isCompleted) const SizedBox(width: 4),
+                      Image.asset(Assets.imagesStars, width: 16, height: 16),
+                      const SizedBox(width: 4),
                       Text(
-                        job.status,
-                        style: TextStyle(
+                        job.tradesPerson.rating.toString(),
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: AppColor.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                      if (isCompleted)
-                        Icon(
-                          Icons.check_circle_outline,
-                          color: AppColor.green,
-                          size: 16,
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Preferred Time Row
-            Row(
-              children: [
-                SvgPicture.asset(Assets.svgsTime, width: 16, height: 16),
-                const SizedBox(width: 4),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      const TextSpan(
-                        text: 'Preferred Time: ',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColor.darkGray,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(
-                        text: job.preferredTime,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColor.darkGray,
+                          color: AppColor.orangecustomColor,
                         ),
                       ),
                     ],
@@ -173,7 +118,8 @@ class TradeHomeCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            // Address Section
+
+            // Distance Section
             Row(
               children: [
                 SvgPicture.asset(Assets.svgsLocation, width: 16, height: 16),
@@ -182,7 +128,7 @@ class TradeHomeCard extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       const TextSpan(
-                        text: 'Address: ',
+                        text: 'Distance: ',
                         style: TextStyle(
                           fontSize: 14,
                           color: AppColor.darkGray,
@@ -201,76 +147,14 @@ class TradeHomeCard extends StatelessWidget {
                 ),
               ],
             ),
-
-            // Only show these if job is completed
-            if (isCompleted) ...[
+            // Description Section - Added this new part
+            if (job.tradesPerson.description.isNotEmpty ?? false) ...[
               const SizedBox(height: 12),
-              // Rating stars
-              Row(
-                children: [
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                ],
-              ),
-              const SizedBox(height: 8),
-              // Description
               Text(
-                job.tradesPerson.description ?? 'No description provided',
+                job.tradesPerson.description,
                 style: TextStyle(fontSize: 14, color: AppColor.darkGray),
-              ),
-              const SizedBox(height: 8),
-              // Bold black text
-              Text(
-                'Jason Rao',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColor.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-
-            const SizedBox(height: 12),
-            // Buttons Row with Intrinsic Width
-            if (!isCompleted) ...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: IntrinsicWidth(
-                      child: CustomButton(
-                        text: rejectText,
-                        onTap: onReject,
-                        color: AppColor.orangecustomColor,
-                        textColor: AppColor.white,
-                        enableBorder: true,
-                        height: 32,
-                        radius: 30,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: IntrinsicWidth(
-                      child: CustomButton(
-                        text: acceptText,
-                        onTap: onAccept,
-                        color: AppColor.darkBlue,
-                        textColor: AppColor.white,
-                        height: 32,
-                        radius: 30,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ],

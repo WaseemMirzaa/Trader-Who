@@ -31,25 +31,29 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
         child: SafeArea(
+          // Add SafeArea here
           bottom: false,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
               children: [
                 const SizedBox(height: 16),
-                // This is the row with centered Home and right-aligned notification
+                // Title row
                 SizedBox(
                   width: double.infinity,
                   child: Row(
                     children: [
                       Expanded(
-                        child: Center(
-                          child: const Text(
-                            'Home',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Center(
+                            child: const Text(
+                              'Home',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
@@ -66,6 +70,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 const Spacer(),
+                // User info row
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Row(

@@ -221,7 +221,6 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomNavBar(),
     );
   }
 }

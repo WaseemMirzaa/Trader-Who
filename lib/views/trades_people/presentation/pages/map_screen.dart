@@ -148,7 +148,6 @@ class _MapScreenState extends State<_MapScreenView> {
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
-      appBar: const TradesPeopleAppbar(currentScreen: MapScreen),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())

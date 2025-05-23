@@ -160,7 +160,7 @@ class _JobPageState extends State<JobPage> {
                   CustomButton(
                     text: 'Find TradePeople',
                     onTap: () {
-                      Get.toNamed(AppRoutes.tradesPage);
+                      Get.toNamed(AppRoutes.tradeContainer);
                     },
                     width: double.infinity,
                     height: screenHeight * 0.06,
@@ -177,7 +177,6 @@ class _JobPageState extends State<JobPage> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomNavBar(),
     );
   }
 }

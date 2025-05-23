@@ -62,7 +62,6 @@ class _TradesPageState extends State<TradesPage> {
     final screenSize = MediaQuery.of(context).size;
 
     return GradientScaffold(
-      appBar: const TradesPeopleAppbar(currentScreen: TradesPage),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(

@@ -117,3 +117,19 @@ class TradeJobHistoryPageBinding extends Bindings {
     Get.lazyPut<TradeJobHistoryController>(() => TradeJobHistoryController());
   }
 }
+
+class MainPageWithNavBarBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<MainPageWithNavBarController>(
+      () => MainPageWithNavBarController(),
+    );
+  }
+}
+
+class TradeContainerBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeContainerController>(() => TradeContainerController());
+  }
+}

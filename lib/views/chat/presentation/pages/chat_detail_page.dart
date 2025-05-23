@@ -133,17 +133,17 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),
                     onPressed: () {
-                      if (_messageController.text.isNotEmpty) {
-                        setState(() {
-                          messages.add({
-                            'text': _messageController.text,
-                            'isMe': true,
-                            'time': FormatCurrentTime(), // Use formatted time
-                          });
-                          _messageController.clear();
-                        });
-                        _scrollToBottom();
-                      }
+                      // if (_messageController.text.isNotEmpty) {
+                      //   setState(() {
+                      //     messages.add({
+                      //       'text': _messageController.text,
+                      //       'isMe': true,
+                      //       'time': FormatCurrentTime(), // Use formatted time
+                      //     });
+                      //     _messageController.clear();
+                      //   });
+                      //   _scrollToBottom();
+                      // }
                     },
                   ),
                 ),

@@ -88,7 +88,6 @@ class _TradeHomePageState extends State<TradeHomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomNavBar(),
     );
   }
 }

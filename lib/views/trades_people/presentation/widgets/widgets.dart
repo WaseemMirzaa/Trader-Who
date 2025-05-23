@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:traderwho/controller/trades_controller.dart';
 import 'package:traderwho/core/extensions/extensions.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
+import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
+import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/theme/theme.dart';
 import 'package:traderwho/models/models.dart';
 import 'package:traderwho/views/trades_people/presentation/pages/pages.dart';
 
+part '../../../trades_job_history/presentation/widgets/map_view_card.dart';
+part 'trade_container.dart';
 part 'trade_people_details_appbar.dart';
 part 'trades_people_appbar.dart';
 part 'trades_people_card.dart';
