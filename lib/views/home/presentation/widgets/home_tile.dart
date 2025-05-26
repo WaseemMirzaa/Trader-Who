@@ -4,13 +4,13 @@ class HomeTiles extends StatelessWidget {
   final String imagePath;
   final String title;
   final VoidCallback? onTap;
-  final Color textColor; 
+  final Color textColor;
   const HomeTiles({
     super.key,
     required this.imagePath,
     required this.title,
     this.onTap,
-    this.textColor = Colors.black,  
+    this.textColor = Colors.black,
   });
 
   @override
@@ -18,6 +18,7 @@ class HomeTiles extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -32,19 +33,15 @@ class HomeTiles extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              imagePath,
-              width: 40,
-              height: 40,
-            ),
+            Image.asset(imagePath, width: 40, height: 40),
             const SizedBox(height: 8),
             Text(
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: AppColor.coolGray,  
+                color: AppColor.coolGray,
               ),
             ),
           ],

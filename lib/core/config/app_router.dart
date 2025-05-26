@@ -97,5 +97,30 @@ class AppRouter {
       page: () => TradeContainer(),
       binding: TradeContainerBinding(),
     ),
+    GetPage(
+      name: AppRoutes.tradeNotification,
+      page: () => TradeNotificationPage(),
+      binding: TradeNotificationBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradeChat,
+      page: () => TradeChatPage(),
+      binding: TradeChatBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradeProfile,
+      page: () => TradeProfilePage(),
+      binding: TradeProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradeMyaccount,
+      page: () => TradeMyaccountPage(),
+      binding: TradeMyAccountBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradeCustomerFeedback,
+      page: () => TradeCustomerFeedbackPage(),
+      binding: TradeCustomerFeedbackBinding(),
+    ),
   ];
 }

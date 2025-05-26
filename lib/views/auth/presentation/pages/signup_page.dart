@@ -136,7 +136,7 @@ class _SignupPageState extends State<SignupPage> {
                         // if (_formKey.currentState!.validate()) {
                         //   // Add sign in functionality
                         // }
-                        Get.toNamed(AppRoutes.mainPageWithNavBar);
+                        Get.offAllNamed(AppRoutes.mainPageWithNavBar);
                       },
                       width: double.infinity,
                       height: screenHeight * 0.06,

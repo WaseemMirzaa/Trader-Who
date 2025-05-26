@@ -15,50 +15,53 @@ class CalendarPicker extends StatelessWidget {
       calendarFormat: CalendarFormat.month,
       rowHeight: 36,
       sixWeekMonthsEnforced: true,
-      headerStyle: HeaderStyle(
+      headerStyle: const HeaderStyle(
         titleCentered: true,
         formatButtonVisible: false,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: Colors.black,
         ),
-        leftChevronIcon: const Icon(
+        leftChevronIcon: Icon(
           Icons.keyboard_arrow_left_outlined,
           color: Colors.black,
           size: 24,
         ),
-        rightChevronIcon: const Icon(
+        rightChevronIcon: Icon(
           Icons.keyboard_arrow_right_outlined,
           color: Colors.black,
           size: 24,
         ),
       ),
-      daysOfWeekStyle: DaysOfWeekStyle(
-        weekdayStyle: const TextStyle(
+      daysOfWeekStyle: const DaysOfWeekStyle(
+        weekdayStyle: TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.w600,
           fontSize: 12,
         ),
-        weekendStyle: const TextStyle(
+        weekendStyle: TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.w600,
           fontSize: 12,
         ),
       ),
-      calendarStyle: CalendarStyle(
-        todayDecoration: const BoxDecoration(
-          color: AppColor.darkBlue,
+      calendarStyle: const CalendarStyle(
+        // Remove highlight for today
+        todayDecoration: BoxDecoration(
           shape: BoxShape.circle,
+          color: Colors.transparent, // No background for today
         ),
         selectedDecoration: BoxDecoration(
           color: AppColor.darkBlue,
           shape: BoxShape.circle,
         ),
-        defaultDecoration: const BoxDecoration(shape: BoxShape.circle),
-        todayTextStyle: const TextStyle(color: Colors.white),
-        selectedTextStyle: const TextStyle(color: Colors.white),
-        defaultTextStyle: const TextStyle(color: Colors.black),
+        defaultDecoration: BoxDecoration(shape: BoxShape.circle),
+        todayTextStyle: TextStyle(
+          color: Colors.black,
+        ), // Same text style as default
+        selectedTextStyle: TextStyle(color: Colors.white),
+        defaultTextStyle: TextStyle(color: Colors.black),
       ),
       calendarBuilders: CalendarBuilders(
         defaultBuilder: (context, day, focusedDay) {

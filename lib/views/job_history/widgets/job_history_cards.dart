@@ -4,11 +4,7 @@ class JobHistoryCard extends StatelessWidget {
   final JobHistory job;
   final VoidCallback? onTap;
 
-  const JobHistoryCard({
-    super.key,
-    required this.job,
-    this.onTap,
-  });
+  const JobHistoryCard({super.key, required this.job, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +31,10 @@ class JobHistoryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomCircleAvatar(
-                 circleColor: Colors.transparent,  
-                 backgroundColor: AppColor.lightCyan,
+                  circleColor: Colors.transparent,
+                  backgroundColor: AppColor.lightCyan,
                   radius: 24,
-                  child: SvgPicture.asset(
-                    job.svgIcon,
-                    width: 24,
-                    height: 24,
-                  ),
+                  child: SvgPicture.asset(job.svgIcon, width: 24, height: 24),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -75,7 +67,8 @@ class JobHistoryCard extends StatelessWidget {
                                 fontSize: 14,
                                 color: AppColor.darkGray,
                               ),
-                              overflow: TextOverflow.ellipsis, // Truncate long text
+                              overflow:
+                                  TextOverflow.ellipsis, // Truncate long text
                               maxLines: 1, // Limit to one line
                             ),
                           ),
@@ -86,24 +79,23 @@ class JobHistoryCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Container(
-                  constraints: const BoxConstraints(maxWidth: 100), // Limit status width
+                  constraints: const BoxConstraints(
+                    maxWidth: 100,
+                  ), // Limit status width
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColor.midGray.withOpacity(0.2),
+                    color: AppColor.lightCyan,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColor.midGray,
-                      width: 1,
-                    ),
+                    border: Border.all(color: AppColor.midGray, width: 1),
                   ),
                   child: Text(
                     job.status,
                     style: const TextStyle(
                       fontSize: 12,
-                      color: AppColor.midGray,
+                      color: AppColor.black,
                       fontWeight: FontWeight.bold,
                     ),
                     overflow: TextOverflow.ellipsis, // Truncate long status
@@ -116,11 +108,7 @@ class JobHistoryCard extends StatelessWidget {
             // Preferred Time Row
             Row(
               children: [
-                SvgPicture.asset(
-                  Assets.svgsTime,
-                  width: 16,
-                  height: 16,
-                ),
+                SvgPicture.asset(Assets.svgsTime, width: 16, height: 16),
                 const SizedBox(width: 4),
                 RichText(
                   text: TextSpan(
@@ -147,13 +135,9 @@ class JobHistoryCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             // Address Section
-             Row(
+            Row(
               children: [
-                SvgPicture.asset(
-                  Assets.svgsLocation,
-                  width: 16,
-                  height: 16,
-                ),
+                SvgPicture.asset(Assets.svgsLocation, width: 16, height: 16),
                 const SizedBox(width: 4),
                 RichText(
                   text: TextSpan(

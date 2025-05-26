@@ -5,8 +5,10 @@ import 'package:traderwho/views/home/presentation/pages/pages.dart';
 import 'package:traderwho/views/job_history/pages/pages.dart';
 import 'package:traderwho/views/main_page_with_navbar.dart';
 import 'package:traderwho/views/profile/presentation/pages/pages.dart';
+import 'package:traderwho/views/trades_chat/presentation/pages/pages.dart';
 import 'package:traderwho/views/trades_home/presentation/pages/pages.dart';
 import 'package:traderwho/views/trades_job_history/presentation/widgets/widgets.dart';
+import 'package:traderwho/views/trades_profile/presentation/pages/pages/pages.dart';
 
 class NavigationController extends GetxController {
   static NavigationController get to => Get.find();
@@ -25,8 +27,8 @@ class NavigationController extends GetxController {
   final List<Widget> tradesPersonPages = [
     TradeHomePage(),
     JobHistoryContainer(),
-    ChatPage(),
-    ProfileScreen(),
+    TradeChatPage(),
+    TradeProfilePage(),
   ];
 
   void changePage(int index) {

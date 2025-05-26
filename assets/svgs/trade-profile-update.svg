@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25">
+  <g id="Notification" transform="translate(-989 -46)">
+    <rect id="Rectangle_1322" data-name="Rectangle 1322" width="25" height="25" transform="translate(989 46)" fill="#fff"/>
+    <path id="Icon_awesome-user-edit" data-name="Icon awesome-user-edit" d="M7,8A4,4,0,1,0,3,4,4,4,0,0,0,7,8ZM9.8,9H9.278A5.44,5.44,0,0,1,4.722,9H4.2A4.2,4.2,0,0,0,0,13.2v1.3A1.5,1.5,0,0,0,1.5,16h8.59a1.5,1.5,0,0,1-.081-.666l.212-1.9.037-.347.247-.247,2.416-2.416A4.157,4.157,0,0,0,9.8,9Zm1.416,4.541L11,15.447a.5.5,0,0,0,.55.55l1.9-.212,4.309-4.309L15.525,9.234,11.215,13.54ZM19.781,8.4,18.6,7.219a.749.749,0,0,0-1.056,0L16.359,8.4l-.128.128,2.244,2.241,1.306-1.306A.753.753,0,0,0,19.781,8.4Z" transform="translate(994.001 50.477)" fill="#121f30"/>
+  </g>
+</svg>

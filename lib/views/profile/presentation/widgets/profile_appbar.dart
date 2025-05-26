@@ -7,7 +7,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final double avatarRadius =
-        size.width * 0.15; // Slightly larger for profile
+        size.width * 0.13; // Slightly larger for profile
     final double avatarImageSize = avatarRadius * 2;
 
     return AppBar(
@@ -42,7 +42,9 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                   width: double.infinity,
                   child: Row(
                     children: [
-                      // Back button
+                      // Back button placeholder (to balance the edit icon)
+                      SizedBox(width: 25),
+                      // Matches the edit icon size
 
                       // Centered "Profile" text
                       Expanded(
@@ -50,7 +52,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                           child: const Text(
                             'Profile',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 18,
                               fontWeight: FontWeight.normal,
                               color: Colors.black,
                             ),
@@ -71,7 +73,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                kGap25,
                 // Circular avatar
                 CustomCircleAvatar(
                   radius: avatarRadius,
@@ -83,7 +85,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                const SizedBox(height: 16),
+                kGap30,
                 // Name text
                 CustomText(
                   text: 'Alex Jerome!',
@@ -91,7 +93,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 // Username text
                 CustomText(
                   text: '@katemiddleton',

@@ -76,8 +76,11 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
               Row(
                 children: List.generate(
                   5,
-                  (index) =>
-                      Image.asset(Assets.imagesStars, width: 24, height: 24),
+                  (index) => Image.asset(
+                    Assets.imagesIconawesomeStar,
+                    width: 24,
+                    height: 24,
+                  ),
                 ),
               ),
               kGap10,
@@ -109,8 +112,11 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
               Row(
                 children: List.generate(
                   5,
-                  (index) =>
-                      Image.asset(Assets.imagesStars, width: 24, height: 24),
+                  (index) => Image.asset(
+                    Assets.imagesIconawesomeStar,
+                    width: 24,
+                    height: 24,
+                  ),
                 ),
               ),
               kGap10,

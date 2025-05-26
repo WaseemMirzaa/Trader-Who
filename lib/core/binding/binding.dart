@@ -12,9 +12,14 @@ import 'package:traderwho/controller/notification_controller.dart';
 import 'package:traderwho/controller/onboarding_controller.dart';
 import 'package:traderwho/controller/profile_controller.dart';
 import 'package:traderwho/controller/signup_controller.dart';
+import 'package:traderwho/controller/trade_chat_controller.dart';
 import 'package:traderwho/controller/trade_container.dart';
+import 'package:traderwho/controller/trade_customer_feedback_controller.dart';
 import 'package:traderwho/controller/trade_home_controller.dart';
 import 'package:traderwho/controller/trade_job_history_controller.dart';
+import 'package:traderwho/controller/trade_myaccount_controller.dart';
+import 'package:traderwho/controller/trade_notification_controller.dart';
+import 'package:traderwho/controller/trade_profile_controller.dart';
 import 'package:traderwho/views/splash/controller.dart';
 
 part 'app_binding.dart';

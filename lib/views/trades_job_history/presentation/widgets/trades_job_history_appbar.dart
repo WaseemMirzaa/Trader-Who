@@ -65,10 +65,11 @@ class TradesJobHistoryAppbar extends StatelessWidget
                         Align(
                           alignment: Alignment.centerRight,
                           child: Container(
+                            width: 78,
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
                               color: AppColor.midGray,
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(24),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -87,12 +88,12 @@ class TradesJobHistoryAppbar extends StatelessWidget
                                     child: SvgPicture.asset(
                                       Assets.svgsNomap,
                                       color: AppColor.white,
-                                      width: 24,
-                                      height: 24,
+                                      width: 18,
+                                      height: 18,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 15),
                                 GestureDetector(
                                   onTap: onMapPressed,
                                   child: Container(
@@ -107,8 +108,8 @@ class TradesJobHistoryAppbar extends StatelessWidget
                                     child: SvgPicture.asset(
                                       Assets.svgsMap,
                                       color: AppColor.white,
-                                      width: 24,
-                                      height: 24,
+                                      width: 18,
+                                      height: 18,
                                     ),
                                   ),
                                 ),

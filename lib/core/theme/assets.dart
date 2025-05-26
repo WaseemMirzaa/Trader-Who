@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_single_quotes
 class Assets {
   Assets._();
-  
+
   /// Assets for imagesArrowDown
   /// assets/images/arrow_down.png
   static const String imagesArrowDown = "assets/images/arrow_down.png";
@@ -23,16 +23,20 @@ class Assets {
   static const String imagesChat = "assets/images/Chat.png";
 
   /// Assets for imagesChatAvatar
-  /// assets/images/chat_avatar.png
-  static const String imagesChatAvatar = "assets/images/chat_avatar.png";
+  /// assets/images/chat-avatar.png
+  static const String imagesChatAvatar = "assets/images/chat-avatar.png";
+
+  /// Assets for imagesChatCharles
+  /// assets/images/chat-charles.png
+  static const String imagesChatCharles = "assets/images/chat-charles.png";
+
+  /// Assets for imagesChatRebort
+  /// assets/images/chat-rebort.png
+  static const String imagesChatRebort = "assets/images/chat-rebort.png";
 
   /// Assets for imagesChatRichard
   /// assets/images/chat-richard.png
   static const String imagesChatRichard = "assets/images/chat-richard.png";
-
-  /// Assets for imagesChatRobert
-  /// assets/images/chat-robert.png
-  static const String imagesChatRobert = "assets/images/chat-robert.png";
 
   /// Assets for imagesChatThomas
   /// assets/images/chat-thomas.png
@@ -44,7 +48,8 @@ class Assets {
 
   /// Assets for imagesCircularAvatar
   /// assets/images/circular_avatar.png
-  static const String imagesCircularAvatar = "assets/images/circular_avatar.png";
+  static const String imagesCircularAvatar =
+      "assets/images/circular_avatar.png";
 
   /// Assets for imagesCrossCheck
   /// assets/images/cross_check.PNG
@@ -72,7 +77,8 @@ class Assets {
 
   /// Assets for imagesElectricityMapicon
   /// assets/images/electricity_mapicon.png
-  static const String imagesElectricityMapicon = "assets/images/electricity_mapicon.png";
+  static const String imagesElectricityMapicon =
+      "assets/images/electricity_mapicon.png";
 
   /// Assets for imagesField
   /// assets/images/Field.png
@@ -98,13 +104,18 @@ class Assets {
   /// assets/images/Home.png
   static const String imagesHome = "assets/images/Home.png";
 
+  /// Assets for imagesIcon awesomeStar
+  /// assets/images/Icon awesome-star.png
+  static const String imagesIconawesomeStar =
+      "assets/images/Icon awesome-star.png";
+
   /// Assets for imagesLocation
   /// assets/images/location.png
   static const String imagesLocation = "assets/images/location.png";
 
-  /// Assets for imagesMapicon
-  /// assets/images/mapicon.png
-  static const String imagesMapicon = "assets/images/mapicon.png";
+  /// Assets for imagesMapIcon
+  /// assets/images/map-icon.png
+  static const String imagesMapIcon = "assets/images/map-icon.png";
 
   /// Assets for imagesMessage
   /// assets/images/message.png
@@ -112,15 +123,18 @@ class Assets {
 
   /// Assets for imagesNotificationAusten
   /// assets/images/notification_austen.png
-  static const String imagesNotificationAusten = "assets/images/notification_austen.png";
+  static const String imagesNotificationAusten =
+      "assets/images/notification_austen.png";
 
   /// Assets for imagesNotificationImage
   /// assets/images/notification_image.png
-  static const String imagesNotificationImage = "assets/images/notification_image.png";
+  static const String imagesNotificationImage =
+      "assets/images/notification_image.png";
 
   /// Assets for imagesNotificationKate
   /// assets/images/notification_kate.png
-  static const String imagesNotificationKate = "assets/images/notification_kate.png";
+  static const String imagesNotificationKate =
+      "assets/images/notification_kate.png";
 
   /// Assets for imagesOrangeMessage
   /// assets/images/orange_message.png
@@ -145,10 +159,6 @@ class Assets {
   /// Assets for imagesPlumber
   /// assets/images/plumber.png
   static const String imagesPlumber = "assets/images/plumber.png";
-
-  /// Assets for imagesPlumberMapicon
-  /// assets/images/plumber_mapicon.png
-  static const String imagesPlumberMapicon = "assets/images/plumber_mapicon.png";
 
   /// Assets for imagesPounds
   /// assets/images/pounds.png
@@ -190,21 +200,46 @@ class Assets {
   /// assets/images/trade.png
   static const String imagesTrade = "assets/images/trade.png";
 
-  /// Assets for imagesTradeHandMapicon
-  /// assets/images/trade_hand_mapicon.png
-  static const String imagesTradeHandMapicon = "assets/images/trade_hand_mapicon.png";
+  /// Assets for imagesTradeComp
+  /// assets/images/trade-comp.png
+  static const String imagesTradeComp = "assets/images/trade-comp.png";
 
-  /// Assets for imagesTradeHomeMapicon
-  /// assets/images/trade_home_mapicon.png
-  static const String imagesTradeHomeMapicon = "assets/images/trade_home_mapicon.png";
+  /// Assets for imagesTradeDavid
+  /// assets/images/trade-david.png
+  static const String imagesTradeDavid = "assets/images/trade-david.png";
+
+  /// Assets for imagesTradeHome
+  /// assets/images/trade-home.png
+  static const String imagesTradeHome = "assets/images/trade-home.png";
+
+  /// Assets for imagesTradeHouse
+  /// assets/images/trade-house.png
+  static const String imagesTradeHouse = "assets/images/trade-house.png";
+
+  /// Assets for imagesTradeJames
+  /// assets/images/trade-james.png
+  static const String imagesTradeJames = "assets/images/trade-james.png";
 
   /// Assets for imagesTradeMapicon
   /// assets/images/trade_mapicon.png
   static const String imagesTradeMapicon = "assets/images/trade_mapicon.png";
 
+  /// Assets for imagesTradeNotification
+  /// assets/images/trade-notification.png
+  static const String imagesTradeNotification =
+      "assets/images/trade-notification.png";
+
   /// Assets for imagesTradePeople
   /// assets/images/trade_people.png
   static const String imagesTradePeople = "assets/images/trade_people.png";
+
+  /// Assets for imagesTradeProfile
+  /// assets/images/trade-profile.png
+  static const String imagesTradeProfile = "assets/images/trade-profile.png";
+
+  /// Assets for imagesTradeRichard
+  /// assets/images/trade-richard.png
+  static const String imagesTradeRichard = "assets/images/trade-richard.png";
 
   /// Assets for svgsApple
   /// assets/svgs/apple.svg
@@ -293,5 +328,13 @@ class Assets {
   /// Assets for svgsTime
   /// assets/svgs/time.svg
   static const String svgsTime = "assets/svgs/time.svg";
-}
 
+  /// Assets for svgsTradeProfileUpdate
+  /// assets/svgs/trade-profile-update.svg
+  static const String svgsTradeProfileUpdate =
+      "assets/svgs/trade-profile-update.svg";
+
+  /// Assets for svgsTradeReview
+  /// assets/svgs/trade-review.svg
+  static const String svgsTradeReview = "assets/svgs/trade-review.svg";
+}

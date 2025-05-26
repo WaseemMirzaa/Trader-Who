@@ -86,7 +86,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColor.white.withOpacity(0.2),
+                          color: AppColor.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: AppColor.midGray, width: 1),
                         ),
@@ -94,7 +94,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           widget.job.status,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: AppColor.midGray,
+                            color: AppColor.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

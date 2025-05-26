@@ -47,11 +47,75 @@ class _MapScreenState extends State<_MapScreenView> {
 
   Future<BitmapDescriptor> _loadIcon(
     BuildContext context,
-    String assetPath,
-  ) async {
+    String assetPath, {
+    bool isFirstIcon = false, // New parameter to identify the special icon
+  }) async {
     try {
-      final Uint8List bytes = await getBytesFromAsset(context, assetPath, 250);
-      return BitmapDescriptor.fromBytes(bytes);
+      // Load the original icon
+      final Uint8List iconBytes = await getBytesFromAsset(
+        context,
+        assetPath,
+        60, // Size for the icon inside the circle
+      );
+
+      // Decode the icon image
+      final ui.Codec codec = await ui.instantiateImageCodec(iconBytes);
+      final ui.FrameInfo frameInfo = await codec.getNextFrame();
+      final ui.Image iconImage = frameInfo.image;
+
+      // Define container properties
+      const double containerSize = 150.0;
+      const double iconSize = 80.0;
+
+      // Create a PictureRecorder and Canvas
+      final recorder = ui.PictureRecorder();
+      final canvas = ui.Canvas(recorder);
+
+      // Determine the background color
+      final backgroundColor = isFirstIcon ? AppColor.darkBlue : AppColor.white;
+
+      // Draw circular container with appropriate color
+      final paint =
+          ui.Paint()
+            ..color = backgroundColor
+            ..style = ui.PaintingStyle.fill;
+      canvas.drawCircle(
+        ui.Offset(containerSize / 2, containerSize / 2),
+        containerSize / 2,
+        paint,
+      );
+
+      // Draw the icon centered in the container
+      canvas.drawImageRect(
+        iconImage,
+        ui.Rect.fromLTWH(
+          0,
+          0,
+          iconImage.width.toDouble(),
+          iconImage.height.toDouble(),
+        ),
+        ui.Rect.fromCenter(
+          center: ui.Offset(containerSize / 2, containerSize / 2),
+          width: iconSize,
+          height: iconSize,
+        ),
+        ui.Paint(),
+      );
+
+      // Convert the canvas to an image
+      final ui.Image compositeImage = await recorder.endRecording().toImage(
+        containerSize.toInt(),
+        containerSize.toInt(),
+      );
+
+      // Convert the composite image to bytes
+      final ByteData? byteData = await compositeImage.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      if (byteData == null) {
+        return BitmapDescriptor.defaultMarker;
+      }
+      return BitmapDescriptor.fromBytes(byteData.buffer.asUint8List());
     } catch (e) {
       debugPrint('Error loading icon: $assetPath - $e');
       return BitmapDescriptor.defaultMarker;
@@ -77,13 +141,13 @@ class _MapScreenState extends State<_MapScreenView> {
   Future<void> _loadMarkers() async {
     try {
       final List<BitmapDescriptor> customIcons = await Future.wait([
-        _loadIcon(context, Assets.imagesMapicon),
-        _loadIcon(context, Assets.imagesTradeMapicon),
-        _loadIcon(context, Assets.imagesPlumberMapicon),
-        _loadIcon(context, Assets.imagesTradeHandMapicon),
-        _loadIcon(context, Assets.imagesTradeHomeMapicon),
-        _loadIcon(context, Assets.imagesElectricityMapicon),
-        _loadIcon(context, Assets.imagesElectricityMapicon),
+        _loadIcon(context, Assets.imagesTradeMapicon, isFirstIcon: true),
+        _loadIcon(context, Assets.imagesMapIcon),
+        _loadIcon(context, Assets.imagesPlaster),
+        _loadIcon(context, Assets.imagesTilers),
+        _loadIcon(context, Assets.imagesTradeHouse),
+        _loadIcon(context, Assets.imagesTradeComp),
+        _loadIcon(context, Assets.imagesTradeHome),
       ]);
 
       final List<LatLng> markerLocations = [

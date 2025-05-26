@@ -16,23 +16,23 @@ class _TradesPageState extends State<TradesPage> {
       description:
           'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after  turning on \n garbage disposal.',
       price: '50',
-      imageUrl: Assets.imagesChatAvatar,
+      imageUrl: Assets.imagesTradeJames,
       rating: 4.5,
     ),
     TradesPerson(
-      name: 'Sarah Johnson',
+      name: 'David William',
       expertise: 'Plumber',
       description: 'Specialist in pipe repairs and bathroom installations',
       price: '65',
-      imageUrl: Assets.imagesChatRichard,
+      imageUrl: Assets.imagesTradeDavid,
       rating: 4.8,
     ),
     TradesPerson(
-      name: 'David',
+      name: 'Richard Joseph',
       expertise: 'Plumber',
       description: 'Specialist in pipe repairs and bathroom installations',
       price: '65',
-      imageUrl: Assets.imagesChatRobert,
+      imageUrl: Assets.imagesTradeRichard,
       rating: 4.0,
     ),
     // Add more sample data...

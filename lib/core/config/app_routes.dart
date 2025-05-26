@@ -60,4 +60,19 @@ class AppRoutes {
 
   /// The trade  container home screen route.
   static const String tradeContainer = '/tradecontainer';
+
+  /// The trade  notification   route.
+  static const String tradeNotification = '/tradenotification';
+
+  /// The trade  chat   route.
+  static const String tradeChat = '/tradechat';
+
+  /// The trade  profile   route.
+  static const String tradeProfile = '/tradeprofile';
+
+  /// The trade  profile   route.
+  static const String tradeMyaccount = '/trademyaccount';
+
+  /// The trade  feedback   route.
+  static const String tradeCustomerFeedback = '/tradecustomerfeedback';
 }

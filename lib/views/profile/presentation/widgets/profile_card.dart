@@ -30,15 +30,22 @@ class ProfileCard extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(
+            vertical: 12.0,
+            horizontal: 16.0,
+          ), // Reduced vertical padding
           child: Row(
             children: [
-              // Circular avatar with SVG
+              // Smaller circular avatar with SVG
               CustomCircleAvatar(
                 backgroundColor: AppColor.customLightGray,
-                radius: 20,
+                radius: 18, // Reduced from 20
                 hasBorder: false,
-                child: SvgPicture.asset(svgAsset, width: 20, height: 20),
+                child: SvgPicture.asset(
+                  svgAsset,
+                  width: 18,
+                  height: 18,
+                ), // Reduced from 20
               ),
               const SizedBox(width: 16),
               // Title
@@ -47,7 +54,7 @@ class ProfileCard extends StatelessWidget {
                   text: title,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                  color: AppColor.darkGray,
                 ),
               ),
               // Forward icon

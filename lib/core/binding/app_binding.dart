@@ -133,3 +133,42 @@ class TradeContainerBinding extends Bindings {
     Get.lazyPut<TradeContainerController>(() => TradeContainerController());
   }
 }
+
+class TradeNotificationBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeNotificationController>(
+      () => TradeNotificationController(),
+    );
+  }
+}
+
+class TradeChatBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeChatController>(() => TradeChatController());
+  }
+}
+
+class TradeProfileBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeProfileController>(() => TradeProfileController());
+  }
+}
+
+class TradeMyAccountBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeMyaccountController>(() => TradeMyaccountController());
+  }
+}
+
+class TradeCustomerFeedbackBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeCustomerFeedbackController>(
+      () => TradeCustomerFeedbackController(),
+    );
+  }
+}

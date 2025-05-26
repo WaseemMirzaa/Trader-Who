@@ -7,9 +7,10 @@ class MyAccountPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GradientScaffold(
       appBar: const MyAccountAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+      body: Padding(
+        padding: kHV15,
         child: Column(
+          spacing: 10,
           children: [
             // Profile Avatar
             Center(
@@ -27,8 +28,8 @@ class MyAccountPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // First Name Field
-            CustomTextField(
-              leftLabel: 'First Name',
+            TextFieldCustom(
+              prefixLabel: 'First Name',
               initialValue: 'Alex',
               textColor: AppColor.black,
               fillColor: Colors.white,
@@ -38,11 +39,10 @@ class MyAccountPage extends StatelessWidget {
                 vertical: 12,
               ),
             ),
-            const SizedBox(height: 16),
 
             // Last Name Field
-            CustomTextField(
-              leftLabel: 'Last Name',
+            TextFieldCustom(
+              prefixLabel: 'Last Name',
               initialValue: 'Middleton',
               fillColor: Colors.white,
               borderColor: AppColor.lightGray,
@@ -52,11 +52,10 @@ class MyAccountPage extends StatelessWidget {
                 vertical: 12,
               ),
             ),
-            const SizedBox(height: 16),
 
             // Email Field
-            CustomTextField(
-              leftLabel: 'Email',
+            TextFieldCustom(
+              prefixLabel: 'Email',
               initialValue: 'alexjerome@info.com',
               textColor: AppColor.black,
               fillColor: Colors.white,
@@ -67,11 +66,10 @@ class MyAccountPage extends StatelessWidget {
               ),
               keyboardType: TextInputType.emailAddress,
             ),
-            const SizedBox(height: 16),
 
             // Phone Field
-            CustomTextField(
-              leftLabel: 'Phone',
+            TextFieldCustom(
+              prefixLabel: 'Phone',
               initialValue: '+9876543210',
               textColor: AppColor.black,
               fillColor: Colors.white,
@@ -82,12 +80,11 @@ class MyAccountPage extends StatelessWidget {
               ),
               keyboardType: TextInputType.phone,
             ),
-            const SizedBox(height: 16),
 
             // Address Field
-            CustomTextField(
-              leftLabel: 'Address',
-              initialValue: '123 Maple',
+            TextFieldCustom(
+              prefixLabel: 'Address',
+              initialValue: '123 Maple Sreet, Unit 4B, SpringField',
               textColor: AppColor.black,
               fillColor: Colors.white,
               borderColor: AppColor.lightGray,
@@ -95,18 +92,18 @@ class MyAccountPage extends StatelessWidget {
                 horizontal: 16,
                 vertical: 12,
               ),
-              maxLines: 2,
+              maxLines: 1,
             ),
-
-            kGap40,
-
-            // Save Button
+            Spacer(),
             CustomButton(
+              height: 55,
               text: 'Update Profile',
               onTap: () {},
               color: AppColor.darkBlue,
               textColor: Colors.white,
             ),
+            SizedBox(height: 20),
+            // Save Button
           ],
         ),
       ),

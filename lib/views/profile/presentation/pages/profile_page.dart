@@ -31,41 +31,51 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GradientScaffold(
       appBar: const ProfileAppBar(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: profileOptions.length,
-                itemBuilder: (context, index) {
-                  final option = profileOptions[index];
-                  return ProfileCard(
-                    title: option['title'],
-                    svgAsset: option['icon'],
-                    onTap: () => _handleOptionTap(context, option),
-                  );
-                },
+      body: Column(
+        children: [
+          Expanded(
+            // Takes remaining space
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: profileOptions.length,
+                    itemBuilder: (context, index) {
+                      final option = profileOptions[index];
+                      return ProfileCard(
+                        title: option['title'],
+                        svgAsset: option['icon'],
+                        onTap: () => _handleOptionTap(context, option),
+                      );
+                    },
+                  ),
+                ],
               ),
-              kGap100,
-              CustomButton(
-                text: 'Log Out',
-                onTap: () {},
-                color: AppColor.darkBlue,
-                textColor: Colors.white,
-                enableIcon: true,
-                icon: SvgPicture.asset(
-                  Assets.svgsDoorExit,
-                  width: 20,
-                  height: 20,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          // Logout button at the bottom
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: CustomButton(
+              text: 'Log Out',
+              onTap: () {
+                Get.offAllNamed(AppRoutes.onboarding);
+              },
+              color: AppColor.darkBlue,
+              textColor: Colors.white,
+              enableIcon: true,
+              icon: SvgPicture.asset(
+                Assets.svgsDoorExit,
+                width: 20,
+                height: 20,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

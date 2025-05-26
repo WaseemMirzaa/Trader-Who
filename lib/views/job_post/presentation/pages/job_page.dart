@@ -177,6 +177,7 @@ class _JobPageState extends State<JobPage> {
           ),
         ),
       ),
+      bottomNavigationBar: const CustomNavBar(),
     );
   }
 }

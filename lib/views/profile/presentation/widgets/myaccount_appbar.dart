@@ -5,17 +5,23 @@ class MyAccountAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      centerTitle: true,
-      title: const CustomText(
-        text: 'My Account',
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: AppColor.black,
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(20.0),
+        bottomRight: Radius.circular(20.0),
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: AppColor.black),
-        onPressed: () => Navigator.pop(context),
+      child: AppBar(
+        centerTitle: true,
+        title: const CustomText(
+          text: 'My Account',
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColor.black,
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColor.black),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
     );
   }

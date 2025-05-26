@@ -17,7 +17,7 @@ class ChatPage extends StatelessWidget {
 
       'time': 'Yesterday',
       'isOnline': true,
-      'avatarImage': Assets.imagesChatRobert,
+      'avatarImage': Assets.imagesChatRebort,
     },
     {
       'name': 'William David',
@@ -36,12 +36,20 @@ class ChatPage extends StatelessWidget {
       'avatarImage': Assets.imagesChatRichard,
     },
     {
+      'name': 'Christopher Thomas',
+      'distance': '500m',
+
+      'time': '2 days ago',
+      'isOnline': true,
+      'avatarImage': Assets.imagesChatThomas,
+    },
+    {
       'name': 'Daniel Charles',
       'distance': '2.1km',
 
       'time': '3 days ago',
       'isOnline': true,
-      'avatarImage': Assets.imagesChatThomas,
+      'avatarImage': Assets.imagesChatCharles,
     },
   ];
 
@@ -59,7 +67,7 @@ class ChatPage extends StatelessWidget {
               child: SearchBarTile(
                 controller: _searchController,
                 onSearch: () {},
-                hintText: 'Search messages...',
+                hintText: 'Search by Name',
               ),
             ),
 
