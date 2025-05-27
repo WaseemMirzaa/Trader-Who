@@ -10,6 +10,15 @@ class AppColor {
   /// Pure black color (#000000).
   static const Color black = Color(0xFF000000);
 
+  /// Dark slate blue
+  static const Color darkSlateBlue = Color(0xff484E62);
+
+  static const Color grayChat = Color(0xFF858585);
+
+  static const Color grey = Color(0xFF6D6D6D);
+
+  static const Color grayHintText = Color(0xFF858585);
+
   ///
   static const Color purplecustomColor = Color(0xFF1E2A44);
 
@@ -30,6 +39,9 @@ class AppColor {
 
   /// Dark gray color (#202224).
   static const Color darkGray = Color(0xFF202224);
+
+  /// Light gray
+  static const Color lightGrayText = Color(0xFFF2F2F2);
 
   static const Color customOffWhite = Color(0xFFEDEEF1);
 
@@ -101,6 +113,9 @@ class AppColor {
   /// Light beige color (#E7E0DB).
   static const Color lightBeige = Color(0xFFE7E0DB);
 
+  /// Vibrant yellow color (#F1E235).
+  static const Color vibrantYellow = Color(0xFFF1E235);
+
   /// Darker gray color (#6D6D6D).
   static const Color darkerGray = Color(0xFF6D6D6D);
 
@@ -109,6 +124,9 @@ class AppColor {
 
   /// Bright yellow color (#FEC53D).
   static const Color yellow = Color(0xFFFEC53D);
+
+  ///
+  static const Color appbarBackground = Color(0xFFFCF3ED);
 
   /// Graphite gray color (#5C5C5C).
   static const Color graphite = Color(0xFF5C5C5C);
@@ -131,13 +149,26 @@ class AppColor {
   /// Dark navy color (#313649).
   static const Color darkNavy = Color(0xFF313649);
 
+  /// silver gray
+  static const Color silverGray = Color(0xFFBABCBF);
+
   /// Deep blue color (#132241).
   static const Color deepBlue = Color(0xFF132241);
+
+  static const Color darkGrayText = Color(0xFF575757);
 
   static const LinearGradient defaultGradient = LinearGradient(
     colors: [
       Color(0xFFFCF3ED), // #FCF3ED
       Color(0xFFEFEFF0), // #EFEFF0
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+  static const LinearGradient splashGradient = LinearGradient(
+    colors: [
+      Color(0xFF313649), // #313649
+      Color(0xFF162442), // #132241
     ],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,

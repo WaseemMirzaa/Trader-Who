@@ -100,6 +100,7 @@ dependencies:
   google_fonts: ^6.2.1
   get: ^4.7.2
   google_maps_flutter: ^2.12.2
+  flutter_rating_bar: ^4.0.1
 
 # Developer-specific dependencies for testing and tooling
 dev_dependencies:
@@ -129,11 +130,16 @@ flutter:
   fonts: # Added fonts section
     - family: HelveticaNeue
       fonts:
-        - asset: assets/fonts/HelveticaNeue-Regular.ttf
         - asset: assets/fonts/HelveticaNeue-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/HelveticaNeue-Light.ttf
-          weight: 300
+          
+    - family: HelveticaNeue
+      fonts:
+        - asset: assets/fonts/HelveticaNeue-Regular.ttf
+    - family: HelveticaNeue
+      fonts:    
+       - asset: assets/fonts/HelveticaNeue-Light.ttf
+        
+         
 
 # Configuration for asset management and code generation (if applicable)
 flutter_assets:

@@ -33,7 +33,7 @@ class TradeHomeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -62,7 +62,7 @@ class TradeHomeCard extends StatelessWidget {
                         style: const TextStyle(
                           color: AppColor.black,
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
@@ -70,8 +70,8 @@ class TradeHomeCard extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          Image.asset(
-                            Assets.imagesPounds,
+                          SvgPicture.asset(
+                            Assets.svgsPound,
                             width: 16,
                             height: 16,
                           ),
@@ -85,14 +85,14 @@ class TradeHomeCard extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: AppColor.black,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                   TextSpan(
                                     text: '£${job.price}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColor.darkGray,
+                                      color: AppColor.darkerGray,
                                     ),
                                   ),
                                 ],
@@ -156,15 +156,15 @@ class TradeHomeCard extends StatelessWidget {
                         text: 'Preferred Time: ',
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.darkGray,
-                          fontWeight: FontWeight.bold,
+                          color: AppColor.black,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       TextSpan(
                         text: job.preferredTime,
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.darkGray,
+                          color: AppColor.darkerGray,
                         ),
                       ),
                     ],
@@ -186,14 +186,14 @@ class TradeHomeCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           color: AppColor.darkGray,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       TextSpan(
                         text: job.address,
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.darkGray,
+                          color: AppColor.darkerGray,
                         ),
                       ),
                     ],

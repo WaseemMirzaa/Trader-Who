@@ -173,8 +173,8 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                Image.asset(
-                                  Assets.imagesPounds,
+                                SvgPicture.asset(
+                                  Assets.svgsPound,
                                   width: 16,
                                   height: 16,
                                 ),

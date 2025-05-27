@@ -47,7 +47,7 @@ class _TradeHomePageState extends State<TradeHomePage> {
                   const CustomText(
                     text: 'New Jobs',
                     fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: AppColor.black,
                   ),
                   TextButton(
@@ -57,7 +57,7 @@ class _TradeHomePageState extends State<TradeHomePage> {
                     child: CustomText(
                       text: 'View All',
                       color: AppColor.orangecustomColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],

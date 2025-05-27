@@ -2,7 +2,9 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:traderwho/core/extensions/media_query_extension.dart';
 import 'package:traderwho/core/shared_widgets/custom_bottom_sheet.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/shared_widgets/search_bar_tile.dart';

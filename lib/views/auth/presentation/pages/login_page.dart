@@ -31,8 +31,9 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
         title: const CustomText(
           text: 'Sign in Account',
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+          color: AppColor.customLightGray,
+          fontSize: 18,
+          fontWeight: FontWeight.normal,
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -48,198 +49,217 @@ class _LoginPageState extends State<LoginPage> {
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Gap(150),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Gap(150),
 
-                    // Email/Phone Field
-                    CustomTextField(
-                      fillColor: AppColor.mediumGray,
-                      borderColor: AppColor.mediumGray,
-                      controller: _emailController,
-                      hintText: 'Email/Phone',
-                      hintStyle: const TextStyle(color: AppColor.midGray),
-                      keyboardType: TextInputType.emailAddress,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Please enter your email or phone';
-                      //   }
-                      //   return null;
-                      // },
-                    ),
-                    const Gap(20),
+                      // Email/Phone Field
+                      CustomTextField(
+                        fillColor: AppColor.darkSlateBlue,
+                        borderColor: AppColor.darkSlateBlue,
+                        controller: _emailController,
+                        borderRadius: 11,
+                        hintText: 'Email/Phone',
 
-                    // Password Field
-                    CustomTextField(
-                      fillColor: AppColor.mediumGray,
-                      hintStyle: const TextStyle(color: AppColor.midGray),
-                      borderColor: AppColor.mediumGray,
-                      controller: _passwordController,
-                      hintText: 'Password',
-                      obscureText: true,
-                      showPasswordToggle: true,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Please enter your password';
-                      //   }
-                      //   if (value.length < 6) {
-                      //     return 'Password must be at least 6 characters';
-                      //   }
-                      //   return null;
-                      // },
-                    ),
-                    const Gap(10),
+                        keyboardType: TextInputType.emailAddress,
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Please enter your email or phone';
+                        //   }
+                        //   return null;
+                        // },
+                      ),
+                      const Gap(20),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Remember Me Checkbox
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: _rememberMe,
-                              onChanged: (value) {
-                                setState(() {
-                                  _rememberMe = value!;
-                                });
-                              },
-                              activeColor: AppColor.orangecustomColor,
-                              checkColor: AppColor.midGray,
-                            ),
-                            const CustomText(
-                              text: 'Remember me',
-                              color: AppColor.midGray,
+                      // Password Field
+                      CustomTextField(
+                        fillColor: AppColor.darkSlateBlue,
+                        borderColor: AppColor.darkSlateBlue,
+
+                        controller: _passwordController,
+                        hintText: 'Password',
+                        obscureText: true,
+                        showPasswordToggle: true,
+                        borderRadius: 11,
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Please enter your password';
+                        //   }
+                        //   if (value.length < 6) {
+                        //     return 'Password must be at least 6 characters';
+                        //   }
+                        //   return null;
+                        // },
+                      ),
+                      kGap10,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Remember Me Checkbox
+                          Row(
+                            children: [
+                              Checkbox(
+                                fillColor: WidgetStateProperty.all(
+                                  AppColor.darkSlateBlue,
+                                ),
+
+                                side: BorderSide(color: AppColor.silverGray),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    6.0,
+                                  ), // Adjust for roundness (e.g., 4.0 for slight rounding)
+                                ),
+                                value: _rememberMe,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _rememberMe = value!;
+                                  });
+                                },
+                                activeColor: AppColor.orangecustomColor,
+                                checkColor: AppColor.midGray,
+                              ),
+                              const CustomText(
+                                text: 'Remember me',
+                                color: AppColor.lightGrayText,
+                                fontSize: 14,
+                              ),
+                            ],
+                          ),
+
+                          // Forgot Password
+                          GestureDetector(
+                            onTap: () {
+                              // Add forgot password functionality
+                            },
+                            child: const CustomText(
+                              text: 'Forgot password?',
+                              color: AppColor.lightGrayText,
                               fontSize: 14,
-                            ),
-                          ],
-                        ),
-
-                        // Forgot Password
-                        GestureDetector(
-                          onTap: () {
-                            // Add forgot password functionality
-                          },
-                          child: const CustomText(
-                            text: 'Forgot password?',
-                            color: AppColor.midGray,
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Gap(30),
-
-                    // Sign In Button
-                    CustomButton(
-                      text: 'Sign In',
-                      onTap: () {
-                        if (_formKey.currentState!.validate()) {
-                          // Add sign in functionality
-                        }
-                      },
-                      width: double.infinity,
-                      height: screenHeight * 0.06,
-                      color: AppColor.orangecustomColor,
-                      textColor: Colors.white,
-                      fontSize: screenWidth > 600 ? 18 : 16,
-                      fontWeight: FontWeight.normal,
-                      radius: 25,
-                    ),
-                    const Gap(20),
-
-                    // Or Divider
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 50, // length of left divider
-                          child: Divider(color: AppColor.midGray, thickness: 1),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: CustomText(
-                            text: 'Sign-in with Apple/Google',
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 50, // length of right divider
-                          child: Divider(color: AppColor.midGray, thickness: 1),
-                        ),
-                      ],
-                    ),
-                    kGap20,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 140, // adjust width as needed
-                          child: CustomButton(
-                            text: 'Apple',
-                            icon: SvgPicture.asset(
-                              Assets.svgsApple,
-                              height: 20,
-                            ),
-                            enableIcon: true,
-                            color: Colors.white,
-                            textColor: Colors.black,
-                            onTap: () {},
-                            radius: 18,
-                            height: 50,
-                          ),
-                        ),
-                        kGap20,
-                        SizedBox(
-                          width: 140, // adjust width as needed
-                          child: CustomButton(
-                            text: 'Google',
-                            icon: SvgPicture.asset(
-                              Assets.svgsGoogle,
-                              height: 20,
-                            ),
-                            enableIcon: true,
-                            color: Colors.white,
-                            textColor: Colors.black,
-                            onTap: () {},
-                            radius: 18,
-                            height: 50,
-                          ),
-                        ),
-                      ],
-                    ),
-                    kGap20,
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
-                          color: AppColor.white,
-                        ),
-                        children: const [
-                          TextSpan(text: 'By continuing, you agree to our\n'),
-
-                          TextSpan(
-                            text: 'Privacy Policy',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                          TextSpan(text: ' – '),
-                          TextSpan(
-                            text: 'Content Policy',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    const Gap(20),
-                  ],
+                      const Gap(30),
+
+                      // Sign In Button
+                      CustomButton(
+                        text: 'Sign in',
+                        onTap: () {
+                          if (_formKey.currentState!.validate()) {
+                            // Add sign in functionality
+                          }
+                        },
+                        width: double.infinity,
+
+                        color: AppColor.orangecustomColor,
+                        textColor: Colors.white,
+                        fontSize: screenWidth > 600 ? 18 : 16,
+                        fontWeight: FontWeight.normal,
+                        radius: 25,
+                      ),
+                      const Gap(20),
+
+                      // Or Divider
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 50, // length of left divider
+                            child: Divider(
+                              color: AppColor.darkSlateBlue,
+                              thickness: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: CustomText(
+                              text: 'Sign-in with Apple/Google',
+                              color: AppColor.lightGrayText,
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 50, // length of right divider
+                            child: Divider(
+                              color: AppColor.darkSlateBlue,
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      kGap20,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 140, // adjust width as needed
+                            child: CustomButton(
+                              text: 'Apple',
+                              icon: SvgPicture.asset(
+                                Assets.svgsApple,
+                                height: 20,
+                              ),
+                              enableIcon: true,
+                              color: Colors.white,
+                              textColor: Colors.black,
+                              onTap: () {},
+                              radius: 18,
+                              height: 50,
+                            ),
+                          ),
+                          kGap20,
+                          SizedBox(
+                            width: 140, // adjust width as needed
+                            child: CustomButton(
+                              text: 'Google',
+                              icon: SvgPicture.asset(
+                                Assets.svgsGoogle,
+                                height: 20,
+                              ),
+                              enableIcon: true,
+                              color: Colors.white,
+                              textColor: Colors.black,
+                              onTap: () {},
+                              radius: 18,
+                              height: 50,
+                            ),
+                          ),
+                        ],
+                      ),
+                      kGap20,
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal,
+                            color: AppColor.white,
+                          ),
+                          children: const [
+                            TextSpan(text: 'By continuing, you agree to our\n'),
+
+                            TextSpan(
+                              text: 'Privacy Policy',
+                              style: TextStyle(
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            TextSpan(text: ' – '),
+                            TextSpan(
+                              text: 'Content Policy',
+                              style: TextStyle(
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Gap(20),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -3,6 +3,8 @@ import 'package:traderwho/core/theme/app_color.dart';
 
 class GradientScaffold extends StatelessWidget {
   final Widget body;
+  final bool isAppBar;
+  final AppBar? appBarSecond;
   final PreferredSizeWidget? appBar; // Make appBar nullable
   final Widget? drawer;
   final Widget? bottomNavigationBar;
@@ -11,14 +13,16 @@ class GradientScaffold extends StatelessWidget {
     super.key,
     required this.body,
     this.appBar,
+    this.isAppBar = false,
     this.drawer,
+    this.appBarSecond,
     this.bottomNavigationBar,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar,
+      appBar: isAppBar ? appBarSecond : appBar,
       drawer: drawer,
       bottomNavigationBar: bottomNavigationBar,
       body: Container(

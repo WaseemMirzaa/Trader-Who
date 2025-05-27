@@ -55,8 +55,8 @@ class MapViewCard extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          Image.asset(
-                            Assets.imagesPounds,
+                          SvgPicture.asset(
+                            Assets.svgsPound,
                             width: 16,
                             height: 16,
                           ),

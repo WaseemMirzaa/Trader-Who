@@ -161,8 +161,6 @@ class Assets {
   static const String imagesPlumber = "assets/images/plumber.png";
 
   /// Assets for imagesPounds
-  /// assets/images/pounds.png
-  static const String imagesPounds = "assets/images/pounds.png";
 
   /// Assets for imagesProfile
   /// assets/images/Profile.png
@@ -245,6 +243,11 @@ class Assets {
   /// assets/svgs/apple.svg
   static const String svgsApple = "assets/svgs/apple.svg";
 
+  /// Assets for svgsBlackNotification
+  /// assets/svgs/black-notification.svg
+  static const String svgsBlackNotification =
+      "assets/svgs/black-notification.svg";
+
   /// Assets for svgsCall
   /// assets/svgs/call.svg
   static const String svgsCall = "assets/svgs/call.svg";
@@ -304,6 +307,10 @@ class Assets {
   /// Assets for svgsPlumbing
   /// assets/svgs/plumbing.svg
   static const String svgsPlumbing = "assets/svgs/plumbing.svg";
+
+  /// Assets for svgsPound
+  /// assets/svgs/pound.svg
+  static const String svgsPound = "assets/svgs/pound.svg";
 
   /// Assets for svgsProfile
   /// assets/svgs/Profile.svg

@@ -12,23 +12,35 @@ class _NewAccountState extends State<NewAccountPage> {
   Widget build(BuildContext context) {
     final navController = NavigationController.to;
     return GradientScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-
-        title: CustomText(
-          text: 'Create New Account',
-          color: AppColor.black,
-          fontWeight: FontWeight.bold,
-          fontSize: context.responsiveFontSize(16),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 40),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.responsiveWidth(4),
+                vertical: context.responsiveHeight(4),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  CustomText(
+                    text: 'Create New Account',
+                    fontSize: context.responsiveFontSize(18),
+                    fontWeight: FontWeight.normal,
+                  ),
+                  SizedBox(
+                    width: context.responsiveWidth(12),
+                  ), // Spacer for balance
+                ],
+              ),
+            ),
+            SizedBox(height: context.responsiveHeight(15)),
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
@@ -37,8 +49,8 @@ class _NewAccountState extends State<NewAccountPage> {
                     Get.toNamed(AppRoutes.signup);
                   },
                   child: Container(
-                    width: context.responsiveWidth(45),
-                    height: context.responsiveHeight(20),
+                    width: 175,
+                    height: 150,
                     decoration: BoxDecoration(
                       color: AppColor.white,
                       borderRadius: BorderRadius.circular(20.0),
@@ -52,31 +64,29 @@ class _NewAccountState extends State<NewAccountPage> {
                       children: [
                         Image.asset(
                           Assets.imagesCustomer,
-                          height: context.responsiveHeight(6),
-                          width: context.responsiveWidth(12),
+                          height: 55,
+                          width: 62,
                         ),
                         SizedBox(height: context.responsiveHeight(1)),
                         CustomText(
                           text: 'Customer',
                           color: AppColor.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: context.responsiveFontSize(14),
+                          fontWeight: FontWeight.normal,
+                          fontSize: 20,
                         ),
                       ],
                     ),
                   ),
                 ),
-
                 SizedBox(height: context.responsiveHeight(3)),
-
                 GestureDetector(
                   onTap: () {
                     navController.setUserType(true);
                     Get.toNamed(AppRoutes.signup);
                   },
                   child: Container(
-                    width: context.responsiveWidth(45),
-                    height: context.responsiveHeight(20),
+                    width: 175,
+                    height: 150,
                     decoration: BoxDecoration(
                       color: AppColor.white,
                       borderRadius: BorderRadius.circular(20.0),
@@ -88,27 +98,22 @@ class _NewAccountState extends State<NewAccountPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          Assets.imagesPeople,
-                          height: context.responsiveHeight(6),
-                          width: context.responsiveWidth(12),
-                        ),
+                        Image.asset(Assets.imagesPeople, height: 62, width: 89),
                         SizedBox(height: context.responsiveHeight(1)),
                         CustomText(
-                          text: 'TradesPerson',
+                          text: 'Tradesperson',
                           color: AppColor.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: context.responsiveFontSize(14),
+                          fontWeight: FontWeight.normal,
+                          fontSize: 20,
                         ),
                       ],
                     ),
                   ),
                 ),
-
-                SizedBox(height: context.responsiveHeight(5)),
               ],
             ),
-          ),
+            SizedBox(height: context.responsiveHeight(5)),
+          ],
         ),
       ),
     );

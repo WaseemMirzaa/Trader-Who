@@ -29,16 +29,6 @@ class _SignupPageState extends State<SignupPage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return GradientScaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const CustomText(
-          text: 'Customer Sign Up',
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -52,11 +42,32 @@ class _SignupPageState extends State<SignupPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        CustomText(
+                          text: 'Customer Signup',
+                          fontSize: 18,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        const SizedBox(
+                          width: 48,
+                        ), // Invisible spacer to balance the row
+                      ],
+                    ),
                     const Gap(80),
 
                     // Email/Phone Field
                     CustomTextField(
                       controller: _fullNameController,
+                      borderColor: Colors.transparent,
                       hintText: 'Full Name',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
@@ -70,6 +81,7 @@ class _SignupPageState extends State<SignupPage> {
                     const Gap(20),
                     CustomTextField(
                       controller: _emailController,
+                      borderColor: Colors.transparent,
                       hintText: 'Email',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
@@ -83,6 +95,7 @@ class _SignupPageState extends State<SignupPage> {
                     const Gap(20),
                     CustomTextField(
                       controller: _phoneController,
+                      borderColor: Colors.transparent,
                       hintText: 'Phone',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
@@ -96,6 +109,7 @@ class _SignupPageState extends State<SignupPage> {
                     const Gap(20),
                     CustomTextField(
                       controller: _addressController,
+                      borderColor: Colors.transparent,
                       hintText: 'Address(auto-location/manual)',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
@@ -113,6 +127,7 @@ class _SignupPageState extends State<SignupPage> {
                       hintStyle: const TextStyle(color: AppColor.midGray),
 
                       controller: _passwordController,
+                      borderColor: Colors.transparent,
                       hintText: 'Password',
                       obscureText: true,
                       showPasswordToggle: true,
@@ -139,7 +154,7 @@ class _SignupPageState extends State<SignupPage> {
                         Get.offAllNamed(AppRoutes.mainPageWithNavBar);
                       },
                       width: double.infinity,
-                      height: screenHeight * 0.06,
+
                       color: AppColor.orangecustomColor,
                       textColor: Colors.white,
                       fontSize: screenWidth > 600 ? 18 : 16,
@@ -160,7 +175,7 @@ class _SignupPageState extends State<SignupPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: CustomText(
                             text: 'Sign-in with Apple/Google',
-                            color: AppColor.black,
+                            color: AppColor.darkGrayText,
                             fontSize: 12,
                           ),
                         ),
@@ -221,13 +236,6 @@ class _SignupPageState extends State<SignupPage> {
                         children: const [
                           TextSpan(text: 'By continuing, you agree to our\n'),
 
-                          TextSpan(
-                            text: 'Terms of Service',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                          TextSpan(text: ' – '),
                           TextSpan(
                             text: 'Privacy Policy',
                             style: TextStyle(

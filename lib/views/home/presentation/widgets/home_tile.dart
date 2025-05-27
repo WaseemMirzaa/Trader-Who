@@ -18,6 +18,8 @@ class HomeTiles extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        height: 105,
+        width: 105,
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -41,7 +43,7 @@ class HomeTiles extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: AppColor.coolGray,
+                color: AppColor.grey,
               ),
             ),
           ],

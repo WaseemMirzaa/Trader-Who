@@ -13,7 +13,13 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
-      appBar: TradePersonDetailsAppBar(person: widget.person),
+      appBar: TradePersonDetailsAppBar(
+        person: widget.person,
+        onBackPressed: () {
+          Navigator.pop(context);
+        },
+        screenHeight: context.screenHeight * 0.4 + 17,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -22,7 +28,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
             children: [
               // Biography Section
               _buildSectionTitle("Biography"),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               Text(
                 "Hi, I'm ${widget.person.name}, a licensed plumbing professional"
                 "with over 10 years of experience helping homeowners and businesses keep their\n"
@@ -30,13 +36,12 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 "pipe installations, I bring dependable, high-quality services with a\n"
                 "focus on getting the job done right the first time.",
                 style: TextStyle(
-                  fontSize: 16,
-                  color: AppColor.mutedGray,
+                  fontSize: 12,
+                  color: AppColor.darkerGray,
                   height: 1.5,
                 ),
               ),
               kGap10,
-
               // Client Reviews/Testimonials Section
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -70,18 +75,21 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               // Star Rating (5 stars)
-              Row(
-                children: List.generate(
-                  5,
-                  (index) => Image.asset(
-                    Assets.imagesIconawesomeStar,
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
+              RatingBar.builder(
+                initialRating: widget.person.rating.toDouble(),
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 4,
+                itemSize: 18,
+                ignoreGestures: true, // Makes it read-only
+                itemBuilder:
+                    (context, _) =>
+                        Icon(Icons.star, color: AppColor.vibrantYellow),
+                onRatingUpdate: (rating) {},
               ),
               kGap10,
 
@@ -91,33 +99,36 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 "service every time. Highly recommended!",
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppColor.darkGray,
+                  color: AppColor.darkerGray,
                   height: 1.5,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               // Reviewer Name
               Text(
                 "Jason Rao",
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColor.darkBlue,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: AppColor.black,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 29),
 
               // Second Review (same pattern)
-              Row(
-                children: List.generate(
-                  5,
-                  (index) => Image.asset(
-                    Assets.imagesIconawesomeStar,
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
+              RatingBar.builder(
+                initialRating: widget.person.rating.toDouble(),
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 4,
+                itemSize: 18,
+                ignoreGestures: true,
+                itemBuilder:
+                    (context, _) =>
+                        Icon(Icons.star, color: AppColor.vibrantYellow),
+                onRatingUpdate: (rating) {},
               ),
               kGap10,
               Text(
@@ -125,17 +136,17 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 "great service provided by the tradesperson.",
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppColor.darkGray,
+                  color: AppColor.darkerGray,
                   height: 1.5,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               Text(
                 "Thomas Christopher",
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColor.darkBlue,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: AppColor.black,
                 ),
               ),
               kGap10,
@@ -150,8 +161,8 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
     return Text(
       title,
       style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
+        fontSize: 18,
+        fontWeight: FontWeight.w400,
         color: Colors.black,
       ),
     );

@@ -14,7 +14,7 @@ class JobHistoryDetailAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       flexibleSpace: Container(
@@ -59,14 +59,14 @@ class JobHistoryDetailAppBar extends StatelessWidget
                       Align(
                         alignment: Alignment.center,
                         child: Text(
-                          job.status == 'Accepted' && job.tradesPerson != null
-                              ? 'Accepted by ${job.tradesPerson!.name}'
+                          job.status == 'Accepted'
+                              ? 'Accepted by ${job.tradesPerson.name}'
                               : job.status == 'Waiting for porposal'
                               ? 'Details'
                               : job.title,
                           style: const TextStyle(
                             fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w400,
                             color: Colors.black,
                           ),
                         ),

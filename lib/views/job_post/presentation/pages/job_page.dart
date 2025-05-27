@@ -39,7 +39,7 @@ class _JobPageState extends State<JobPage> {
         child: Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: screenWidth > 600 ? 400 : screenWidth * 0.9,
+              maxWidth: screenWidth > 600 ? 400 : screenWidth * 0.96,
               minHeight: screenHeight,
             ),
             child: SingleChildScrollView(
@@ -53,7 +53,7 @@ class _JobPageState extends State<JobPage> {
                   CustomText(
                     text: 'Category Select',
                     fontSize: screenWidth > 600 ? 18 : 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
                   const Gap(10),
@@ -62,8 +62,19 @@ class _JobPageState extends State<JobPage> {
                   CustomTextField(
                     fillColor: AppColor.white,
                     controller: _titleController,
+                    borderColor: AppColor.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 9,
+                      horizontal: 14,
+                    ),
+                    borderRadius: 10,
+                    height: 45,
                     hintText: 'Write title',
-                    hintStyle: const TextStyle(color: AppColor.midGray),
+                    fontStyle: FontStyle.normal,
+                    hintStyle: const TextStyle(
+                      color: AppColor.grayHintText,
+                      fontSize: 15,
+                    ),
                     keyboardType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -78,7 +89,7 @@ class _JobPageState extends State<JobPage> {
                   CustomText(
                     text: 'Job Type',
                     fontSize: screenWidth > 600 ? 18 : 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
                   const Gap(10),
@@ -107,16 +118,26 @@ class _JobPageState extends State<JobPage> {
                   CustomText(
                     text: 'Location',
                     fontSize: screenWidth > 600 ? 18 : 16,
-                    fontWeight: FontWeight.bold,
+
+                    fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
                   const Gap(10),
                   CustomTextField(
+                    height: 45,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 9,
+                      horizontal: 14,
+                    ),
                     fillColor: AppColor.white,
                     controller: _locationController,
-
+                    borderColor: AppColor.white,
+                    fontStyle: FontStyle.normal,
                     hintText: 'Auto-fill from GPS or manual entry',
-                    hintStyle: const TextStyle(color: AppColor.midGray),
+                    hintStyle: const TextStyle(
+                      color: AppColor.grayHintText,
+                      fontSize: 15,
+                    ),
                     keyboardType: TextInputType.streetAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -131,15 +152,20 @@ class _JobPageState extends State<JobPage> {
                   CustomText(
                     text: 'Job Description',
                     fontSize: screenWidth > 600 ? 18 : 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
                   const Gap(10),
                   CustomTextField(
+                    fontStyle: FontStyle.normal,
                     fillColor: AppColor.white,
                     controller: _descriptionController,
+                    borderColor: AppColor.white,
                     hintText: 'Describe what needs fixing...',
-                    hintStyle: const TextStyle(color: AppColor.midGray),
+                    hintStyle: const TextStyle(
+                      color: AppColor.grayHintText,
+                      fontSize: 15,
+                    ),
                     keyboardType: TextInputType.multiline,
                     maxLines: 5,
                     height: screenHeight * 0.13, // Increased height
@@ -154,16 +180,16 @@ class _JobPageState extends State<JobPage> {
                       return null;
                     },
                   ),
-                  const Gap(60),
+                  const Gap(100),
 
                   // Find TradePeople Button
                   CustomButton(
-                    text: 'Find TradePeople',
+                    text: 'Find Tradepeople',
                     onTap: () {
                       Get.toNamed(AppRoutes.tradeContainer);
                     },
                     width: double.infinity,
-                    height: screenHeight * 0.06,
+
                     color: AppColor.darkBlue,
                     textColor: AppColor.white,
                     fontWeight: FontWeight.normal,

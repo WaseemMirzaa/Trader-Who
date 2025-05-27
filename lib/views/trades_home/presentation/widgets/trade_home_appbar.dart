@@ -11,7 +11,7 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     ).format(DateTime.now());
 
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 400, // Adjusted to accommodate new row
@@ -49,7 +49,7 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                             'Home',
                             style: TextStyle(
                               fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: Colors.black,
                             ),
                           ),
@@ -77,7 +77,7 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         'Upcoming Jobs',
                         style: TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           color: Colors.black,
                         ),
                       ),
@@ -85,7 +85,7 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         currentMonthYear, // e.g., "May 2025"
                         style: const TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w400,
                           color: Colors.black,
                         ),
                       ),

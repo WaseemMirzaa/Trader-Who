@@ -4,19 +4,21 @@ class TradePersonDetailsAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final TradesPerson person;
   final VoidCallback? onBackPressed;
+  final double screenHeight;
 
   const TradePersonDetailsAppBar({
     super.key,
     required this.person,
     this.onBackPressed,
+    required this.screenHeight,
   });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       elevation: 0,
-      toolbarHeight: 300,
+      toolbarHeight: screenHeight,
       automaticallyImplyLeading: false,
       flexibleSpace: Container(
         margin: EdgeInsets.zero,
@@ -28,7 +30,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -40,42 +42,37 @@ class TradePersonDetailsAppBar extends StatelessWidget
           child: Padding(
             padding: context.responsivePadding(horizontal: 3, vertical: 3),
             child: Column(
+              spacing: 20,
               children: [
-                Stack(
+                Row(
                   children: [
-                    Center(
-                      child: Text(
-                        'Details',
-                        style: TextStyle(
-                          fontSize: context.responsiveFontSize(24),
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                        size: context.responsiveFontSize(24),
                       ),
+                      onPressed: onBackPressed ?? () => Navigator.pop(context),
+                      padding: context.responsivePadding(
+                        horizontal: 0.5,
+                        vertical: 0.5,
+                      ),
+                      constraints: const BoxConstraints(),
                     ),
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                          size: context.responsiveFontSize(24),
-                        ),
-                        onPressed:
-                            onBackPressed ?? () => Navigator.pop(context),
-                        padding: context.responsivePadding(
-                          horizontal: 0.5,
-                          vertical: 0.5,
-                        ),
-                        constraints: const BoxConstraints(),
+                    SizedBox(width: 100),
+                    Text(
+                      'Details',
+                      style: TextStyle(
+                        fontSize: context.responsiveFontSize(18),
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: context.responsiveHeight(2)),
+
                 _buildAvatarWithFallback(context),
-                SizedBox(height: context.responsiveHeight(2)),
+
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -83,20 +80,20 @@ class TradePersonDetailsAppBar extends StatelessWidget
                       person.name,
                       style: TextStyle(
                         fontSize: context.responsiveFontSize(20),
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        color: AppColor.black,
                       ),
                     ),
-                    SizedBox(height: context.responsiveHeight(1)),
+                    kGap10,
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          Assets.imagesPounds,
+                        SvgPicture.asset(
+                          Assets.svgsPound,
                           width: context.responsiveWidth(4),
                           height: context.responsiveWidth(4),
                         ),
-                        SizedBox(width: context.responsiveWidth(1)),
+                        kGap5,
                         RichText(
                           text: TextSpan(
                             children: [
@@ -104,7 +101,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                                 text: 'Price: ',
                                 style: TextStyle(
                                   fontSize: context.responsiveFontSize(15),
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   color: Colors.black,
                                 ),
                               ),
@@ -120,7 +117,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                         ),
                       ],
                     ),
-                    SizedBox(height: context.responsiveHeight(1)),
+                    kGap15,
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -129,7 +126,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                           width: context.responsiveWidth(4),
                           height: context.responsiveWidth(4),
                         ),
-                        const SizedBox(width: 10),
+                        kGap5,
                         RichText(
                           text: TextSpan(
                             children: [
@@ -138,6 +135,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                                 style: TextStyle(
                                   fontSize: context.responsiveFontSize(14),
                                   color: AppColor.black,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               TextSpan(
@@ -152,7 +150,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    kGap15,
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: SingleChildScrollView(
@@ -169,7 +167,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                                 text: 'Book Now',
                                 onTap: () {},
                                 width: context.responsiveWidth(29),
-                                height: context.responsiveHeight(4),
+                                height: context.responsiveHeight(4.5),
                                 color: AppColor.orangecustomColor,
                                 textColor: Colors.white,
                                 fontWeight: FontWeight.normal,
@@ -234,8 +232,8 @@ class TradePersonDetailsAppBar extends StatelessWidget
 
   Widget _buildAvatarWithFallback(BuildContext context) {
     return Container(
-      width: context.responsiveWidth(16),
-      height: context.responsiveWidth(16),
+      width: context.responsiveWidth(24),
+      height: context.responsiveWidth(24),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: AppColor.midGray.withOpacity(0.2),
@@ -253,5 +251,5 @@ class TradePersonDetailsAppBar extends StatelessWidget
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(300);
+  Size get preferredSize => Size.fromHeight(screenHeight);
 }

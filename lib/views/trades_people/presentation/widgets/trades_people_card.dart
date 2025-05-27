@@ -26,7 +26,7 @@ class TradesPeopleCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.grey.withOpacity(0.0),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -51,7 +51,7 @@ class TradesPeopleCard extends StatelessWidget {
                           style: const TextStyle(
                             color: AppColor.black,
                             fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Row(
@@ -76,7 +76,7 @@ class TradesPeopleCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: AppColor.mutedGray,
+                                color: AppColor.darkerGray,
                               ),
                             ),
                           ],
@@ -91,7 +91,7 @@ class TradesPeopleCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColor.midGray.withOpacity(0.2),
+                    color: AppColor.lightCyan,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -118,13 +118,13 @@ class TradesPeopleCard extends StatelessWidget {
                     text: 'Expertise: ',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w400,
                       color: Colors.black,
                     ),
                   ),
                   TextSpan(
                     text: person.expertise,
-                    style: TextStyle(fontSize: 18, color: AppColor.mutedGray),
+                    style: TextStyle(fontSize: 18, color: AppColor.darkerGray),
                   ),
                 ],
               ),
@@ -132,7 +132,12 @@ class TradesPeopleCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               person.description,
-              style: TextStyle(fontSize: 14, color: AppColor.darkGray),
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColor.darkerGray,
+
+                fontWeight: FontWeight.w500,
+              ),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
@@ -144,8 +149,8 @@ class TradesPeopleCard extends StatelessWidget {
 
   Widget _buildAvatarWithFallback() {
     return Container(
-      width: 48,
-      height: 48,
+      width: 55,
+      height: 55,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: AppColor.midGray.withOpacity(0.2),

@@ -37,7 +37,7 @@ class ChatCard extends StatelessWidget {
                         name,
                         style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: AppColor.black,
                         ),
                       ),
@@ -56,7 +56,7 @@ class ChatCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '$distance away from your location',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                    style: TextStyle(fontSize: 13, color: AppColor.grayChat),
                   ),
                 ],
               ),

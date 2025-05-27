@@ -160,7 +160,7 @@ class CustomNavBar extends StatelessWidget {
             border:
                 isSelected
                     ? const Border(
-                      top: BorderSide(color: AppColor.darkBlue, width: 3),
+                      top: BorderSide(color: AppColor.darkBlue, width: 2),
                     )
                     : null,
           ),

@@ -14,7 +14,7 @@ class _ChatAppbarState extends State<ChatAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 120,
@@ -28,7 +28,7 @@ class _ChatAppbarState extends State<ChatAppbar> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -52,7 +52,7 @@ class _ChatAppbarState extends State<ChatAppbar> {
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -62,7 +62,7 @@ class _ChatAppbarState extends State<ChatAppbar> {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: SvgPicture.asset(
-                            Assets.svgsNotification,
+                            Assets.svgsBlackNotification,
                             width: 24,
                             height: 24,
                           ),

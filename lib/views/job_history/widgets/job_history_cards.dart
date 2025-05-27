@@ -17,7 +17,7 @@ class JobHistoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -46,7 +46,7 @@ class JobHistoryCard extends StatelessWidget {
                         style: const TextStyle(
                           color: AppColor.black,
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w400,
                         ),
                         overflow: TextOverflow.ellipsis, // Truncate long titles
                         maxLines: 1, // Limit to one line
@@ -54,18 +54,19 @@ class JobHistoryCard extends StatelessWidget {
                       kGap10, // Assuming this is a SizedBox(height: 10)
                       Row(
                         children: [
-                          Image.asset(
-                            Assets.imagesPounds,
-                            width: 16,
-                            height: 16,
+                          SvgPicture.asset(
+                            Assets.svgsPound,
+                            width: 14,
+                            height: 14,
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               'Small Job– Fixed Price: \$${job.price}',
                               style: TextStyle(
-                                fontSize: 14,
-                                color: AppColor.darkGray,
+                                fontSize: 12,
+                                color: AppColor.black,
+                                fontWeight: FontWeight.w600,
                               ),
                               overflow:
                                   TextOverflow.ellipsis, // Truncate long text
@@ -96,7 +97,7 @@ class JobHistoryCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 12,
                       color: AppColor.black,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis, // Truncate long status
                     maxLines: 1, // Limit to one line
@@ -118,14 +119,14 @@ class JobHistoryCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           color: AppColor.darkGray,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       TextSpan(
                         text: job.preferredTime,
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.darkGray,
+                          color: AppColor.darkerGray,
                         ),
                       ),
                     ],
@@ -147,14 +148,14 @@ class JobHistoryCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           color: AppColor.darkGray,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       TextSpan(
                         text: job.address,
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.darkGray,
+                          color: AppColor.darkerGray,
                         ),
                       ),
                     ],

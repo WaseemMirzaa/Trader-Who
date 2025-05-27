@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
-import 'package:traderwho/core/shared_widgets/custom_nav_bar.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/shared_widgets/custom_text.dart';
 import 'package:traderwho/core/shared_widgets/custom_toggle_button.dart';

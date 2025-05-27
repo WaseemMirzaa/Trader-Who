@@ -11,7 +11,9 @@ class FeedbackScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColor.white, // White background
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey), // Optional: keep light border
+          border: Border.all(
+            color: Colors.white,
+          ), // Optional: keep light border
         ),
         child: TextButton(
           style: TextButton.styleFrom(
@@ -26,7 +28,7 @@ class FeedbackScreen extends StatelessWidget {
           },
           child: Text(
             amount,
-            style: TextStyle(fontSize: 14, color: AppColor.black),
+            style: TextStyle(fontSize: 14, color: AppColor.darkerGray),
             textAlign: TextAlign.center,
           ),
         ),
@@ -38,8 +40,7 @@ class FeedbackScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: AppColor.lightPeach,
+    return GradientScaffold(
       appBar: const FeedBackAppbar(),
       body: SingleChildScrollView(
         child: Padding(
@@ -55,7 +56,7 @@ class FeedbackScreen extends StatelessWidget {
                 style: TextStyle(
                   color: AppColor.black,
                   fontSize: context.responsiveFontSize(22),
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               kGap10,
@@ -73,20 +74,33 @@ class FeedbackScreen extends StatelessWidget {
               SizedBox(height: context.responsiveHeight(2)),
 
               // Five stars rating
-              Image.asset(
-                Assets.imagesFiveStars,
-                width: context.responsiveWidth(30),
-                fit: BoxFit.contain,
+              RatingBar.builder(
+                initialRating: 5,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemSize: 21,
+                ignoreGestures: true, // Makes it read-only
+                itemBuilder:
+                    (context, _) =>
+                        Icon(Icons.star, color: AppColor.vibrantYellow),
+                onRatingUpdate: (rating) {},
               ),
-              SizedBox(height: context.responsiveHeight(4)),
+              SizedBox(height: context.responsiveHeight(2)),
 
               // Comments text field
               CustomTextField(
                 fillColor: AppColor.white,
+                borderColor: AppColor.white,
                 // controller: _descriptionController,
                 hintText:
-                    ' please share any comments or suggestions to help us improve your next visit.',
-                hintStyle: const TextStyle(color: AppColor.midGray),
+                    ' Please share any comments or suggestions to help us improve your next visit.',
+                fontStyle: FontStyle.normal,
+                hintStyle: const TextStyle(
+                  color: AppColor.midGray,
+                  fontSize: 13,
+                ),
                 keyboardType: TextInputType.multiline,
                 maxLines: 5,
                 height: screenHeight * 0.13, // Increased height
@@ -107,7 +121,7 @@ class FeedbackScreen extends StatelessWidget {
                     textAlign: TextAlign.start, // Align text to the left
                     style: TextStyle(
                       fontSize: context.responsiveFontSize(16),
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: AppColor.black,
                     ),
                   ),
@@ -140,6 +154,7 @@ class FeedbackScreen extends StatelessWidget {
               // Submit button
               CustomButton(
                 text: 'Submit Review & Tip',
+                textColor: AppColor.white,
                 color: AppColor.darkBlue,
               ),
               SizedBox(height: context.responsiveHeight(2)),

@@ -11,7 +11,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
     final double avatarImageSize = avatarRadius * 2;
 
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 280, // Increased height to accommodate the layout
@@ -99,7 +99,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                   text: '@katemiddleton',
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
-                  color: AppColor.midGray,
+                  color: AppColor.darkerGray,
                 ),
               ],
             ),

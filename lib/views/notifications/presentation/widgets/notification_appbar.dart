@@ -14,7 +14,7 @@ class _NotificationAppbarState extends State<NotificationAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 120,
@@ -51,8 +51,8 @@ class _NotificationAppbarState extends State<NotificationAppbar> {
                           "Notification",
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),

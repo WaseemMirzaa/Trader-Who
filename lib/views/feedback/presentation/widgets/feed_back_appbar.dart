@@ -6,7 +6,7 @@ class FeedBackAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       elevation: 0,
       toolbarHeight: 60,
       leading: IconButton(
@@ -35,7 +35,7 @@ class FeedBackAppbar extends StatelessWidget implements PreferredSizeWidget {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: 6),
                 // This is the row with centered FeedBackAppbar and right-aligned notification
                 const Expanded(
                   child: Center(
@@ -43,7 +43,7 @@ class FeedBackAppbar extends StatelessWidget implements PreferredSizeWidget {
                       'We Value Your Feedback',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
                     ),

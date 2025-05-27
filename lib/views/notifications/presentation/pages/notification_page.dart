@@ -40,6 +40,7 @@ class NotificationPage extends StatelessWidget {
             children: [
               CustomText(
                 text: 'New Notifications',
+                fontWeight: FontWeight.w500,
                 fontSize: context.responsiveFontSize(18),
               ),
               SizedBox(height: context.responsiveHeight(2)),
@@ -55,7 +56,8 @@ class NotificationPage extends StatelessWidget {
                       Flexible(
                         child: CustomText(
                           text: 'Job Reassessment - Action Required',
-                          fontSize: context.responsiveFontSize(14),
+                          fontWeight: FontWeight.w500,
+                          fontSize: context.responsiveFontSize(16),
                         ),
                       ),
                       CustomText(
@@ -128,6 +130,7 @@ class NotificationPage extends StatelessWidget {
 
                   CustomText(
                     text: 'New Notifications',
+                    fontWeight: FontWeight.w500,
                     fontSize: context.responsiveFontSize(18),
                   ),
                   SizedBox(height: context.responsiveHeight(1.2)),

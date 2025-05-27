@@ -16,7 +16,7 @@ class TradesPeopleAppbar extends StatelessWidget
 
     return Obx(
       () => AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColor.appbarBackground,
         elevation: 0,
         toolbarHeight: 120,
         flexibleSpace: Container(
@@ -49,11 +49,11 @@ class TradesPeopleAppbar extends StatelessWidget
                         Positioned.fill(
                           child: Center(
                             child: Text(
-                              "Job History",
+                              "Tradespeople",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.normal,
                               ),
                             ),
                           ),
@@ -83,7 +83,11 @@ class TradesPeopleAppbar extends StatelessWidget
                                     ),
                                     child: SvgPicture.asset(
                                       Assets.svgsNomap,
-                                      color: AppColor.white,
+                                      color:
+                                          controller.selectedIndex.value == 0
+                                              ? AppColor.white
+                                              : Colors
+                                                  .black, // White when selected, black when not
                                       width: 18,
                                       height: 18,
                                     ),
@@ -103,7 +107,11 @@ class TradesPeopleAppbar extends StatelessWidget
                                     ),
                                     child: SvgPicture.asset(
                                       Assets.svgsMap,
-                                      color: AppColor.white,
+                                      color:
+                                          controller.selectedIndex.value == 1
+                                              ? AppColor.white
+                                              : Colors
+                                                  .black, // White when selected, black when not
                                       width: 18,
                                       height: 18,
                                     ),

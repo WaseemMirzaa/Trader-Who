@@ -14,7 +14,7 @@ class _JobHistoryAppbarState extends State<JobHistoryAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 120,
@@ -51,8 +51,8 @@ class _JobHistoryAppbarState extends State<JobHistoryAppbar> {
                           "Job History",
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -62,7 +62,7 @@ class _JobHistoryAppbarState extends State<JobHistoryAppbar> {
                         child: InkWell(
                           onTap: () => Get.toNamed(AppRoutes.notificationPage),
                           child: SvgPicture.asset(
-                            Assets.svgsNotification,
+                            Assets.svgsBlackNotification,
                             width: 24,
                             height: 24,
                           ),

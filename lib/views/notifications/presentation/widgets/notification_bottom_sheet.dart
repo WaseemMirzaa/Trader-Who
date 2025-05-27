@@ -48,7 +48,7 @@ class NotificationBottomSheet extends StatelessWidget {
                     title,
                     style: const TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: AppColor.black,
                     ),
                   ),
@@ -89,7 +89,7 @@ class NotificationBottomSheet extends StatelessWidget {
                         const TextSpan(text: 'They have submitted a '),
                         TextSpan(
                           text: '"Reassessed Price of 200"',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                         const TextSpan(
                           text: ' based on the updated job scope.',
@@ -124,10 +124,10 @@ class NotificationBottomSheet extends StatelessWidget {
                 // Reject Button
                 Expanded(
                   child: CustomButton(
-                    text: 'Reject',
-                    onTap: onReject ?? () {},
+                    text: 'Accept',
+                    onTap: onAccept ?? () {},
                     height: 50,
-                    color: AppColor.orangecustomColor,
+                    color: AppColor.darkBlue,
                     textColor: AppColor.white,
                     fontWeight: FontWeight.bold,
                     radius: 25,
@@ -138,10 +138,10 @@ class NotificationBottomSheet extends StatelessWidget {
                 // Accept Button
                 Expanded(
                   child: CustomButton(
-                    text: 'Accept',
-                    onTap: onAccept ?? () {},
+                    text: 'Reject',
+                    onTap: onReject ?? () {},
                     height: 50,
-                    color: AppColor.darkBlue,
+                    color: AppColor.orangecustomColor,
                     textColor: AppColor.white,
                     fontWeight: FontWeight.bold,
                     radius: 25,

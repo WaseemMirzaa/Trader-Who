@@ -10,7 +10,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     final double avatarImageSize = avatarRadius * 2;
 
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 200,
@@ -50,8 +50,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                             child: const Text(
                               'Home',
                               style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
                                 color: Colors.black,
                               ),
                             ),
@@ -78,6 +78,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                       CustomCircleAvatar(
                         radius: avatarRadius,
                         circleColor: AppColor.orangecustomColor,
+
                         child: Image(
                           image: AssetImage(Assets.imagesCircularAvatar),
                           width: avatarImageSize,
@@ -92,8 +93,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                           children: [
                             CustomText(
                               text: 'Hi, Alex Jerome!',
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 24,
+                              fontWeight: FontWeight.normal,
                               color: Colors.black,
                             ),
                             kGap10,
@@ -102,7 +103,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                               decorationColor: AppColor.midGray,
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
-                              color: Colors.black,
+                              color: AppColor.darkerGray,
                             ),
                           ],
                         ),

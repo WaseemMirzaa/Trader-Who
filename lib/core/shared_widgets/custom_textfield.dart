@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../theme/app_color.dart';
-import '../theme/constant.dart';
-import 'custom_text.dart';
+import 'package:traderwho/core/theme/app_color.dart';
 
 class CustomTextField extends StatefulWidget {
   final bool enabled;
@@ -37,11 +34,14 @@ class CustomTextField extends StatefulWidget {
   final Color borderColor;
   final Color fillColor;
   final String? fieldHeading;
-  final String? leftLabel; // Used as hintText if hintText is null
+  final String? leftLabel;
   final double? height;
   final double? width;
   final bool autofocus;
   final Color? passwordToggleIconColor;
+  final bool isCircular;
+  final double? circularRadius;
+  final FontStyle? fontStyle;
 
   const CustomTextField({
     super.key,
@@ -71,16 +71,19 @@ class CustomTextField extends StatefulWidget {
     this.obscureText = false,
     this.showPasswordToggle = false,
     this.textAlign = TextAlign.start,
-    this.textColor = AppColor.mediumGray,
+    this.textColor = Colors.grey,
     this.textInputAction = TextInputAction.go,
-    this.borderColor = AppColor.lightGray,
-    this.fillColor = AppColor.veryLightGray,
+    this.borderColor = Colors.grey,
+    this.fillColor = Colors.white,
     this.fieldHeading,
     this.leftLabel,
-    this.height = 60,
+    this.height,
     this.width,
     this.autofocus = false,
-    this.passwordToggleIconColor = AppColor.white,
+    this.passwordToggleIconColor = AppColor.lightGrayText,
+    this.isCircular = false,
+    this.circularRadius,
+    this.fontStyle,
   });
 
   @override
@@ -100,21 +103,36 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate effective height
+    final effectiveHeight = widget.height ?? (widget.isCircular ? 40.0 : 55.0);
+
+    // Calculate effective border radius
+    final effectiveBorderRadius =
+        widget.isCircular
+            ? widget.circularRadius ?? effectiveHeight / 2
+            : widget.borderRadius ?? 15.0;
+
+    // Calculate effective width - match height if circular
+    final effectiveWidth = widget.isCircular ? effectiveHeight : widget.width;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         if (widget.fieldHeading != null)
           Padding(
-            padding: kOB10,
-            child: CustomText(
-              text: widget.fieldHeading!,
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: AppColor.mediumGray,
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(
+              widget.fieldHeading!,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: AppColor.lightGrayText,
+              ),
             ),
           ),
         SizedBox(
-          height: widget.height,
+          height: effectiveHeight,
+          width: effectiveWidth,
           child: TextFormField(
             onTap: widget.onTap,
             enabled: widget.enabled,
@@ -146,7 +164,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             autofocus: widget.autofocus,
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
+              fontStyle: widget.fontStyle ?? FontStyle.italic,
               color: widget.textColor,
             ),
             decoration: InputDecoration(
@@ -167,53 +186,45 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         ),
                       )
                       : widget.suffixIcon,
-              hintText:
-                  widget.hintText ??
-                  widget.leftLabel, // Use leftLabel as fallback
+              hintText: widget.hintText ?? widget.leftLabel,
               errorMaxLines: widget.errorMaxLines,
               contentPadding:
                   widget.contentPadding ??
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-              errorStyle: const TextStyle(color: AppColor.red),
+                  EdgeInsets.symmetric(
+                    horizontal: widget.isCircular ? effectiveHeight / 3 : 16,
+                    vertical: widget.isCircular ? 0 : 15,
+                  ),
+              errorStyle: const TextStyle(color: Colors.red),
               hintStyle:
                   widget.hintStyle ??
                   const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: AppColor.mediumGray,
+                    color: AppColor.lightGrayText,
                   ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: widget.borderColor),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(widget.borderRadius ?? 15),
-                ),
+                borderRadius: BorderRadius.circular(effectiveBorderRadius),
               ),
               disabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: widget.borderColor),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(widget.borderRadius ?? 15),
-                ),
+                borderRadius: BorderRadius.circular(effectiveBorderRadius),
               ),
               errorBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: AppColor.red),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(widget.borderRadius ?? 15),
-                ),
+                borderSide: const BorderSide(color: Colors.red),
+                borderRadius: BorderRadius.circular(effectiveBorderRadius),
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: widget.borderColor),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(widget.borderRadius ?? 15),
-                ),
+                borderRadius: BorderRadius.circular(effectiveBorderRadius),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: AppColor.red),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(widget.borderRadius ?? 15),
-                ),
+                borderSide: const BorderSide(color: Colors.red),
+                borderRadius: BorderRadius.circular(effectiveBorderRadius),
               ),
               fillColor: widget.fillColor,
               filled: true,
+              isDense: true,
             ),
           ),
         ),

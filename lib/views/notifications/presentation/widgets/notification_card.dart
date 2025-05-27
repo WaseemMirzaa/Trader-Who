@@ -33,16 +33,13 @@ class NotificationCard extends StatelessWidget {
                       title,
                       style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: AppColor.black,
                       ),
                     ),
                     Text(
                       time,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade500,
-                      ),
+                      style: TextStyle(fontSize: 12, color: AppColor.grey),
                     ),
                   ],
                 ),

@@ -54,24 +54,40 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                               style: const TextStyle(
                                 color: AppColor.black,
                                 fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                Image.asset(
-                                  Assets.imagesPounds,
+                                SvgPicture.asset(
+                                  Assets.svgsPound,
                                   width: 16,
                                   height: 16,
                                 ),
                                 const SizedBox(width: 4),
                                 Flexible(
-                                  child: Text(
-                                    'Small Job - Fixed Price: £${widget.job.price}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.darkGray,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Small Job - Fixed Price: ',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColor.black,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '£${widget.job.price}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color:
+                                                AppColor
+                                                    .darkerGray, // Or any other color you prefer
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -114,15 +130,15 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                               text: 'Preferred Time: ',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.darkGray,
-                                fontWeight: FontWeight.bold,
+                                color: AppColor.black,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             TextSpan(
                               text: widget.job.preferredTime,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.darkGray,
+                                color: AppColor.darkerGray,
                               ),
                             ),
                           ],
@@ -136,7 +152,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                     'Description',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: AppColor.black,
                     ),
                   ),
@@ -144,7 +160,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                   Text(
                     widget.job.tradesPerson.description ??
                         'No description available',
-                    style: TextStyle(fontSize: 14, color: AppColor.darkGray),
+                    style: TextStyle(fontSize: 13, color: AppColor.darkerGray),
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -191,7 +207,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                     ],
                     CustomText(
                       text: 'Location',
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 16,
                       color: AppColor.black,
                     ),
@@ -212,7 +228,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: AppColor.darkGray,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               TextSpan(
@@ -297,7 +313,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           ),
                         );
                       },
-                      height: 50,
+                      height: 45,
                       color: AppColor.darkBlue,
                       textColor: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -318,34 +334,38 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           ),
                         ),
                         kGap10,
-                        IconButton(
-                          icon: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: Image.asset(
-                              Assets.imagesCall,
-                              fit: BoxFit.contain,
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: AppColor.darkBlue, // Dark blue background
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              Assets.svgsCall,
+                              width: 25,
+                              height: 25,
                             ),
                           ),
-                          iconSize: 50,
-                          onPressed: () {},
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
                         ),
                         kGap10,
-                        IconButton(
-                          icon: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: Image.asset(
-                              Assets.imagesOrangeMessage,
-                              fit: BoxFit.contain,
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color:
+                                AppColor
+                                    .orangecustomColor, // Dark blue background
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              Assets.svgsMessage,
+                              width: 25,
+                              height: 25,
                             ),
                           ),
-                          iconSize: 50,
-                          onPressed: () {},
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
                         ),
                       ],
                     ),

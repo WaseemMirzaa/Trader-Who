@@ -6,7 +6,7 @@ class JobAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       elevation: 0,
       toolbarHeight: 120, // Decreased height
       leading: IconButton(
@@ -26,7 +26,7 @@ class JobAppBar extends StatelessWidget implements PreferredSizeWidget {
               color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: SafeArea(
@@ -42,8 +42,8 @@ class JobAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: Text(
                       'Post a Job',
                       style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
                     ),

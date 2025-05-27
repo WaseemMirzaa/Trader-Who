@@ -21,9 +21,6 @@ class _HomePageState extends State<HomePage> {
     {'title': 'Painters & Decorators', 'image': Assets.imagesPainter},
     {'title': 'Bricklayers', 'image': Assets.imagesBricker},
     {'title': 'Flooring', 'image': Assets.imagesFlooring},
-    {'title': 'Tilers', 'image': Assets.imagesTilers},
-    {'title': 'Painters & Decorators', 'image': Assets.imagesPainter},
-    {'title': 'Bricklayers', 'image': Assets.imagesBricker},
   ];
 
   @override
@@ -37,7 +34,7 @@ class _HomePageState extends State<HomePage> {
             width: context.screenWidth,
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 15,
@@ -45,7 +42,7 @@ class _HomePageState extends State<HomePage> {
                     CustomText(
                       text: 'Select Category',
                       fontSize: 16,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
                     GridView.builder(
@@ -67,33 +64,13 @@ class _HomePageState extends State<HomePage> {
                           imagePath: services[index]['image']!,
                           title: services[index]['title']!,
                           onTap: () {
-                            // Handle tile tap
+                            Get.toNamed(AppRoutes.jobPage);
                           },
                         );
                       },
                     ),
                   ],
                 ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter, // Align button at bottom center
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 16.0,
-              ),
-              child: CustomButton(
-                text: 'Next',
-                onTap: () {
-                  Get.toNamed(AppRoutes.jobPage);
-                },
-                width: double.infinity,
-                color: AppColor.darkBlue,
-                textColor: AppColor.white,
-                fontWeight: FontWeight.normal,
-                radius: 25,
               ),
             ),
           ),

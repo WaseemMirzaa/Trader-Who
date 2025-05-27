@@ -22,7 +22,7 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
       tradesPerson: TradesPerson(
         expertise: 'Plumber',
         description:
-            'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after  turning on  garbage disposal.',
+            'Leaking kitchen sink, Pipe may be cracked. Water  dripping into cabinet below. Happened after  turning on  garbage disposal.',
         name: 'John Smith',
         imageUrl: 'path_to_image',
         price: '50',

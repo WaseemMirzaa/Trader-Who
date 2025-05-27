@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/shared_widgets/custom_button.dart';
-import '../../core/config/app_routes.dart';
+
 import '../../core/theme/theme.dart';
 import 'controller.dart';
 
@@ -18,9 +17,7 @@ class SplashPage extends StatelessWidget {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          color: AppColor.purplecustomColor,
-        ),
+        decoration: const BoxDecoration(gradient: AppColor.splashGradient),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -29,11 +26,9 @@ class SplashPage extends StatelessWidget {
                 Assets.imagesSplashscreen,
                 width: 150,
                 height: 150,
-                fit: BoxFit.contain, 
+                fit: BoxFit.contain,
               ),
-kGap20,
-             
-            
+              kGap20,
             ],
           ),
         ),
