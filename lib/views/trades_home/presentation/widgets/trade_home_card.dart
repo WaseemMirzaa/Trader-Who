@@ -21,8 +21,8 @@ class TradeHomeCard extends StatelessWidget {
 
     // Determine button text based on showQuoteButtons
     final String rejectText =
-        job.showQuoteButtons ? 'Not Interested' : 'Reject';
-    final String acceptText = job.showQuoteButtons ? 'Quote' : 'Accept';
+        job.showQuoteButtons ? 'Not Interested' : 'REJECT';
+    final String acceptText = job.showQuoteButtons ? 'Quote' : 'ACCEPT';
 
     return GestureDetector(
       onTap: onTap,
@@ -42,15 +42,15 @@ class TradeHomeCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 12),
+            const SizedBox(height: 9),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomCircleAvatar(
                   circleColor: Colors.transparent,
                   backgroundColor: AppColor.lightCyan,
-                  radius: 24,
-                  child: SvgPicture.asset(job.svgIcon, width: 24, height: 24),
+                  radius: 30,
+                  child: SvgPicture.asset(job.svgIcon, width: 26, height: 28),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -114,9 +114,9 @@ class TradeHomeCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColor.midGray.withOpacity(0.2),
+                    color: AppColor.lightCyan,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColor.midGray, width: 1),
+                    border: Border.all(color: AppColor.white, width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -127,7 +127,7 @@ class TradeHomeCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           color: AppColor.green,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,

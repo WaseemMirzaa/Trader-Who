@@ -17,10 +17,10 @@ class NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          CircleAvatar(radius: 28, backgroundImage: AssetImage(avatarImage)),
+          CircleAvatar(radius: 30, backgroundImage: AssetImage(avatarImage)),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -39,14 +39,17 @@ class NotificationCard extends StatelessWidget {
                     ),
                     Text(
                       time,
-                      style: TextStyle(fontSize: 12, color: AppColor.grey),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColor.darkGrayText,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  style: TextStyle(fontSize: 12, color: AppColor.darkGrayText),
                 ),
               ],
             ),

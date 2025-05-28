@@ -25,7 +25,7 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: AppColor.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -43,14 +43,15 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   width: double.infinity,
                   child: Row(
                     children: [
+                      SizedBox(width: 20),
                       Expanded(
                         child: Center(
                           child: const Text(
                             'Home',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
-                              color: Colors.black,
+                              color: AppColor.darkBlueText,
                             ),
                           ),
                         ),
@@ -74,9 +75,9 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Upcoming Jobs',
+                        'Upcoming Jobs Date',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w500,
                           color: Colors.black,
                         ),
@@ -84,9 +85,9 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Text(
                         currentMonthYear, // e.g., "May 2025"
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 15,
                           fontWeight: FontWeight.w400,
-                          color: Colors.black,
+                          color: AppColor.darkBlue,
                         ),
                       ),
                     ],

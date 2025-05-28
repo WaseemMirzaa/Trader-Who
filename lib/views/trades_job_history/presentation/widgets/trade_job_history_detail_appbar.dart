@@ -18,7 +18,7 @@ class TradeJobHistoryDetailAppbar extends StatelessWidget
             : 'New Job Details';
 
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       elevation: 0,
       toolbarHeight: 120, // Decreased height
       leading: IconButton(
@@ -35,7 +35,7 @@ class TradeJobHistoryDetailAppbar extends StatelessWidget
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: AppColor.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -54,9 +54,9 @@ class TradeJobHistoryDetailAppbar extends StatelessWidget
                     child: Text(
                       title, // Use dynamic title
                       style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.darkBlueText,
                       ),
                     ),
                   ),

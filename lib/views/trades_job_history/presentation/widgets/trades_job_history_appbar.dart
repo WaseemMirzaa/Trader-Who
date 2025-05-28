@@ -20,7 +20,7 @@ class TradesJobHistoryAppbar extends StatelessWidget
 
     return Obx(
       () => AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColor.appbarBackground,
         elevation: 0,
         toolbarHeight: 120,
         flexibleSpace: Container(
@@ -33,7 +33,7 @@ class TradesJobHistoryAppbar extends StatelessWidget
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: AppColor.grey.withOpacity(0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -55,9 +55,9 @@ class TradesJobHistoryAppbar extends StatelessWidget
                             child: Text(
                               "Job History",
                               style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                                color: AppColor.darkBlueText,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -68,7 +68,7 @@ class TradesJobHistoryAppbar extends StatelessWidget
                             width: 78,
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: AppColor.midGray,
+                              color: AppColor.customOffWhite,
                               borderRadius: BorderRadius.circular(24),
                             ),
                             child: Row(
@@ -87,7 +87,11 @@ class TradesJobHistoryAppbar extends StatelessWidget
                                     ),
                                     child: SvgPicture.asset(
                                       Assets.svgsNomap,
-                                      color: AppColor.white,
+                                      color:
+                                          controller.selectedIndex.value == 0
+                                              ? AppColor.white
+                                              : Colors
+                                                  .black, // White when selected, black when not
                                       width: 18,
                                       height: 18,
                                     ),
@@ -107,7 +111,11 @@ class TradesJobHistoryAppbar extends StatelessWidget
                                     ),
                                     child: SvgPicture.asset(
                                       Assets.svgsMap,
-                                      color: AppColor.white,
+                                      color:
+                                          controller.selectedIndex.value == 1
+                                              ? AppColor.white
+                                              : Colors
+                                                  .black, // White when selected, black when not
                                       width: 18,
                                       height: 18,
                                     ),

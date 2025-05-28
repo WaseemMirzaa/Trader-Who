@@ -46,7 +46,7 @@ class _TradeHomePageState extends State<TradeHomePage> {
                 children: [
                   const CustomText(
                     text: 'New Jobs',
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: AppColor.black,
                   ),

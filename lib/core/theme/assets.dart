@@ -160,8 +160,6 @@ class Assets {
   /// assets/images/plumber.png
   static const String imagesPlumber = "assets/images/plumber.png";
 
-  /// Assets for imagesPounds
-
   /// Assets for imagesProfile
   /// assets/images/Profile.png
   static const String imagesProfile = "assets/images/Profile.png";
@@ -256,9 +254,17 @@ class Assets {
   /// assets/svgs/Chat.svg
   static const String svgsChat = "assets/svgs/Chat.svg";
 
+  /// Assets for svgsCross
+  /// assets/svgs/cross.svg
+  static const String svgsCross = "assets/svgs/cross.svg";
+
+  /// Assets for svgsCrossWhiteIcon
+  /// assets/svgs/cross-white-icon.svg
+  static const String svgsCrossWhiteIcon = "assets/svgs/cross-white-icon.svg";
+
   /// Assets for svgsDetails
-  /// assets/svgs/Details.svg
-  static const String svgsDetails = "assets/svgs/Details.svg";
+  /// assets/svgs/details.svg
+  static const String svgsDetails = "assets/svgs/details.svg";
 
   /// Assets for svgsDollar
   /// assets/svgs/dollar.svg

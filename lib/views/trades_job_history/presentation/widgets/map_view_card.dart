@@ -18,7 +18,7 @@ class MapViewCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -34,8 +34,8 @@ class MapViewCard extends StatelessWidget {
                 CustomCircleAvatar(
                   circleColor: Colors.transparent,
                   backgroundColor: AppColor.lightCyan,
-                  radius: 24,
-                  child: SvgPicture.asset(job.svgIcon, width: 24, height: 24),
+                  radius: 26,
+                  child: SvgPicture.asset(job.svgIcon, width: 24, height: 28),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -47,12 +47,12 @@ class MapViewCard extends StatelessWidget {
                         style: const TextStyle(
                           color: AppColor.black,
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           SvgPicture.asset(
@@ -70,14 +70,14 @@ class MapViewCard extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: AppColor.black,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                   TextSpan(
                                     text: '£${job.price}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColor.darkGray,
+                                      color: AppColor.grey,
                                     ),
                                   ),
                                 ],
@@ -98,7 +98,7 @@ class MapViewCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColor.midGray.withOpacity(0.2),
+                    color: AppColor.customOffWhite,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -131,16 +131,13 @@ class MapViewCard extends StatelessWidget {
                         text: 'Distance: ',
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.darkGray,
-                          fontWeight: FontWeight.bold,
+                          color: AppColor.black,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       TextSpan(
                         text: job.address,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColor.darkGray,
-                        ),
+                        style: TextStyle(fontSize: 14, color: AppColor.grey),
                       ),
                     ],
                   ),
@@ -152,8 +149,8 @@ class MapViewCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 job.tradesPerson.description,
-                style: TextStyle(fontSize: 14, color: AppColor.darkGray),
-                maxLines: 2,
+                style: TextStyle(fontSize: 14, color: AppColor.grey),
+                maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
             ],

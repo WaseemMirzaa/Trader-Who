@@ -14,7 +14,7 @@ class _TradeCustomerFeedbackPageState extends State<TradeCustomerFeedbackPage> {
     return GradientScaffold(
       appBar: TradeCustomerFeedbackAppbar(),
       body: ListView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         children: List.generate(
           6, // Repeat 6 times
           (index) => Padding(
@@ -25,60 +25,39 @@ class _TradeCustomerFeedbackPageState extends State<TradeCustomerFeedbackPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Star Rating
-                Row(
-                  children: [
-                    // Generate 5 star images
-                    Image.asset(
-                      Assets.imagesIconawesomeStar,
-                      width: 24,
-                      height: 24,
-                    ),
-                    kGap5,
-                    Image.asset(
-                      Assets.imagesIconawesomeStar,
-                      width: 24,
-                      height: 24,
-                    ),
-                    kGap5,
-                    Image.asset(
-                      Assets.imagesIconawesomeStar,
-                      width: 24,
-                      height: 24,
-                    ),
-                    kGap5,
-                    Image.asset(
-                      Assets.imagesIconawesomeStar,
-                      width: 24,
-                      height: 24,
-                    ),
-                    kGap5,
-                    Image.asset(
-                      Assets.imagesIconawesomeStar,
-                      width: 24,
-                      height: 24,
-                    ),
-                  ],
+                RatingBar.builder(
+                  initialRating: 5,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemSize: 21,
+                  ignoreGestures: true, // Makes it read-only
+                  itemBuilder:
+                      (context, _) =>
+                          Icon(Icons.star, color: AppColor.vibrantYellow),
+                  onRatingUpdate: (rating) {},
                 ),
                 const SizedBox(height: 10), // kGap10 replacement
                 // Review Text
                 const Text(
-                  "He always gives a perfect service. Great attention to detail and awesome\n"
+                  "He always gives a perfect service. Great attention to detail and awesome "
                   "service every time. Highly recommended!",
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColor.darkGray,
+                    color: AppColor.grey,
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // Reviewer Name
                 const Text(
                   "Jason Rao",
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColor.darkBlue,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.black,
                   ),
                 ),
               ],

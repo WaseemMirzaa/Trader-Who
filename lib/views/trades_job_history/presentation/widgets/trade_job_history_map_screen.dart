@@ -271,7 +271,7 @@ class _TradeJobHistoryMapScreenState
           name: "Technician ${index + 1}",
           expertise: "Electrician",
           description:
-              "Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after turning on garbage disposal.",
+              "Leaking kitchen sink, Pipe may be cracked. Water dripping into cabinet below. Happened after turning on garbage disposal.",
           price: "\$${50 + (index * 10)}/hr",
           imageUrl: "",
           rating: 4.5 - (index * 0.1),
@@ -302,7 +302,8 @@ class _TradeJobHistoryMapScreenState
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.1),
+
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),
@@ -319,7 +320,7 @@ class _TradeJobHistoryMapScreenState
                   _showingCompletedJobs ? 'Completed Jobs' : 'Available Jobs',
                   style: const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: AppColor.black,
                   ),
                 ),
@@ -384,7 +385,7 @@ class _TradeJobHistoryMapScreenState
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.grey.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

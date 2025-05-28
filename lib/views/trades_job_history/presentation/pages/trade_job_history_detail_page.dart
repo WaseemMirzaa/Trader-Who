@@ -15,6 +15,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      showDragHandle: false,
       backgroundColor: Colors.transparent,
       builder:
           (context) => TradeJobHistoryBottomSheet(
@@ -35,8 +36,10 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
       children: [
         Expanded(
           child: Row(
+            mainAxisAlignment:
+                MainAxisAlignment.center, // Optional: centers the buttons
             children: [
-              Expanded(
+              IntrinsicWidth(
                 child: CustomButton(
                   text: 'Accept',
                   onTap: _showReassessBottomSheet,
@@ -44,11 +47,11 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   textColor: AppColor.white,
                   height: 50,
                   radius: 30,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              kGap10,
+              kGap10, // Your predefined spacing widget
               Expanded(
                 child: CustomButton(
                   text: 'Reassess Quote',
@@ -58,23 +61,29 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   enableBorder: true,
                   height: 50,
                   radius: 30,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
           ),
         ),
         const SizedBox(width: 10),
-        CustomButton(
-          text: ' \\',
-          onTap: _showReassessBottomSheet,
-          color: AppColor.darkBlue,
-          textColor: AppColor.white,
+        Container(
           height: 50,
           width: 50,
-          radius: 30,
-          fontWeight: FontWeight.bold,
+          decoration: BoxDecoration(
+            color: AppColor.darkBlue, // #121F30
+            borderRadius: BorderRadius.circular(30), // Creates circular shape
+          ),
+          child: Center(
+            child: SvgPicture.asset(
+              Assets.svgsCross, // Path to your SVG file
+
+              width: 17, // Adjust size as needed
+              height: 17,
+            ),
+          ),
         ),
       ],
     );
@@ -89,7 +98,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
           style: TextStyle(
             fontSize: 16,
             color: AppColor.black,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
         ),
         kGap10, // Rating stars
@@ -118,8 +127,8 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
           'Jason Rao',
           style: TextStyle(
             fontSize: 14,
-            color: AppColor.darkGray,
-            fontStyle: FontStyle.italic,
+            color: AppColor.black,
+            fontStyle: FontStyle.normal,
           ),
         ),
       ],
@@ -137,7 +146,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
           // Scrollable main content
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,7 +159,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                       CustomCircleAvatar(
                         circleColor: Colors.transparent,
                         backgroundColor: AppColor.white,
-                        radius: 24,
+                        radius: 26,
                         child: SvgPicture.asset(
                           widget.job.svgIcon,
                           width: 24,
@@ -180,12 +189,28 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                                 ),
                                 const SizedBox(width: 4),
                                 Flexible(
-                                  child: Text(
-                                    'Small Job - Fixed Price: £${widget.job.price}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.darkGray,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Small Job - Fixed Price: ',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppColor.black,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '£${widget.job.price}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppColor.darkerGray,
+                                          ),
+                                        ),
+                                      ],
                                     ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
                                 ),
                               ],
@@ -199,16 +224,16 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColor.white.withOpacity(0.2),
+                          color: AppColor.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColor.midGray, width: 1),
+                          border: Border.all(color: AppColor.white, width: 0),
                         ),
                         child: Text(
                           widget.job.status,
                           style: TextStyle(
                             fontSize: 12,
                             color: AppColor.green,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -227,15 +252,15 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                               text: 'Preferred Time: ',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.darkGray,
-                                fontWeight: FontWeight.bold,
+                                color: AppColor.black,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             TextSpan(
                               text: widget.job.preferredTime,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.darkGray,
+                                color: AppColor.darkerGray,
                               ),
                             ),
                           ],
@@ -249,7 +274,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                     'Description',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: AppColor.black,
                     ),
                   ),
@@ -257,51 +282,49 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   Text(
                     widget.job.tradesPerson.description ??
                         'No description available',
-                    style: TextStyle(fontSize: 14, color: AppColor.darkGray),
+                    style: TextStyle(fontSize: 14, color: AppColor.darkerGray),
                   ),
                   const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          Assets.imagesPipe,
+                          width: 70,
+                          height: 60,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      kGap10,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          Assets.imagesPipe,
+                          width: 70,
+                          height: 60,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      kGap10,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          Assets.imagesPipe,
+                          width: 70,
+                          height: 60,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
+                  ),
                   // Images Row (only show for completed jobs)
-                  if (isCompleted) ...[
-                    Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.asset(
-                            Assets.imagesPipe,
-                            width: 70,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        kGap10,
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.asset(
-                            Assets.imagesPipe,
-                            width: 70,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        kGap10,
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.asset(
-                            Assets.imagesPipe,
-                            width: 70,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ],
-                    ),
-                    kGap10,
-                  ],
+                  if (isCompleted) ...[kGap10],
                   // Location and Map
                   const SizedBox(height: 20),
                   CustomText(
                     text: 'Location',
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     fontSize: 16,
                     color: AppColor.black,
                   ),
@@ -321,15 +344,15 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                               text: 'Address: ',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.darkGray,
-                                fontWeight: FontWeight.bold,
+                                color: AppColor.black,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             TextSpan(
                               text: widget.job.address,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.darkGray,
+                                color: AppColor.darkerGray,
                               ),
                             ),
                           ],
@@ -340,12 +363,12 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   kGap10,
                   // Map Container
                   Container(
-                    height: 200,
+                    height: 156,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: AppColor.grey.withOpacity(0.1),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
@@ -368,9 +391,10 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                         },
                         myLocationEnabled: false,
                         zoomControlsEnabled: false,
-                        scrollGesturesEnabled: false,
+                        scrollGesturesEnabled: true,
+
                         tiltGesturesEnabled: false,
-                        rotateGesturesEnabled: false,
+                        rotateGesturesEnabled: true,
                       ),
                     ),
                   ),
@@ -382,7 +406,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                       style: TextStyle(
                         fontSize: 16,
                         color: AppColor.black,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     kGap10,
@@ -408,8 +432,8 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                       'Jason Rao',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColor.darkGray,
-                        fontStyle: FontStyle.italic,
+                        color: AppColor.black,
+                        fontStyle: FontStyle.normal,
                       ),
                     ),
                   ],

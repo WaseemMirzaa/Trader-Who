@@ -21,7 +21,7 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Container(
-      constraints: BoxConstraints(maxHeight: context.screenHeight * 0.6),
+      constraints: BoxConstraints(maxHeight: context.screenHeight * 0.55),
       decoration: const BoxDecoration(
         color: AppColor.customLightGray,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -52,42 +52,43 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
                     title,
                     style: const TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: AppColor.black,
                     ),
                   ),
-                  const SizedBox(height: 16),
-
+                  kGap10,
                   CustomText(
                     text:
-                        'Please provide a reassessed price and an explanation. \n This will be sent to the customer for approval.',
+                        'Please provide a reassessed price and an explanation. This will be sent to the customer for approval.',
                     maxLines: 2,
-                    fontSize: 12,
-                    color: AppColor.mutedGray,
+                    fontSize: 13,
+                    color: AppColor.darkGrayText,
                   ),
-                  const SizedBox(height: 24),
-
+                  kGap10,
                   // Reassessed Price label
                   CustomText(
                     text: 'Reassessed Price:',
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.black,
                   ),
                   const SizedBox(height: 8),
 
                   // Price TextField
                   CustomTextField(
+                    borderColor: AppColor.white,
                     controller: priceController,
                     hintText: 'Enter price',
+                    hintStyle: TextStyle(color: AppColor.customsLightGray),
                     keyboardType: TextInputType.number,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
 
                   // Reason label
                   const Text(
                     'Reason/Explanation:',
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: AppColor.black,
                     ),
                   ),
@@ -95,6 +96,7 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
 
                   // Reason TextField
                   CustomTextField(
+                    borderColor: AppColor.white,
                     controller: reasonController,
                     hintText: 'Briefly explain',
                     hintStyle: const TextStyle(color: AppColor.midGray),
@@ -123,7 +125,7 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
             child: CustomButton(
               text: 'Submit',
               onTap: onSubmit ?? () {},
-              height: 50,
+              height: 45,
               color: AppColor.darkBlue,
               textColor: AppColor.white,
               fontWeight: FontWeight.bold,

@@ -13,7 +13,11 @@ class AppColor {
   /// Dark slate blue
   static const Color darkSlateBlue = Color(0xff484E62);
 
+  static const Color darkBlueText = Color(0xFF121F30);
+
   static const Color grayChat = Color(0xFF858585);
+
+  static const Color darkGrayTextCalender = Color(0xFF434343);
 
   static const Color grey = Color(0xFF6D6D6D);
 

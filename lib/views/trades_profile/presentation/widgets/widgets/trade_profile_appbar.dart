@@ -8,11 +8,11 @@ class TradeProfileAppbar extends StatelessWidget
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final double avatarRadius =
-        size.width * 0.13; // Slightly larger for profile
+        size.width * 0.15; // Slightly larger for profile
     final double avatarImageSize = avatarRadius * 2;
 
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColor.appbarBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 280, // Increased height to accommodate the layout
@@ -26,7 +26,7 @@ class TradeProfileAppbar extends StatelessWidget
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -38,9 +38,10 @@ class TradeProfileAppbar extends StatelessWidget
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
               children: [
-                // Row with back button, centered "Profile" text, and edit icon
+                kGap15,
                 SizedBox(
                   width: double.infinity,
+
                   child: Row(
                     children: [
                       SizedBox(width: 25),
@@ -87,11 +88,11 @@ class TradeProfileAppbar extends StatelessWidget
                     fit: BoxFit.cover,
                   ),
                 ),
-                kGap30,
+                kGap10,
                 // Name text
                 CustomText(
                   text: 'Kate Middleton',
-                  fontSize: 22,
+                  fontSize: 24,
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                 ),
@@ -101,7 +102,7 @@ class TradeProfileAppbar extends StatelessWidget
                   text: '@katemiddleton',
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
-                  color: AppColor.midGray,
+                  color: AppColor.grey,
                 ),
               ],
             ),

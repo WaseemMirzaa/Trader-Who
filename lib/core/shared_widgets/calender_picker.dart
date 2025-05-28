@@ -20,8 +20,8 @@ class CalendarPicker extends StatelessWidget {
         formatButtonVisible: false,
         titleTextStyle: TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
+          fontWeight: FontWeight.w400,
+          color: AppColor.darkGrayTextCalender,
         ),
         leftChevronIcon: Icon(
           Icons.keyboard_arrow_left_outlined,
@@ -37,12 +37,12 @@ class CalendarPicker extends StatelessWidget {
       daysOfWeekStyle: const DaysOfWeekStyle(
         weekdayStyle: TextStyle(
           color: Colors.black,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w400,
           fontSize: 12,
         ),
         weekendStyle: TextStyle(
           color: Colors.black,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w400,
           fontSize: 12,
         ),
       ),

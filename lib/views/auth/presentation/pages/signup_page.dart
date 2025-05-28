@@ -1,7 +1,8 @@
 part of 'pages.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+  final bool isTradesperson;
+  const SignupPage({super.key, required this.isTradesperson});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -53,7 +54,10 @@ class _SignupPageState extends State<SignupPage> {
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                         CustomText(
-                          text: 'Customer Signup',
+                          text:
+                              widget.isTradesperson
+                                  ? 'Create an Account'
+                                  : 'Customer Signup',
                           fontSize: 18,
                           fontWeight: FontWeight.normal,
                         ),

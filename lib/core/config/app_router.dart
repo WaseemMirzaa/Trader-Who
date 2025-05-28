@@ -24,7 +24,12 @@ class AppRouter {
     ),
     GetPage(
       name: AppRoutes.signup,
-      page: () => const SignupPage(),
+      page: () {
+        // Get the arguments passed from navigation
+        final args =
+            Get.arguments ?? false; // Default to false (customer) if no args
+        return SignupPage(isTradesperson: args);
+      },
       binding: SignUpBinding(),
     ),
     GetPage(

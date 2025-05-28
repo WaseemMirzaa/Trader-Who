@@ -46,7 +46,7 @@ class _NewAccountState extends State<NewAccountPage> {
                 GestureDetector(
                   onTap: () {
                     navController.setUserType(false);
-                    Get.toNamed(AppRoutes.signup);
+                    Get.toNamed(AppRoutes.signup, arguments: false);
                   },
                   child: Container(
                     width: 175,
@@ -82,7 +82,7 @@ class _NewAccountState extends State<NewAccountPage> {
                 GestureDetector(
                   onTap: () {
                     navController.setUserType(true);
-                    Get.toNamed(AppRoutes.signup);
+                    Get.toNamed(AppRoutes.signup, arguments: true);
                   },
                   child: Container(
                     width: 175,

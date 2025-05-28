@@ -8,7 +8,7 @@ class MyAccountPage extends StatelessWidget {
     return GradientScaffold(
       appBar: const MyAccountAppBar(),
       body: Padding(
-        padding: kHV15,
+        padding: kHV20,
         child: Column(
           spacing: 10,
           children: [
@@ -33,7 +33,7 @@ class MyAccountPage extends StatelessWidget {
               initialValue: 'Alex',
               textColor: AppColor.black,
               fillColor: Colors.white,
-              borderColor: AppColor.lightGray,
+              borderColor: AppColor.white,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
@@ -45,7 +45,7 @@ class MyAccountPage extends StatelessWidget {
               prefixLabel: 'Last Name',
               initialValue: 'Middleton',
               fillColor: Colors.white,
-              borderColor: AppColor.lightGray,
+              borderColor: AppColor.white,
               textColor: AppColor.black,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -59,7 +59,7 @@ class MyAccountPage extends StatelessWidget {
               initialValue: 'alexjerome@info.com',
               textColor: AppColor.black,
               fillColor: Colors.white,
-              borderColor: AppColor.lightGray,
+              borderColor: AppColor.white,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
@@ -73,7 +73,7 @@ class MyAccountPage extends StatelessWidget {
               initialValue: '+9876543210',
               textColor: AppColor.black,
               fillColor: Colors.white,
-              borderColor: AppColor.lightGray,
+              borderColor: AppColor.white,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
@@ -87,7 +87,7 @@ class MyAccountPage extends StatelessWidget {
               initialValue: '123 Maple Sreet, Unit 4B, SpringField',
               textColor: AppColor.black,
               fillColor: Colors.white,
-              borderColor: AppColor.lightGray,
+              borderColor: AppColor.white,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,

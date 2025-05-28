@@ -31,10 +31,7 @@ class NotificationPage extends StatelessWidget {
       appBar: const NotificationAppbar(),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.responsiveWidth(4), // ~4% of screen width
-            vertical: 16,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -62,7 +59,7 @@ class NotificationPage extends StatelessWidget {
                       ),
                       CustomText(
                         text: '10:30 AM',
-                        color: AppColor.darkerGray,
+                        color: AppColor.grey,
                         fontSize: context.responsiveFontSize(11),
                       ),
                     ],
@@ -87,10 +84,10 @@ class NotificationPage extends StatelessWidget {
                       children: [
                         // Reject Button
                         CustomButton(
-                          text: 'Reject',
+                          text: 'REJECT',
                           onTap: () => _showNotificationBottomSheet(context),
                           width: context.responsiveWidth(
-                            20,
+                            21,
                           ), // 20% of screen width
                           height: context.responsiveHeight(
                             4,
@@ -102,9 +99,9 @@ class NotificationPage extends StatelessWidget {
                         ),
                         // Accept Button
                         CustomButton(
-                          text: 'Accept',
+                          text: 'ACCEPT',
                           onTap: () => _showNotificationBottomSheet(context),
-                          width: context.responsiveWidth(20),
+                          width: context.responsiveWidth(21),
                           height: context.responsiveHeight(4),
                           color: AppColor.darkBlue,
                           textColor: AppColor.white,

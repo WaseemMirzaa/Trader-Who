@@ -22,7 +22,7 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
       tradesPerson: TradesPerson(
         expertise: 'Plumber',
         description:
-            'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after turning on garbage disposal.',
+            'Leaking kitchen sink, Pipe may be cracked. Water  dripping into cabinet below. Happened after turning on garbage disposal.',
         name: 'John Smith',
         imageUrl: 'path_to_image',
         price: '50',
@@ -141,7 +141,7 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
                     boxShadow: [
                       BoxShadow(
                         // ignore: deprecated_member_use
-                        color: Colors.black.withOpacity(0.1),
+                        color: AppColor.grey.withOpacity(0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),

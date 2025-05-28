@@ -10,18 +10,26 @@ class TradeNotificationPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: context.responsiveWidth(4), // ~4% of screen width
+            horizontal: context.responsiveWidth(4),
             vertical: 16,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomText(
-                text: 'New Notifications',
-                fontSize: context.responsiveFontSize(18),
+              Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Text(
+                  'New Notifications',
+                  style: TextStyle(
+                    color: AppColor.black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: context.responsiveFontSize(18),
+                  ),
+                ),
               ),
-              SizedBox(height: context.responsiveHeight(2)),
-
+              SizedBox(
+                height: context.responsiveHeight(2),
+              ), // Consistent spacing
               // Notification item
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,8 +41,9 @@ class TradeNotificationPage extends StatelessWidget {
                     time: "11:23 AM",
                     avatarImage: Assets.imagesTradeNotification,
                   ),
-                  // Title and time row
-                  SizedBox(height: context.responsiveHeight(2)),
+                  SizedBox(
+                    height: context.responsiveHeight(2),
+                  ), // Consistent spacing
                   NotificationCard(
                     title: "Kate Austen",
                     description:
@@ -42,14 +51,23 @@ class TradeNotificationPage extends StatelessWidget {
                     time: "11:23 AM",
                     avatarImage: Assets.imagesNotificationImage,
                   ),
-                  SizedBox(height: context.responsiveHeight(1.2)),
-
-                  CustomText(
-                    text: 'New Notifications',
-                    fontSize: context.responsiveFontSize(18),
+                  SizedBox(
+                    height: context.responsiveHeight(2),
+                  ), // Consistent spacing
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Text(
+                      'New Notifications',
+                      style: TextStyle(
+                        color: AppColor.black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: context.responsiveFontSize(18),
+                      ),
+                    ),
                   ),
-                  SizedBox(height: context.responsiveHeight(1.2)),
-
+                  SizedBox(
+                    height: context.responsiveHeight(2),
+                  ), // Consistent spacing
                   NotificationCard(
                     title: "Kate Austen",
                     description:
@@ -57,8 +75,9 @@ class TradeNotificationPage extends StatelessWidget {
                     time: "11:23 AM",
                     avatarImage: Assets.imagesNotificationKate,
                   ),
-                  SizedBox(height: context.responsiveHeight(1.2)),
-
+                  SizedBox(
+                    height: context.responsiveHeight(2),
+                  ), // Consistent spacing
                   NotificationCard(
                     title: "Kate Austen",
                     description:

@@ -60,7 +60,7 @@ class NotificationBottomSheet extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 13,
                         height: 1.4,
-                        color: AppColor.mutedGray,
+                        color: AppColor.darkGrayText,
                       ),
                       children: [
                         const TextSpan(
@@ -68,7 +68,10 @@ class NotificationBottomSheet extends StatelessWidget {
                         ),
                         TextSpan(
                           text: '"Not as described"',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColor.black,
+                          ),
                         ),
                         const TextSpan(
                           text:
@@ -77,19 +80,22 @@ class NotificationBottomSheet extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 3),
                   RichText(
                     text: TextSpan(
                       style: const TextStyle(
                         fontSize: 15,
                         height: 1.4,
-                        color: AppColor.mutedGray,
+                        color: AppColor.darkGrayText,
                       ),
                       children: [
                         const TextSpan(text: 'They have submitted a '),
                         TextSpan(
                           text: '"Reassessed Price of 200"',
-                          style: const TextStyle(fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.black,
+                          ),
                         ),
                         const TextSpan(
                           text: ' based on the updated job scope.',
@@ -97,13 +103,13 @@ class NotificationBottomSheet extends StatelessWidget {
                       ],
                     ),
                   ),
-                  kGap10,
+                  kGap20,
                   CustomText(
                     text:
                         'Please review and either accept or reject this new price.',
                     maxLines: 2,
                     fontSize: 13,
-                    color: AppColor.mediumGray,
+                    color: AppColor.darkGrayText,
                   ),
                 ],
               ),

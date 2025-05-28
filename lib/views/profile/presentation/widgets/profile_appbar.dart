@@ -7,7 +7,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final double avatarRadius =
-        size.width * 0.13; // Slightly larger for profile
+        size.width * 0.14; // Slightly larger for profile
     final double avatarImageSize = avatarRadius * 2;
 
     return AppBar(
@@ -25,7 +25,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: AppColor.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),

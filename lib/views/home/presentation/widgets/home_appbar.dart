@@ -24,7 +24,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: AppColor.grey.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -51,7 +51,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                               'Home',
                               style: TextStyle(
                                 fontSize: 18,
-                                fontWeight: FontWeight.normal,
+                                fontWeight: FontWeight.w500,
                                 color: Colors.black,
                               ),
                             ),
