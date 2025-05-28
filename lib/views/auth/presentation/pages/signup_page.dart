@@ -11,18 +11,7 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   final bool _rememberMe = false;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _fullNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  final SignupController controller = Get.put(SignupController());
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +59,7 @@ class _SignupPageState extends State<SignupPage> {
 
                     // Email/Phone Field
                     CustomTextField(
-                      controller: _fullNameController,
+                      controller: controller.nameController,
                       borderColor: Colors.transparent,
                       hintText: 'Full Name',
                       hintStyle: const TextStyle(color: AppColor.midGray),
@@ -84,7 +73,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     const Gap(20),
                     CustomTextField(
-                      controller: _emailController,
+                      controller: controller.emailController,
                       borderColor: Colors.transparent,
                       hintText: 'Email',
                       hintStyle: const TextStyle(color: AppColor.midGray),
@@ -98,7 +87,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     const Gap(20),
                     CustomTextField(
-                      controller: _phoneController,
+                      controller: controller.phoneController,
                       borderColor: Colors.transparent,
                       hintText: 'Phone',
                       hintStyle: const TextStyle(color: AppColor.midGray),
@@ -112,7 +101,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     const Gap(20),
                     CustomTextField(
-                      controller: _addressController,
+                      controller: controller.addressController,
                       borderColor: Colors.transparent,
                       hintText: 'Address(auto-location/manual)',
                       hintStyle: const TextStyle(color: AppColor.midGray),
@@ -130,7 +119,7 @@ class _SignupPageState extends State<SignupPage> {
                     CustomTextField(
                       hintStyle: const TextStyle(color: AppColor.midGray),
 
-                      controller: _passwordController,
+                      controller: controller.passwordController,
                       borderColor: Colors.transparent,
                       hintText: 'Password',
                       obscureText: true,
@@ -149,21 +138,29 @@ class _SignupPageState extends State<SignupPage> {
                     const Gap(30),
 
                     // Sign In Button
-                    CustomButton(
-                      text: 'Sign Up',
-                      onTap: () {
-                        // if (_formKey.currentState!.validate()) {
-                        //   // Add sign in functionality
-                        // }
-                        Get.offAllNamed(AppRoutes.mainPageWithNavBar);
-                      },
-                      width: double.infinity,
-
-                      color: AppColor.orangecustomColor,
-                      textColor: Colors.white,
-                      fontSize: screenWidth > 600 ? 18 : 16,
-                      fontWeight: FontWeight.normal,
-                      radius: 25,
+                    Obx(
+                      () => CustomButton(
+                        text: 'Sign Up',
+                        onTap: () {
+                          if (_formKey.currentState!.validate()) {
+                            controller.signup(
+                              name: controller.nameController.text,
+                              email: controller.emailController.text,
+                              phone: controller.phoneController.text,
+                              address: controller.addressController.text,
+                              password: controller.passwordController.text,
+                            );
+                          }
+                        },
+                        width: double.infinity,
+                        color: AppColor.orangecustomColor,
+                        textColor: Colors.white,
+                        fontSize: screenWidth > 600 ? 18 : 16,
+                        fontWeight: FontWeight.normal,
+                        radius: 25,
+                        isLoading: controller.isLoading.value,
+                        loadingColor: Colors.white,
+                      ),
                     ),
                     const Gap(20),
 

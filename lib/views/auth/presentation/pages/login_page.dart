@@ -10,15 +10,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  final LoginController controller = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                       CustomTextField(
                         fillColor: AppColor.darkSlateBlue,
                         borderColor: AppColor.darkSlateBlue,
-                        controller: _emailController,
+                        controller: controller.emailController,
                         borderRadius: 11,
                         hintText: 'Email/Phone',
 
@@ -79,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                         fillColor: AppColor.darkSlateBlue,
                         borderColor: AppColor.darkSlateBlue,
 
-                        controller: _passwordController,
+                        controller: controller.passwordController,
                         hintText: 'Password',
                         obscureText: true,
                         showPasswordToggle: true,
@@ -145,20 +137,22 @@ class _LoginPageState extends State<LoginPage> {
                       const Gap(30),
 
                       // Sign In Button
-                      CustomButton(
-                        text: 'Sign in',
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            // Add sign in functionality
-                          }
-                        },
-                        width: double.infinity,
-
-                        color: AppColor.orangecustomColor,
-                        textColor: Colors.white,
-                        fontSize: screenWidth > 600 ? 18 : 16,
-                        fontWeight: FontWeight.normal,
-                        radius: 25,
+                      Obx(
+                        () => CustomButton(
+                          text: 'Login',
+                          onTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              controller.login();
+                            }
+                          },
+                          isLoading: controller.isLoading.value,
+                          width: double.infinity,
+                          color: AppColor.orangecustomColor,
+                          textColor: Colors.white,
+                          fontSize: screenWidth > 600 ? 18 : 16,
+                          fontWeight: FontWeight.normal,
+                          radius: 25,
+                        ),
                       ),
                       const Gap(20),
 

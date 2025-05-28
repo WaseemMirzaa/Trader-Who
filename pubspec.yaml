@@ -101,6 +101,9 @@ dependencies:
   get: ^4.7.2
   google_maps_flutter: ^2.12.2
   flutter_rating_bar: ^4.0.1
+  firebase_core: ^3.13.1
+  firebase_auth: ^5.5.4
+  cloud_firestore: ^5.6.8
 
 # Developer-specific dependencies for testing and tooling
 dev_dependencies:

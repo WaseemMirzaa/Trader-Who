@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "371566690832",
+    "project_id": "traderwho-7a1f9",
+    "storage_bucket": "traderwho-7a1f9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371566690832:android:cb115f9069295fe3b34095",
+        "android_client_info": {
+          "package_name": "com.example.traderwho"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArhr-ZW_JFutiFAMzoSzVNnZv6w9S-x3o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
