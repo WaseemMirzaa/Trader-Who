@@ -26,7 +26,7 @@ class _NewAccountState extends State<NewAccountPage> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Get.back(),
                   ),
                   CustomText(
                     text: 'Create New Account',

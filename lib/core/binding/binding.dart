@@ -20,6 +20,7 @@ import 'package:traderwho/controller/trade_job_history_controller.dart';
 import 'package:traderwho/controller/trade_myaccount_controller.dart';
 import 'package:traderwho/controller/trade_notification_controller.dart';
 import 'package:traderwho/controller/trade_profile_controller.dart';
+import 'package:traderwho/controller/user_controller.dart';
 import 'package:traderwho/views/splash/controller.dart';
 
 part 'app_binding.dart';

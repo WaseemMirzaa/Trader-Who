@@ -8,7 +8,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _rememberMe = false;
+  final bool _rememberMe = false;
   final _formKey = GlobalKey<FormState>();
   final LoginController controller = Get.put(LoginController());
 
@@ -91,34 +91,31 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Remember Me Checkbox
-                          Row(
-                            children: [
-                              Checkbox(
-                                fillColor: WidgetStateProperty.all(
-                                  AppColor.darkSlateBlue,
+                          Obx(
+                            () => Row(
+                              children: [
+                                Checkbox(
+                                  fillColor: WidgetStateProperty.all(
+                                    AppColor.darkSlateBlue,
+                                  ),
+                                  side: BorderSide(color: AppColor.silverGray),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
+                                  value: controller.rememberMe.value,
+                                  onChanged: (value) {
+                                    controller.rememberMe.value = value!;
+                                  },
+                                  activeColor: AppColor.orangecustomColor,
+                                  checkColor: AppColor.midGray,
                                 ),
-
-                                side: BorderSide(color: AppColor.silverGray),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    6.0,
-                                  ), // Adjust for roundness (e.g., 4.0 for slight rounding)
+                                const CustomText(
+                                  text: 'Remember me',
+                                  color: AppColor.lightGrayText,
+                                  fontSize: 14,
                                 ),
-                                value: _rememberMe,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _rememberMe = value!;
-                                  });
-                                },
-                                activeColor: AppColor.orangecustomColor,
-                                checkColor: AppColor.midGray,
-                              ),
-                              const CustomText(
-                                text: 'Remember me',
-                                color: AppColor.lightGrayText,
-                                fontSize: 14,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
 
                           // Forgot Password
@@ -199,7 +196,8 @@ class _LoginPageState extends State<LoginPage> {
                               enableIcon: true,
                               color: Colors.white,
                               textColor: Colors.black,
-                              onTap: () {},
+                              onTap: controller.signInWithApple,
+
                               radius: 18,
                               height: 50,
                             ),
@@ -216,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                               enableIcon: true,
                               color: Colors.white,
                               textColor: Colors.black,
-                              onTap: () {},
+                              onTap: controller.signInWithGoogle,
                               radius: 18,
                               height: 50,
                             ),

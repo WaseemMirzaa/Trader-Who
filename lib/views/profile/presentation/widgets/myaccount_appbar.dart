@@ -20,7 +20,7 @@ class MyAccountAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColor.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Get.back(result: true),
         ),
       ),
     );

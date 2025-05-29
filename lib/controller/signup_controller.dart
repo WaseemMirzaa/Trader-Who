@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 
 class SignupController extends GetxController {
@@ -105,6 +106,8 @@ class SignupController extends GetxController {
         'Success',
         'Account created successfully! Please verify your email.',
       );
+      NavigationController.to.setUserType(isTradesperson.value);
+      await Future.delayed(const Duration(seconds: 3));
       Get.offNamed(AppRoutes.mainPageWithNavBar);
     } on FirebaseAuthException catch (e) {
       isLoading.value = false;

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:traderwho/views/chat/presentation/pages/pages.dart';
 import 'package:traderwho/views/home/presentation/pages/pages.dart';
 import 'package:traderwho/views/job_history/pages/pages.dart';
-import 'package:traderwho/views/main_page_with_navbar.dart';
 import 'package:traderwho/views/profile/presentation/pages/pages.dart';
 import 'package:traderwho/views/trades_chat/presentation/pages/pages.dart';
 import 'package:traderwho/views/trades_home/presentation/pages/pages.dart';
@@ -40,7 +39,7 @@ class NavigationController extends GetxController {
   void setUserType(bool isTrades) {
     isTradesPerson.value = isTrades;
     currentIndex.value = 0; // Reset to first tab
-    Get.offAll(() => MainPageWithNavbar()); // Navigate to main page
+    // Get.offAll(() => MainPageWithNavbar()); // Navigate to main page
   }
 
   List<Widget> get currentPages =>

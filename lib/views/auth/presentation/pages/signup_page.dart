@@ -40,7 +40,7 @@ class _SignupPageState extends State<SignupPage> {
                             Icons.arrow_back,
                             color: Colors.black,
                           ),
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => Get.back(),
                         ),
                         CustomText(
                           text:
