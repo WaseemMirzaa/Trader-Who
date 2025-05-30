@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:traderwho/controller/login_controller.dart';
 import 'package:traderwho/controller/myaccount_controller.dart';
-import 'package:traderwho/controller/profile_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';

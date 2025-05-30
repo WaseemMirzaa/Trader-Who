@@ -8,9 +8,14 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final bool _rememberMe = false;
   final _formKey = GlobalKey<FormState>();
-  final LoginController controller = Get.put(LoginController());
+  late LoginController controller;
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(LoginController(), permanent: true);
+    // This ensures the controller is initialized and loadSavedCredentials is called
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +62,12 @@ class _LoginPageState extends State<LoginPage> {
                         hintText: 'Email/Phone',
 
                         keyboardType: TextInputType.emailAddress,
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please enter your email or phone';
-                        //   }
-                        //   return null;
-                        // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email or phone';
+                          }
+                          return null;
+                        },
                       ),
                       const Gap(20),
 
@@ -76,15 +81,15 @@ class _LoginPageState extends State<LoginPage> {
                         obscureText: true,
                         showPasswordToggle: true,
                         borderRadius: 11,
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please enter your password';
-                        //   }
-                        //   if (value.length < 6) {
-                        //     return 'Password must be at least 6 characters';
-                        //   }
-                        //   return null;
-                        // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          }
+                          return null;
+                        },
                       ),
                       kGap10,
                       Row(
@@ -95,19 +100,30 @@ class _LoginPageState extends State<LoginPage> {
                             () => Row(
                               children: [
                                 Checkbox(
-                                  fillColor: WidgetStateProperty.all(
-                                    AppColor.darkSlateBlue,
-                                  ),
+                                  fillColor: WidgetStateProperty.resolveWith<
+                                    Color?
+                                  >((Set<WidgetState> states) {
+                                    if (states.contains(WidgetState.selected)) {
+                                      return AppColor
+                                          .offWhite; // Background color when checked
+                                    }
+                                    return AppColor
+                                        .darkSlateBlue; // Background color when unchecked
+                                  }),
                                   side: BorderSide(color: AppColor.silverGray),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(6.0),
                                   ),
                                   value: controller.rememberMe.value,
                                   onChanged: (value) {
-                                    controller.rememberMe.value = value!;
+                                    if (value != null) {
+                                      controller.rememberMe.value = value;
+                                    }
                                   },
-                                  activeColor: AppColor.orangecustomColor,
-                                  checkColor: AppColor.midGray,
+                                  activeColor:
+                                      AppColor
+                                          .offWhite, // Set activeColor to offWhite for consistency
+                                  checkColor: AppColor.black,
                                 ),
                                 const CustomText(
                                   text: 'Remember me',

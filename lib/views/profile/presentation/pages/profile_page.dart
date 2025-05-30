@@ -61,8 +61,12 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: CustomButton(
               text: 'Log Out',
-              onTap: () {
-                Get.offAllNamed(AppRoutes.onboarding);
+              onTap: () async {
+                final loginController = Get.put(
+                  LoginController(),
+                  permanent: true,
+                );
+                await loginController.logout();
               },
               color: AppColor.darkBlue,
               textColor: Colors.white,
