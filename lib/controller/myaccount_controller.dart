@@ -12,11 +12,15 @@ class MyaccountController extends GetxController {
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final addressController = TextEditingController();
+  final usernameController = TextEditingController();
 
   // Observables
   final RxBool showShimmer = true.obs;
   final RxString error = ''.obs;
   final Rx<UserModel?> user = Rx<UserModel?>(null);
+
+  // Getter to check if user is a customer
+  bool get isCustomer => user.value?.userType == 'customer';
 
   @override
   void onInit() {
@@ -31,6 +35,7 @@ class MyaccountController extends GetxController {
     emailController.dispose();
     phoneController.dispose();
     addressController.dispose();
+    usernameController.dispose();
     super.onClose();
   }
 
@@ -43,18 +48,25 @@ class MyaccountController extends GetxController {
       if (authUser == null) {
         showShimmer(false);
         error('No authenticated user');
+        print('MyAccount: No authenticated user');
         return;
       }
 
+      print('MyAccount: Fetching data for user: ${authUser.uid}');
       final doc =
           await FirebaseFirestore.instance
               .collection('users')
               .doc(authUser.uid)
               .get();
 
+      print('MyAccount: Document exists: ${doc.exists}');
       if (doc.exists) {
+        print('MyAccount: Document data: ${doc.data()}');
         final userData = UserModel.fromFirestore(doc);
         user.value = userData;
+        print(
+          'MyAccount: UserModel created: ${userData.name}, type: ${userData.userType}',
+        );
 
         // Split name into first and last name
         final nameParts = userData.name.split(' ');
@@ -68,8 +80,12 @@ class MyaccountController extends GetxController {
         emailController.text = userData.email;
         phoneController.text = userData.phone ?? '';
         addressController.text = userData.address ?? '';
+
+        // Set customer specific fields if user is a customer
+        usernameController.text = userData.username ?? '';
       } else {
         // Document doesn't exist, use auth data
+        print('MyAccount: Document does not exist, using auth data');
         final name = authUser.displayName ?? 'User';
         final nameParts = name.split(' ');
         final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
@@ -81,6 +97,15 @@ class MyaccountController extends GetxController {
         emailController.text = authUser.email ?? '';
         phoneController.text = '';
         addressController.text = '';
+        usernameController.text = '';
+
+        // Create a basic user model for display
+        user.value = UserModel(
+          id: authUser.uid,
+          name: name,
+          email: authUser.email ?? '',
+          userType: 'customer', // Default to customer for myaccount page
+        );
       }
     } catch (e) {
       error('Failed to fetch user data: ${e.toString()}');
@@ -109,7 +134,7 @@ class MyaccountController extends GetxController {
       final fullName =
           '${firstNameController.text} ${lastNameController.text}'.trim();
 
-      // Update data in Firestore
+      // Update data in Firestore (only customer-relevant fields)
       await FirebaseFirestore.instance
           .collection('users')
           .doc(authUser.uid)
@@ -118,7 +143,15 @@ class MyaccountController extends GetxController {
             'email': emailController.text,
             'phone': phoneController.text,
             'address': addressController.text,
+            'username': usernameController.text,
             'updatedAt': FieldValue.serverTimestamp(),
+            // Explicitly remove tradesperson fields for customers
+            'title': FieldValue.delete(),
+            'bio': FieldValue.delete(),
+            'status': FieldValue.delete(),
+            'availability': FieldValue.delete(),
+            'start_time': FieldValue.delete(),
+            'end_time': FieldValue.delete(),
           });
 
       // Update display name in Firebase Auth
@@ -126,7 +159,7 @@ class MyaccountController extends GetxController {
 
       // If email changed, update it in Firebase Auth
       if (authUser.email != emailController.text) {
-        await authUser.updateEmail(emailController.text);
+        await authUser.verifyBeforeUpdateEmail(emailController.text);
       }
 
       Get.snackbar(

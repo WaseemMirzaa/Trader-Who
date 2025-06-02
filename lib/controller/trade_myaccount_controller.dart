@@ -12,6 +12,8 @@ class TradeMyaccountController extends GetxController {
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final addressController = TextEditingController();
+  final titleController = TextEditingController();
+  final bioController = TextEditingController();
 
   // Observables
   final RxBool showShimmer = true.obs;
@@ -31,6 +33,8 @@ class TradeMyaccountController extends GetxController {
     emailController.dispose();
     phoneController.dispose();
     addressController.dispose();
+    titleController.dispose();
+    bioController.dispose();
     super.onClose();
   }
 
@@ -43,18 +47,26 @@ class TradeMyaccountController extends GetxController {
       if (authUser == null) {
         showShimmer(false);
         error('No authenticated user');
+        print('TradeMyAccount: No authenticated user');
         return;
       }
 
-      final doc =
+      print('TradeMyAccount: Fetching data for user: ${authUser.uid}');
+      // Fetch user data from unified users collection
+      final userDoc =
           await FirebaseFirestore.instance
               .collection('users')
               .doc(authUser.uid)
               .get();
 
-      if (doc.exists) {
-        final userData = UserModel.fromFirestore(doc);
+      print('TradeMyAccount: Document exists: ${userDoc.exists}');
+      if (userDoc.exists) {
+        print('TradeMyAccount: Document data: ${userDoc.data()}');
+        final userData = UserModel.fromFirestore(userDoc);
         user.value = userData;
+        print(
+          'TradeMyAccount: UserModel created: ${userData.name}, type: ${userData.userType}',
+        );
 
         // Split name into first and last name
         final nameParts = userData.name.split(' ');
@@ -62,14 +74,19 @@ class TradeMyaccountController extends GetxController {
         final lastName =
             nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
-        // Set text controllers
+        // Set all user data controllers
         firstNameController.text = firstName;
         lastNameController.text = lastName;
         emailController.text = userData.email;
         phoneController.text = userData.phone ?? '';
         addressController.text = userData.address ?? '';
+
+        // Set tradesperson specific fields if user is a tradesperson
+        titleController.text = userData.title ?? '';
+        bioController.text = userData.bio ?? '';
       } else {
         // Document doesn't exist, use auth data
+        print('TradeMyAccount: Document does not exist, using auth data');
         final name = authUser.displayName ?? 'User';
         final nameParts = name.split(' ');
         final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
@@ -81,6 +98,17 @@ class TradeMyaccountController extends GetxController {
         emailController.text = authUser.email ?? '';
         phoneController.text = '';
         addressController.text = '';
+        titleController.text = '';
+        bioController.text = '';
+
+        // Create a basic user model for display
+        user.value = UserModel(
+          id: authUser.uid,
+          name: name,
+          email: authUser.email ?? '',
+          userType:
+              'tradesperson', // Default to tradesperson for trade myaccount page
+        );
       }
     } catch (e) {
       error('Failed to fetch user data: ${e.toString()}');
@@ -109,7 +137,7 @@ class TradeMyaccountController extends GetxController {
       final fullName =
           '${firstNameController.text} ${lastNameController.text}'.trim();
 
-      // Update data in Firestore
+      // Update all user data in unified users collection (only tradesperson-relevant fields)
       await FirebaseFirestore.instance
           .collection('users')
           .doc(authUser.uid)
@@ -118,7 +146,11 @@ class TradeMyaccountController extends GetxController {
             'email': emailController.text,
             'phone': phoneController.text,
             'address': addressController.text,
+            'title': titleController.text,
+            'bio': bioController.text,
             'updatedAt': FieldValue.serverTimestamp(),
+            // Explicitly remove customer fields for tradespeople
+            'username': FieldValue.delete(),
           });
 
       // Update display name in Firebase Auth
@@ -126,7 +158,7 @@ class TradeMyaccountController extends GetxController {
 
       // If email changed, update it in Firebase Auth
       if (authUser.email != emailController.text) {
-        await authUser.updateEmail(emailController.text);
+        await authUser.verifyBeforeUpdateEmail(emailController.text);
       }
 
       Get.snackbar(

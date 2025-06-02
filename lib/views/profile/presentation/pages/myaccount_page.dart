@@ -33,8 +33,8 @@ class MyAccountPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Shimmer for all text fields
-                for (int i = 0; i < 4; i++) ...[
+                // Shimmer for all text fields (5 fields: first name, last name, email, phone, address, username)
+                for (int i = 0; i < 6; i++) ...[
                   CustomShimmer(
                     isActive: true,
                     child: Container(
@@ -164,6 +164,23 @@ class MyAccountPage extends StatelessWidget {
                     ),
                     maxLines: 1,
                   ),
+                  const SizedBox(height: 10),
+
+                  // Username Field (only for customers)
+                  if (controller.isCustomer) ...[
+                    TextFieldCustom(
+                      prefixLabel: 'Username',
+                      controller: controller.usernameController,
+                      textColor: AppColor.black,
+                      fillColor: Colors.white,
+                      borderColor: AppColor.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                   const SizedBox(height: 80), // Extra space for the button
                 ],
               ),
