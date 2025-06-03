@@ -58,11 +58,24 @@ class _TradeRatePageState extends State<TradeRatePage> {
               const SizedBox(height: 20),
               // List of tasks with toggle switches and price fields
               ...taskToggles.keys.map(
-                (task) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                (task) => Container(
+                  margin: const EdgeInsets.symmetric(vertical: 6.0),
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: AppColor.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColor.lightGray, width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.lightGray.withValues(alpha: 0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
                   child: Row(
                     children: [
-                      // Toggle switch
+                      // Toggle switch with app theme colors
                       Switch(
                         value: taskToggles[task]!,
                         onChanged: (value) {
@@ -70,39 +83,59 @@ class _TradeRatePageState extends State<TradeRatePage> {
                             taskToggles[task] = value;
                           });
                         },
-                        activeColor: AppColor.darkBlue,
-                        inactiveThumbColor: Colors.black,
-                        inactiveTrackColor: Colors.grey.shade300,
+                        activeColor: AppColor.white,
+                        activeTrackColor: AppColor.darkBlue,
+                        inactiveThumbColor: AppColor.white,
+                        inactiveTrackColor: AppColor.lightGray,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
+                      const SizedBox(width: 12),
                       // Task name
                       Expanded(
                         child: Text(
                           task,
                           style: const TextStyle(
                             fontSize: 16,
-                            color: AppColor.black,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.darkBlueText,
                           ),
                         ),
                       ),
+                      const SizedBox(width: 12),
                       // Price input field using CustomTextField
                       CustomTextField(
                         controller: priceControllers[task],
                         enabled: taskToggles[task]!,
                         keyboardType: TextInputType.number,
-                        textColor: Colors.black,
+                        textColor:
+                            taskToggles[task]!
+                                ? AppColor.darkBlueText
+                                : AppColor.mediumGray,
                         hintText: '0.00',
                         hintStyle: TextStyle(color: AppColor.midGray),
-                        prefix: const Text(
+                        prefix: Text(
                           '£',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(
+                            color:
+                                taskToggles[task]!
+                                    ? AppColor.darkBlueText
+                                    : AppColor.mediumGray,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        borderColor: Colors.grey.shade400,
-                        fillColor: Colors.transparent, // Transparent fill
+                        borderColor:
+                            taskToggles[task]!
+                                ? AppColor.darkBlue
+                                : AppColor.lightGray,
+                        fillColor:
+                            taskToggles[task]!
+                                ? AppColor.offWhite
+                                : AppColor.veryLightGray,
                         borderRadius: 8,
-                        width: 100, // Match original width
-                        height: 55.0, // Match CustomTextField default height
+                        width: 100,
+                        height: 55.0,
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: 12,
                           vertical: 15,
                         ),
                         inputFormatters: [
@@ -115,84 +148,110 @@ class _TradeRatePageState extends State<TradeRatePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               // Custom text for other small job
               const Text(
                 'Other small job',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: AppColor.black,
+                  color: AppColor.darkBlueText,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
               // Custom task description text field using CustomTextField
-              CustomTextField(
-                controller: customTaskController,
-                textColor: Colors.black,
-                hintText: 'Description',
-                hintStyle: TextStyle(color: AppColor.midGray),
-                borderColor: Colors.black,
-                fillColor: Colors.transparent, // Transparent fill
-                borderRadius: 8,
-                height: 55.0, // Match CustomTextField default height
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 15,
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: AppColor.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColor.lightGray, width: 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColor.lightGray.withValues(alpha: 0.3),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 20), // Replace kGap20
-              // Price text and input for custom task
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Price',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  CustomTextField(
-                    controller: customPriceController,
-                    keyboardType: TextInputType.number,
-                    textColor: Colors.black,
-                    hintText: '0.00',
-                    prefix: const Text(
-                      '£',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    borderColor: Colors.grey.shade400,
-                    fillColor: Colors.transparent, // Transparent fill
-                    borderRadius: 8,
-                    width: 100, // Match original width
-                    height: 55.0, // Match CustomTextField default height
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 15,
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d*\.?\d{0,2}'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextField(
+                      controller: customTaskController,
+                      textColor: AppColor.darkBlueText,
+                      hintText: 'Description',
+                      hintStyle: TextStyle(color: AppColor.midGray),
+                      borderColor: AppColor.darkBlue,
+                      fillColor: AppColor.offWhite,
+                      borderRadius: 8,
+                      height: 55.0,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 15,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 20),
+                    // Price text and input for custom task
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Price',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.darkBlueText,
+                          ),
+                        ),
+                        CustomTextField(
+                          controller: customPriceController,
+                          keyboardType: TextInputType.number,
+                          textColor: AppColor.darkBlueText,
+                          hintText: '0.00',
+                          hintStyle: TextStyle(color: AppColor.midGray),
+                          prefix: const Text(
+                            '£',
+                            style: TextStyle(
+                              color: AppColor.darkBlueText,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          borderColor: AppColor.darkBlue,
+                          fillColor: AppColor.offWhite,
+                          borderRadius: 8,
+                          width: 100,
+                          height: 55.0,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 15,
+                          ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 30),
               // Save changes button
               Center(
                 child: CustomButton(
                   text: 'Save Changes',
-                  onTap: () {},
-                  width: 200,
+                  onTap: () {
+                    // TODO: Implement save functionality
+                  },
+                  width: double.infinity,
                   color: AppColor.darkBlue,
-                  textColor: Colors.white,
+                  textColor: AppColor.white,
                   fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  radius: 10,
+                  fontWeight: FontWeight.w600,
+                  radius: 12,
                 ),
               ),
             ],

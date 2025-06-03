@@ -75,12 +75,12 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: 'Full Name',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your full name';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Please enter your full name';
+                      //   }
+                      //   return null;
+                      // },
                     ),
                     const Gap(20),
                     CustomTextField(
@@ -89,12 +89,12 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: 'Email',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Please enter your email';
+                      //   }
+                      //   return null;
+                      // },
                     ),
                     const Gap(20),
                     CustomTextField(
@@ -103,12 +103,12 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: 'Phone',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your phone';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Please enter your phone';
+                      //   }
+                      //   return null;
+                      // },
                     ),
                     const Gap(20),
                     CustomTextField(

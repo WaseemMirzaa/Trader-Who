@@ -186,3 +186,12 @@ class TradeServiceBinding extends Bindings {
     Get.lazyPut<TradeServiceController>(() => TradeServiceController());
   }
 }
+
+class TradeServiceSignupBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeServiceSignupController>(
+      () => TradeServiceSignupController(),
+    );
+  }
+}

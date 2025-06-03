@@ -13,4 +13,5 @@ part 'trade_profile_appbar.dart';
 part 'trade_profile_card.dart';
 part 'trade_rates_appbar.dart';
 part 'trade_service_card.dart';
+part 'trade_service_signup_appbar.dart';
 part 'trade_services_appbar.dart';
