@@ -150,6 +150,40 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 ),
               ),
               kGap10,
+              _buildSectionTitle("Services"),
+              widget.person.services?.isNotEmpty ?? false
+                  ? Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children:
+                        widget.person.services!.map((service) {
+                          return Chip(
+                            label: Text(
+                              service,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColor.black,
+                              ),
+                            ),
+                            backgroundColor: AppColor.mediumGray,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                          );
+                        }).toList(),
+                  )
+                  : Text(
+                    "No services listed",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColor.darkerGray,
+                      height: 1.5,
+                    ),
+                  ),
             ],
           ),
         ),

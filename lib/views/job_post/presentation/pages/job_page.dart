@@ -11,13 +11,13 @@ class _JobPageState extends State<JobPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final int _selectedIndex = 0;
+
   String? _selectedJobType;
 
   // Job type options
   final List<Map<String, String>> _jobTypes = [
-    {'value': 'small', 'label': 'Small Job: Fixed price estimate'},
-    {'value': 'large', 'label': 'Large Jobs: Custom Quote Required'},
+    {'value': 'small', 'label': 'Book Instantly: Small Fixed-Price Job'},
+    {'value': 'large', 'label': 'Request Quote:  Large-Scale Job'},
   ];
 
   @override

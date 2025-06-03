@@ -172,3 +172,17 @@ class TradeCustomerFeedbackBinding extends Bindings {
     );
   }
 }
+
+class TradeRateBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeRateController>(() => TradeRateController());
+  }
+}
+
+class TradeServiceBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeServiceController>(() => TradeServiceController());
+  }
+}

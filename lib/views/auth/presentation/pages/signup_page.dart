@@ -117,12 +117,12 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: 'Address(auto-location/manual)',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your Address';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Please enter your Address';
+                      //   }
+                      //   return null;
+                      // },
                     ),
                     const Gap(20),
 
@@ -136,15 +136,15 @@ class _SignupPageState extends State<SignupPage> {
                       obscureText: true,
                       showPasswordToggle: true,
                       passwordToggleIconColor: AppColor.midGray,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Please enter your password';
+                      //   }
+                      //   if (value.length < 6) {
+                      //     return 'Password must be at least 6 characters';
+                      //   }
+                      //   return null;
+                      // },
                     ),
                     const Gap(30),
 
@@ -152,10 +152,9 @@ class _SignupPageState extends State<SignupPage> {
                     CustomButton(
                       text: 'Sign Up',
                       onTap: () {
-                        // if (_formKey.currentState!.validate()) {
-                        //   // Add sign in functionality
-                        // }
-                        Get.offAllNamed(AppRoutes.mainPageWithNavBar);
+                        // For now, just navigate to main page after successful signup
+                        final navController = NavigationController.to;
+                        navController.navigateToMainPage();
                       },
                       width: double.infinity,
 

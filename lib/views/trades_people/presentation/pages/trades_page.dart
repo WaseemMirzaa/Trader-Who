@@ -18,6 +18,7 @@ class _TradesPageState extends State<TradesPage> {
       price: '50',
       imageUrl: Assets.imagesTradeJames,
       rating: 4.5,
+      services: ['Electrician', 'Plumber'],
     ),
     TradesPerson(
       name: 'David William',
@@ -27,6 +28,7 @@ class _TradesPageState extends State<TradesPage> {
       price: '65',
       imageUrl: Assets.imagesTradeDavid,
       rating: 4.8,
+      services: ['Electrician', 'Gas Eng'],
     ),
     TradesPerson(
       name: 'Richard Joseph',
@@ -36,6 +38,7 @@ class _TradesPageState extends State<TradesPage> {
       price: '65',
       imageUrl: Assets.imagesTradeRichard,
       rating: 4.0,
+      services: ['Roof Maker', 'Socket Changer'],
     ),
     // Add more sample data...
   ];

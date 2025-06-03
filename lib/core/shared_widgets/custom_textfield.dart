@@ -34,6 +34,7 @@ class CustomTextField extends StatefulWidget {
   final Color borderColor;
   final Color fillColor;
   final String? fieldHeading;
+  final TextStyle? headingStyle; // New parameter for heading style
   final String? leftLabel;
   final double? height;
   final double? width;
@@ -76,6 +77,7 @@ class CustomTextField extends StatefulWidget {
     this.borderColor = Colors.grey,
     this.fillColor = Colors.white,
     this.fieldHeading,
+    this.headingStyle, // Added headingStyle parameter
     this.leftLabel,
     this.height,
     this.width,
@@ -123,11 +125,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
             padding: const EdgeInsets.only(bottom: 10),
             child: Text(
               widget.fieldHeading!,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: AppColor.lightGrayText,
-              ),
+              style:
+                  widget.headingStyle ??
+                  TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColor.lightGrayText,
+                  ),
             ),
           ),
         SizedBox(

@@ -7,6 +7,7 @@ class TradesPerson {
   final String price;
   final String imageUrl;
   final double rating;
+  final List<String>? services;
 
   const TradesPerson({
     required this.name,
@@ -15,5 +16,6 @@ class TradesPerson {
     required this.price,
     required this.imageUrl,
     required this.rating,
+    this.services,
   });
 }

@@ -75,4 +75,10 @@ class AppRoutes {
 
   /// The trade  feedback   route.
   static const String tradeCustomerFeedback = '/tradecustomerfeedback';
+
+  /// The trade  set rate    route.
+  static const String tradeRate = '/traderate';
+
+  /// The trade  people  services    route.
+  static const String tradeServices = '/tradeservices';
 }

@@ -229,6 +229,11 @@ class Assets {
   /// assets/images/trade_people.png
   static const String imagesTradePeople = "assets/images/trade_people.png";
 
+  /// Assets for imagesTradePeopleIcon
+  /// assets/images/trade_people_icon.jpeg
+  static const String imagesTradePeopleIcon =
+      "assets/images/trade_people_icon.jpeg";
+
   /// Assets for imagesTradeProfile
   /// assets/images/trade-profile.png
   static const String imagesTradeProfile = "assets/images/trade-profile.png";
@@ -318,6 +323,10 @@ class Assets {
   /// assets/svgs/pound.svg
   static const String svgsPound = "assets/svgs/pound.svg";
 
+  /// Assets for svgsPoundSign
+  /// assets/svgs/pound-sign.svg
+  static const String svgsPoundSign = "assets/svgs/pound-sign.svg";
+
   /// Assets for svgsProfile
   /// assets/svgs/Profile.svg
   static const String svgsProfile = "assets/svgs/Profile.svg";
@@ -329,6 +338,10 @@ class Assets {
   /// Assets for svgsProfileIcon
   /// assets/svgs/profile-icon.svg
   static const String svgsProfileIcon = "assets/svgs/profile-icon.svg";
+
+  /// Assets for svgsProvider
+  /// assets/svgs/provider.svg
+  static const String svgsProvider = "assets/svgs/provider.svg";
 
   /// Assets for svgsSearch
   /// assets/svgs/search.svg

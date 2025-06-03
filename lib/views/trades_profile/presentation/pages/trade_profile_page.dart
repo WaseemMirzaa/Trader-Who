@@ -18,6 +18,16 @@ class TradeProfilePage extends StatelessWidget {
       'route': AppRoutes.notificationPage,
     },
     {
+      'title': 'Services',
+      'icon': Assets.svgsProvider,
+      'route': AppRoutes.tradeServices,
+    },
+    {
+      'title': 'Set Your Rates, Small Jobs Done Right',
+      'icon': Assets.svgsPound,
+      'route': AppRoutes.tradeRate,
+    },
+    {
       'title': 'Change Password',
       'icon': Assets.svgsPassword,
       // 'route': AppRoutes.transactionHistory,

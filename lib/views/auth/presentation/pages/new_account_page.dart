@@ -98,7 +98,19 @@ class _NewAccountState extends State<NewAccountPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(Assets.imagesPeople, height: 62, width: 89),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            10.0,
+                          ), // Adjust the radius as needed
+                          child: Image.asset(
+                            Assets.imagesTradePeopleIcon,
+                            height: 82,
+                            width: 92,
+                            fit:
+                                BoxFit
+                                    .cover, // Ensures the image fits within the clipped area
+                          ),
+                        ),
                         SizedBox(height: context.responsiveHeight(1)),
                         CustomText(
                           text: 'Tradesperson',

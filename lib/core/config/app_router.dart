@@ -127,5 +127,15 @@ class AppRouter {
       page: () => TradeCustomerFeedbackPage(),
       binding: TradeCustomerFeedbackBinding(),
     ),
+    GetPage(
+      name: AppRoutes.tradeRate,
+      page: () => TradeRatePage(),
+      binding: TradeRateBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.tradeServices,
+      page: () => TradeServicesPage(),
+      binding: TradeServiceBinding(),
+    ),
   ];
 }
