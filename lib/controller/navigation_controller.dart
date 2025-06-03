@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/views/chat/presentation/pages/pages.dart';
 import 'package:traderwho/views/home/presentation/pages/pages.dart';
 import 'package:traderwho/views/job_history/pages/pages.dart';
@@ -34,6 +35,13 @@ class NavigationController extends GetxController {
   void changePage(int index) {
     if (currentIndex.value != index) {
       currentIndex.value = index;
+
+      // If we're not on the main navigation page, just go back to it
+      if (Get.currentRoute != AppRoutes.mainPageWithNavBar) {
+        // Use Get.back() to return to the previous page (MainPageWithNavbar)
+        // This preserves the existing navbar instance
+        Get.back();
+      }
     }
   }
 
