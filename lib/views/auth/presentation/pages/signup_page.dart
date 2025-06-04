@@ -148,16 +148,20 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     const Gap(30),
 
-                    // Sign In Button
+                    // Sign Up Button
                     CustomButton(
                       text: 'Sign Up',
                       onTap: () {
-                        // For now, just navigate to main page after successful signup
-                        final navController = NavigationController.to;
-                        navController.navigateToMainPage();
+                        // If user is a tradesperson, navigate to trade service signup page
+                        if (widget.isTradesperson) {
+                          Get.toNamed(AppRoutes.tradeServices);
+                        } else {
+                          // For regular customers, navigate to main page
+                          final navController = NavigationController.to;
+                          navController.navigateToMainPage();
+                        }
                       },
                       width: double.infinity,
-
                       color: AppColor.orangecustomColor,
                       textColor: Colors.white,
                       fontSize: screenWidth > 600 ? 18 : 16,

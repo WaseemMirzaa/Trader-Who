@@ -8,13 +8,14 @@ class TradeRatePage extends StatefulWidget {
 }
 
 class _TradeRatePageState extends State<TradeRatePage> {
-  // State for toggle switches
+  // State for checkboxes
   Map<String, bool> taskToggles = {
     'Change light switch': false,
     'Replace socket': false,
     'Install light fixture': false,
     'Repair light fixture': false,
   };
+
   // State for prices
   Map<String, TextEditingController> priceControllers = {
     'Change light switch': TextEditingController(),
@@ -22,10 +23,13 @@ class _TradeRatePageState extends State<TradeRatePage> {
     'Install light fixture': TextEditingController(),
     'Repair light fixture': TextEditingController(),
   };
+
   // Controller for custom task description
   final TextEditingController customTaskController = TextEditingController();
   // Controller for custom task price
   final TextEditingController customPriceController = TextEditingController();
+  // State for custom task checkbox
+  bool customTaskToggle = false;
 
   @override
   void dispose() {
@@ -41,7 +45,7 @@ class _TradeRatePageState extends State<TradeRatePage> {
     return GradientScaffold(
       appBar: const TradeRatesAppbar(),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 14.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,21 +54,24 @@ class _TradeRatePageState extends State<TradeRatePage> {
               const Text(
                 'Specify your fixed rates for common small tasks.',
                 style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.mediumGray,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: AppColor.black,
                 ),
               ),
               const SizedBox(height: 20),
-              // List of tasks with toggle switches and price fields
+              // List of tasks with checkboxes and price fields
               ...taskToggles.keys.map(
                 (task) => Container(
-                  margin: const EdgeInsets.symmetric(vertical: 6.0),
-                  padding: const EdgeInsets.all(16.0),
+                  margin: const EdgeInsets.symmetric(vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColor.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColor.lightGray, width: 1),
+                    border: Border.all(color: AppColor.white, width: 1),
                     boxShadow: [
                       BoxShadow(
                         color: AppColor.lightGray.withValues(alpha: 0.3),
@@ -74,73 +81,80 @@ class _TradeRatePageState extends State<TradeRatePage> {
                     ],
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Toggle switch with app theme colors
-                      Switch(
-                        value: taskToggles[task]!,
-                        onChanged: (value) {
-                          setState(() {
-                            taskToggles[task] = value;
-                          });
-                        },
-                        activeColor: AppColor.white,
-                        activeTrackColor: AppColor.darkBlue,
-                        inactiveThumbColor: AppColor.white,
-                        inactiveTrackColor: AppColor.lightGray,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      const SizedBox(width: 12),
-                      // Task name
                       Expanded(
                         child: Text(
                           task,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: AppColor.darkBlueText,
+                            color: AppColor.grayChat,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      // Price input field using CustomTextField
-                      CustomTextField(
-                        controller: priceControllers[task],
-                        enabled: taskToggles[task]!,
-                        keyboardType: TextInputType.number,
-                        textColor:
-                            taskToggles[task]!
-                                ? AppColor.darkBlueText
-                                : AppColor.mediumGray,
-                        hintText: '0.00',
-                        hintStyle: TextStyle(color: AppColor.midGray),
-                        prefix: Text(
-                          '£',
-                          style: TextStyle(
-                            color:
-                                taskToggles[task]!
-                                    ? AppColor.darkBlueText
-                                    : AppColor.mediumGray,
-                            fontWeight: FontWeight.w500,
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            child: CustomTextField(
+                              controller: priceControllers[task],
+                              enabled: taskToggles[task]!,
+                              keyboardType: TextInputType.number,
+                              textColor:
+                                  taskToggles[task]!
+                                      ? AppColor.darkBlueText
+                                      : AppColor.mediumGray,
+                              hintText: '0.00',
+
+                              hintStyle: TextStyle(color: AppColor.midGray),
+                              prefix: Text(
+                                '£',
+                                style: TextStyle(
+                                  color:
+                                      taskToggles[task]!
+                                          ? AppColor.darkBlueText
+                                          : AppColor.mediumGray,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              borderColor:
+                                  taskToggles[task]!
+                                      ? AppColor.offWhite
+                                      : AppColor.veryLightGray,
+                              fillColor:
+                                  taskToggles[task]!
+                                      ? AppColor.offWhite
+                                      : AppColor.veryLightGray,
+                              borderRadius: 8,
+                              height: 36.0,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 7,
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,2}'),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        borderColor:
-                            taskToggles[task]!
-                                ? AppColor.darkBlue
-                                : AppColor.lightGray,
-                        fillColor:
-                            taskToggles[task]!
-                                ? AppColor.offWhite
-                                : AppColor.veryLightGray,
-                        borderRadius: 8,
-                        width: 100,
-                        height: 55.0,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 15,
-                        ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d{0,2}'),
+                          const SizedBox(width: 8),
+                          Transform.scale(
+                            scale: 0.9,
+                            child: Checkbox(
+                              value: taskToggles[task],
+                              onChanged: (value) {
+                                setState(() {
+                                  taskToggles[task] = value!;
+                                });
+                              },
+                              activeColor: AppColor.darkBlue,
+                              checkColor: AppColor.white,
+                              side: BorderSide(color: AppColor.grey),
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                            ),
                           ),
                         ],
                       ),
@@ -151,7 +165,7 @@ class _TradeRatePageState extends State<TradeRatePage> {
               const SizedBox(height: 30),
               // Custom text for other small job
               const Text(
-                'Other small job',
+                'Other Small Job',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -160,83 +174,90 @@ class _TradeRatePageState extends State<TradeRatePage> {
               ),
               const SizedBox(height: 16),
               // Custom task description text field using CustomTextField
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: AppColor.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColor.lightGray, width: 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColor.lightGray.withValues(alpha: 0.3),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomTextField(
+                    controller: customTaskController,
+                    textColor: AppColor.grayChat,
+                    hintText: 'Description',
+                    hintStyle: TextStyle(color: AppColor.midGray),
+                    borderColor: AppColor.offWhite,
+                    fillColor: AppColor.offWhite,
+                    borderRadius: 8,
+                    height: 55.0,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 15,
                     ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomTextField(
-                      controller: customTaskController,
-                      textColor: AppColor.darkBlueText,
-                      hintText: 'Description',
-                      hintStyle: TextStyle(color: AppColor.midGray),
-                      borderColor: AppColor.darkBlue,
-                      fillColor: AppColor.offWhite,
-                      borderRadius: 8,
-                      height: 55.0,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 15,
+                  ),
+                  const SizedBox(height: 20),
+                  // Price text and input for custom task
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Price',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.darkBlueText,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    // Price text and input for custom task
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Price',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.darkBlueText,
-                          ),
-                        ),
-                        CustomTextField(
-                          controller: customPriceController,
-                          keyboardType: TextInputType.number,
-                          textColor: AppColor.darkBlueText,
-                          hintText: '0.00',
-                          hintStyle: TextStyle(color: AppColor.midGray),
-                          prefix: const Text(
-                            '£',
-                            style: TextStyle(
-                              color: AppColor.darkBlueText,
-                              fontWeight: FontWeight.w500,
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            child: CustomTextField(
+                              controller: customPriceController,
+                              keyboardType: TextInputType.number,
+                              textColor: AppColor.darkBlueText,
+                              hintText: '0.00',
+                              hintStyle: TextStyle(color: AppColor.midGray),
+                              prefix: const Text(
+                                '£',
+                                style: TextStyle(
+                                  color: AppColor.darkBlueText,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              borderColor: AppColor.offWhite,
+                              fillColor: AppColor.offWhite,
+                              borderRadius: 8,
+                              height: 55.0,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 15,
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,2}'),
+                                ),
+                              ],
                             ),
                           ),
-                          borderColor: AppColor.darkBlue,
-                          fillColor: AppColor.offWhite,
-                          borderRadius: 8,
-                          width: 100,
-                          height: 55.0,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 15,
-                          ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'^\d*\.?\d{0,2}'),
+                          const SizedBox(width: 8),
+                          Transform.scale(
+                            scale: 0.9,
+                            child: Checkbox(
+                              value: customTaskToggle,
+                              onChanged: (value) {
+                                setState(() {
+                                  customTaskToggle = value!;
+                                });
+                              },
+                              activeColor: AppColor.darkBlue,
+                              checkColor: AppColor.white,
+                              side: BorderSide(color: AppColor.grey),
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 30),
               // Save changes button
@@ -244,14 +265,16 @@ class _TradeRatePageState extends State<TradeRatePage> {
                 child: CustomButton(
                   text: 'Save Changes',
                   onTap: () {
-                    // TODO: Implement save functionality
+                    final navController = NavigationController.to;
+                    navController.setUserType(true); // Set as tradesperson
+                    navController.navigateToMainPage();
                   },
                   width: double.infinity,
                   color: AppColor.darkBlue,
                   textColor: AppColor.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  radius: 12,
+                  radius: 24,
                 ),
               ),
             ],

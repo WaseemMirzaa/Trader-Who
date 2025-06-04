@@ -1,17 +1,16 @@
 part of 'widgets.dart';
 
-class TradeServicesAppbar extends StatefulWidget
-    implements PreferredSizeWidget {
-  const TradeServicesAppbar({super.key});
+class ShortJobAppbar extends StatefulWidget implements PreferredSizeWidget {
+  const ShortJobAppbar({super.key});
 
   @override
-  State<TradeServicesAppbar> createState() => _TradeServicesAppbarState();
+  State<ShortJobAppbar> createState() => _ShortJobAppbarState();
 
   @override
   Size get preferredSize => const Size.fromHeight(70);
 }
 
-class _TradeServicesAppbarState extends State<TradeServicesAppbar> {
+class _ShortJobAppbarState extends State<ShortJobAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(

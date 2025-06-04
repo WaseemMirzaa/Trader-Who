@@ -195,3 +195,10 @@ class TradeServiceSignupBinding extends Bindings {
     );
   }
 }
+
+class TradeShortPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeShortPageController>(() => TradeShortPageController());
+  }
+}

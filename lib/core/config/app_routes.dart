@@ -87,4 +87,7 @@ class AppRoutes {
 
   /// The trade service signup page route.
   static const String tradeServiceSignupPage = '/tradeservicesignuppage';
+
+  /// The trade service signup page route.
+  static const String tradeShortPage = '/tradeservicesignuppage';
 }

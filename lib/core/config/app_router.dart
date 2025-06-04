@@ -137,14 +137,11 @@ class AppRouter {
       page: () => TradeServicesPage(),
       binding: TradeServiceBinding(),
     ),
+
     GetPage(
-      name: AppRoutes.tradeServicesSignup,
-      page: () => TradeServiceSignupPage(),
+      name: AppRoutes.tradeShortPage,
+      page: () => const TradeShortServicesPage(),
       binding: TradeServiceSignupBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.tradeServiceSignupPage,
-      page: () => const TradeServiceSignupPage(),
     ),
   ];
 }

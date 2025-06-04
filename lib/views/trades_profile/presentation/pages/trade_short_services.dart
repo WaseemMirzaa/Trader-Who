@@ -1,13 +1,13 @@
 part of 'pages.dart';
 
-class TradeServicesPage extends StatefulWidget {
-  const TradeServicesPage({super.key});
+class TradeShortServicesPage extends StatefulWidget {
+  const TradeShortServicesPage({super.key});
 
   @override
-  State<TradeServicesPage> createState() => _TradeServicesPageState();
+  State<TradeShortServicesPage> createState() => _TradeShortServicesPageState();
 }
 
-class _TradeServicesPageState extends State<TradeServicesPage> {
+class _TradeShortServicesPageState extends State<TradeShortServicesPage> {
   // Use a local list to manage services
   List<Service> servicesList = List.from(services);
 
@@ -42,7 +42,7 @@ class _TradeServicesPageState extends State<TradeServicesPage> {
             children: [
               // Add dropdown for selecting predefined services
               Text(
-                "Select a Service",
+                "Select a Short Service",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -186,7 +186,9 @@ class _TradeServicesPageState extends State<TradeServicesPage> {
                 text: "Continue",
                 onTap: () {
                   // Navigate to the main page with navbar (home screen)
-                  Get.toNamed(AppRoutes.tradeRate);
+                  final navController = NavigationController.to;
+                  navController.setUserType(true); // Set as tradesperson
+                  navController.navigateToMainPage();
                 },
                 color: AppColor.darkBlue,
                 textColor: Colors.white,
@@ -203,7 +205,7 @@ class _TradeServicesPageState extends State<TradeServicesPage> {
 }
 
 // Sample data
-final List<Service> services = [
+final List<Service> servicesShort = [
   Service(title: "Basic Plumbing Repair", price: 75.00),
   Service(title: "Electrical Installation", price: 120.00),
   Service(title: "Gas Eng", price: 90.00),

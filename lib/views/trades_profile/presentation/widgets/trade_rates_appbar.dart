@@ -7,7 +7,7 @@ class TradeRatesAppbar extends StatefulWidget implements PreferredSizeWidget {
   State<TradeRatesAppbar> createState() => _TradeRatesState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(70);
+  Size get preferredSize => const Size.fromHeight(120); // Match the toolbarHeight
 }
 
 class _TradeRatesState extends State<TradeRatesAppbar> {
@@ -42,11 +42,13 @@ class _TradeRatesState extends State<TradeRatesAppbar> {
               children: [
                 const SizedBox(height: 16),
                 Expanded(
-                  child: Stack(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Back button on the left
-                      Align(
-                        alignment: Alignment.centerLeft,
+                      // Back button
+                      Positioned(
+                        left: 0,
                         child: InkWell(
                           onTap: () => Get.back(),
                           child: const Icon(
@@ -58,19 +60,18 @@ class _TradeRatesState extends State<TradeRatesAppbar> {
                       ),
 
                       // Centered title
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Set Fixed prices to small jobs",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 19,
-                            fontWeight: FontWeight.w500,
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            "Set Fixed Prices for Small Jobs",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-
-                      // Right-aligned notification icon
                     ],
                   ),
                 ),
