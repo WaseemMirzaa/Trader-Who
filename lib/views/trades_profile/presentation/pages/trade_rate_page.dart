@@ -8,6 +8,9 @@ class TradeRatePage extends StatefulWidget {
 }
 
 class _TradeRatePageState extends State<TradeRatePage> {
+  // Flag to check if we came from profile page
+  bool isFromProfilePage = false;
+
   // State for checkboxes
   Map<String, bool> taskToggles = {
     'Change light switch': false,
@@ -30,6 +33,20 @@ class _TradeRatePageState extends State<TradeRatePage> {
   final TextEditingController customPriceController = TextEditingController();
   // State for custom task checkbox
   bool customTaskToggle = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Check the previous route to determine if we came from profile
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        isFromProfilePage =
+            Get.arguments == true ||
+            ModalRoute.of(context)?.settings.arguments == true ||
+            Get.previousRoute == AppRoutes.tradeProfile;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -96,7 +113,9 @@ class _TradeRatePageState extends State<TradeRatePage> {
                       Row(
                         children: [
                           SizedBox(
-                            width: 100,
+                            width: context.responsiveWidth(
+                              25,
+                            ), // Adjust width to be responsive
                             child: CustomTextField(
                               controller: priceControllers[task],
                               enabled: taskToggles[task]!,
@@ -108,14 +127,18 @@ class _TradeRatePageState extends State<TradeRatePage> {
                               hintText: '0.00',
 
                               hintStyle: TextStyle(color: AppColor.midGray),
-                              prefix: Text(
-                                '£',
-                                style: TextStyle(
-                                  color:
-                                      taskToggles[task]!
-                                          ? AppColor.darkBlueText
-                                          : AppColor.mediumGray,
-                                  fontWeight: FontWeight.w500,
+                              prefix: const Padding(
+                                padding: EdgeInsets.only(
+                                  right: 4.0,
+                                ), // Small padding to separate £ from text
+                                child: Text(
+                                  '£',
+                                  style: TextStyle(
+                                    color:
+                                        AppColor
+                                            .darkBlueText, // Match enabled/disabled state if needed
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                               borderColor:
@@ -129,8 +152,8 @@ class _TradeRatePageState extends State<TradeRatePage> {
                               borderRadius: 8,
                               height: 36.0,
                               contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 7,
+                                horizontal: 15, // Reduced and balanced padding
+                                vertical: 6,
                               ),
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
@@ -226,7 +249,7 @@ class _TradeRatePageState extends State<TradeRatePage> {
                               borderRadius: 8,
                               height: 55.0,
                               contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 18,
+                                horizontal: 22,
                                 vertical: 15,
                               ),
                               inputFormatters: [
@@ -265,9 +288,25 @@ class _TradeRatePageState extends State<TradeRatePage> {
                 child: CustomButton(
                   text: 'Save Changes',
                   onTap: () {
-                    final navController = NavigationController.to;
-                    navController.setUserType(true); // Set as tradesperson
-                    navController.navigateToMainPage();
+                    // Save the changes
+                    // Show success message
+                    Get.snackbar(
+                      'Success',
+                      'Rates saved successfully',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: AppColor.lightCyan,
+                      colorText: AppColor.darkBlueText,
+                    );
+
+                    if (isFromProfilePage) {
+                      // If coming from profile, just go back
+                      Get.back();
+                    } else {
+                      // Normal flow - navigate to main page
+                      final navController = NavigationController.to;
+                      navController.setUserType(true); // Set as tradesperson
+                      navController.navigateToMainPage();
+                    }
                   },
                   width: double.infinity,
                   color: AppColor.darkBlue,

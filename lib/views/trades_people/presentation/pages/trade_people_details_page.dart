@@ -162,7 +162,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                               service,
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: AppColor.black,
+                                color: AppColor.white,
                               ),
                             ),
                             backgroundColor: AppColor.mediumGray,

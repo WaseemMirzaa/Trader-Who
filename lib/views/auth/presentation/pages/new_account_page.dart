@@ -100,18 +100,24 @@ class _NewAccountState extends State<NewAccountPage> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(
-                            10.0,
-                          ), // Adjust the radius as needed
+                            context.responsiveWidth(
+                              2,
+                            ), // Responsive border radius
+                          ),
                           child: Image.asset(
                             Assets.imagesTradePeopleIcon,
-                            height: 82,
-                            width: 92,
+                            height: context.responsiveHeight(
+                              10,
+                            ), // Responsive height
+                            width: context.responsiveWidth(
+                              25,
+                            ), // Responsive width
                             fit:
                                 BoxFit
-                                    .cover, // Ensures the image fits within the clipped area
+                                    .cover, // Maintains image aspect ratio while fitting
                           ),
                         ),
-                        SizedBox(height: context.responsiveHeight(1)),
+                        SizedBox(height: context.responsiveHeight(0.8)),
                         CustomText(
                           text: 'Tradesperson',
                           color: AppColor.black,

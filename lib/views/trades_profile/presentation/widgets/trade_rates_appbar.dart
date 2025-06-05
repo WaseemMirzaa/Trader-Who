@@ -4,20 +4,20 @@ class TradeRatesAppbar extends StatefulWidget implements PreferredSizeWidget {
   const TradeRatesAppbar({super.key});
 
   @override
-  State<TradeRatesAppbar> createState() => _TradeRatesState();
+  State<TradeRatesAppbar> createState() => _TradeRatesAppbarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(120); // Match the toolbarHeight
+  Size get preferredSize => const Size.fromHeight(90); // Match the toolbarHeight
 }
 
-class _TradeRatesState extends State<TradeRatesAppbar> {
+class _TradeRatesAppbarState extends State<TradeRatesAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: AppColor.appbarBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
-      toolbarHeight: 120,
+      toolbarHeight: 100,
       flexibleSpace: Container(
         margin: EdgeInsets.zero,
         decoration: BoxDecoration(
@@ -35,45 +35,42 @@ class _TradeRatesState extends State<TradeRatesAppbar> {
           ],
         ),
         child: SafeArea(
-          bottom: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
             child: Column(
               children: [
                 const SizedBox(height: 16),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Back button
-                      Positioned(
-                        left: 0,
-                        child: InkWell(
-                          onTap: () => Get.back(),
-                          child: const Icon(
-                            Icons.arrow_back,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Back button
+                    InkWell(
+                      onTap: () => Get.back(),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                        size: 24,
+                      ),
+                    ),
+                    kGap20,
+                    // Centered title
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "Set Fixed Prices for Small Jobs",
+                          style: TextStyle(
                             color: Colors.black,
-                            size: 24,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
+                    ),
 
-                      // Centered title
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            "Set Fixed Prices for Small Jobs",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    // This empty SizedBox balances the back button in the row
+                    SizedBox(width: 24),
+                  ],
                 ),
               ],
             ),

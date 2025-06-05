@@ -18,12 +18,12 @@ class TradeProfilePage extends StatelessWidget {
       'route': AppRoutes.notificationPage,
     },
     {
-      'title': 'Services',
+      'title': 'Selected Large Jobs',
       'icon': Assets.svgsProvider,
       'route': AppRoutes.tradeServices,
     },
     {
-      'title': 'Set Your Rates, Small Jobs Done Right',
+      'title': 'Selected Small Jobs',
       'icon': Assets.svgsPound,
       'route': AppRoutes.tradeRate,
     },
@@ -36,9 +36,19 @@ class TradeProfilePage extends StatelessWidget {
 
   TradeProfilePage({super.key});
   void _handleOptionTap(BuildContext context, Map<String, dynamic> option) {
+    if (option['isLogout'] == true) {
+      Get.offAllNamed(AppRoutes.onboarding);
+      return;
+    }
+
     final String? route = option['route'];
     if (route != null) {
-      Navigator.pushNamed(context, route);
+      if (route == AppRoutes.tradeServices || route == AppRoutes.tradeRate) {
+        // Pass true as argument to indicate navigation from profile
+        Get.toNamed(route, arguments: true);
+      } else {
+        Navigator.pushNamed(context, route);
+      }
     }
   }
 

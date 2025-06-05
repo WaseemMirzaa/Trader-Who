@@ -11,6 +11,9 @@ class _TradeServicesPageState extends State<TradeServicesPage> {
   // Use a local list to manage services
   List<Service> servicesList = List.from(services);
 
+  // Flag to check if we came from profile page
+  bool isFromProfilePage = false;
+
   // Predefined service options
   final List<String> predefinedServices = [
     "Basic Plumbing Repair",
@@ -29,6 +32,20 @@ class _TradeServicesPageState extends State<TradeServicesPage> {
 
   // Selected service from dropdown
   String? selectedService;
+
+  @override
+  void initState() {
+    super.initState();
+    // Check the previous route to determine if we came from profile
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        isFromProfilePage =
+            Get.arguments == true ||
+            ModalRoute.of(context)?.settings.arguments == true ||
+            Get.previousRoute == AppRoutes.tradeProfile;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +132,7 @@ class _TradeServicesPageState extends State<TradeServicesPage> {
                 color: AppColor.orangecustomColor,
                 textColor: Colors.white,
                 width: double.infinity,
-                radius: 12,
+                radius: 24,
               ),
 
               const SizedBox(height: 24),
@@ -183,10 +200,23 @@ class _TradeServicesPageState extends State<TradeServicesPage> {
               // Continue button at the bottom
               const SizedBox(height: 30),
               CustomButton(
-                text: "Continue",
+                text: isFromProfilePage ? "Save" : "Continue",
                 onTap: () {
-                  // Navigate to the main page with navbar (home screen)
-                  Get.toNamed(AppRoutes.tradeRate);
+                  if (isFromProfilePage) {
+                    // If coming from profile, save changes and go back
+                    // Show success message
+                    Get.snackbar(
+                      'Success',
+                      'Services updated successfully',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: AppColor.lightCyan,
+                      colorText: AppColor.darkBlueText,
+                    );
+                    Get.back(); // Go back to profile page
+                  } else {
+                    // Normal flow - continue to trade rate page
+                    Get.toNamed(AppRoutes.tradeRate);
+                  }
                 },
                 color: AppColor.darkBlue,
                 textColor: Colors.white,
