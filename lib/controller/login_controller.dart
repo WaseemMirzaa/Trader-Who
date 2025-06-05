@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 
 class LoginController extends GetxController {
@@ -24,6 +26,9 @@ class LoginController extends GetxController {
   // Authentication instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  // Add Firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void onInit() {
@@ -92,8 +97,8 @@ class LoginController extends GetxController {
       );
 
       if (userCredential.user!.emailVerified) {
-        isLoggedIn.value = true;
-        Get.offAllNamed(AppRoutes.mainPageWithNavBar);
+        // Check user type from Firestore
+        await _checkUserTypeAndNavigate(userCredential.user!.uid);
       } else {
         await _auth.signOut();
         Get.snackbar(
@@ -128,7 +133,8 @@ class LoginController extends GetxController {
         return;
       }
 
-      await _handleSuccessfulLogin();
+      // Check user type from Firestore
+      await _checkUserTypeAndNavigate(userCredential.user!.uid);
     } on FirebaseAuthException catch (e) {
       _handleLoginError(e);
     } catch (e) {
@@ -213,9 +219,10 @@ class LoginController extends GetxController {
         idToken: googleAuth.idToken,
       );
 
-      await _auth.signInWithCredential(credential);
-      isLoggedIn.value = true;
-      Get.offAllNamed(AppRoutes.mainPageWithNavBar);
+      final userCredential = await _auth.signInWithCredential(credential);
+
+      // Check user type from Firestore
+      await _checkUserTypeAndNavigate(userCredential.user!.uid);
     } catch (e) {
       authException.value = 'Google Sign-In failed';
       Get.snackbar('Error', authException.value);
@@ -240,9 +247,10 @@ class LoginController extends GetxController {
         accessToken: appleCredential.authorizationCode,
       );
 
-      await _auth.signInWithCredential(oauthCredential);
-      isLoggedIn.value = true;
-      Get.offAllNamed(AppRoutes.mainPageWithNavBar);
+      final userCredential = await _auth.signInWithCredential(oauthCredential);
+
+      // Check user type from Firestore
+      await _checkUserTypeAndNavigate(userCredential.user!.uid);
     } catch (e) {
       authException.value = 'Apple Sign-In failed';
       Get.snackbar('Error', authException.value);
@@ -317,6 +325,72 @@ class LoginController extends GetxController {
         return 'Network error. Check your connection';
       default:
         return 'Login failed. Please try again';
+    }
+  }
+
+  // Improved method to check user type and navigate accordingly
+  Future<void> _checkUserTypeAndNavigate(String uid) async {
+    try {
+      // Get user document from Firestore
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+
+      if (userDoc.exists) {
+        final userData = userDoc.data();
+        if (userData == null) {
+          debugPrint('USER DATA IS NULL');
+          Get.snackbar('Error', 'User profile data is missing');
+          return;
+        }
+
+        debugPrint('FIRESTORE USER DATA: $userData');
+
+        // Check if user is tradesperson
+        bool isTradesperson = false;
+
+        // Check userType field first (this is what your signup controller uses)
+        if (userData.containsKey('user_type')) {
+          final userType = userData['user_type'];
+          debugPrint(
+            'USER TYPE FROM FIRESTORE: $userType (${userType.runtimeType})',
+          );
+
+          if (userType is String) {
+            isTradesperson = userType.toLowerCase() == 'tradesperson';
+          }
+          debugPrint('DETERMINED IS TRADESPERSON: $isTradesperson');
+        }
+
+        // Make sure NavigationController is available
+        if (!Get.isRegistered<NavigationController>()) {
+          Get.put(NavigationController());
+        }
+
+        // Set user type in NavigationController
+        debugPrint(
+          'SETTING USER TYPE IN NAVIGATION CONTROLLER: $isTradesperson',
+        );
+        NavigationController.to.setUserType(isTradesperson);
+
+        // Save credentials if remember me is checked
+        await _saveCredentialsIfRemembered();
+        isLoggedIn.value = true;
+
+        // Force update before navigation
+        Get.forceAppUpdate();
+
+        // Add a small delay to ensure the user type is set
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        // Navigate to main page
+        debugPrint('NAVIGATING TO MAIN PAGE WITH USER TYPE: $isTradesperson');
+        Get.offAllNamed(AppRoutes.mainPageWithNavBar);
+      } else {
+        debugPrint('USER DOCUMENT NOT FOUND IN FIRESTORE');
+        Get.snackbar('Error', 'User profile not found');
+      }
+    } catch (e) {
+      debugPrint('ERROR CHECKING USER TYPE: $e');
+      Get.snackbar('Error', 'Failed to load user profile');
     }
   }
 }

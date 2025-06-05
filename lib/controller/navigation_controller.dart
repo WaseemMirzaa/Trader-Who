@@ -33,15 +33,31 @@ class NavigationController extends GetxController {
   void changePage(int index) {
     if (currentIndex.value != index) {
       currentIndex.value = index;
+      update(); // Force UI update
     }
   }
 
   void setUserType(bool isTrades) {
+    debugPrint(
+      'SETTING USER TYPE IN NAVIGATION CONTROLLER: isTrades = $isTrades',
+    );
     isTradesPerson.value = isTrades;
     currentIndex.value = 0; // Reset to first tab
-    // Get.offAll(() => MainPageWithNavbar()); // Navigate to main page
+
+    // Force update
+    update();
+
+    // Print the current value to verify it was set
+    debugPrint(
+      'USER TYPE AFTER SETTING: isTradesperson = ${isTradesPerson.value}',
+    );
   }
 
-  List<Widget> get currentPages =>
-      isTradesPerson.value ? tradesPersonPages : customerPages;
+  List<Widget> get currentPages {
+    final pages = isTradesPerson.value ? tradesPersonPages : customerPages;
+    debugPrint(
+      'Getting current pages based on user type: isTradesperson = ${isTradesPerson.value}',
+    );
+    return pages;
+  }
 }

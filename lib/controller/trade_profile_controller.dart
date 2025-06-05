@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/config/app_routes.dart';
+import 'package:traderwho/views/auth/presentation/pages/pages.dart';
 
 class TradeProfileController extends GetxController {
   final Rx<String> name = Rx<String>('');
@@ -55,7 +56,23 @@ class TradeProfileController extends GetxController {
   }
 
   Future<void> logout() async {
-    await FirebaseAuth.instance.signOut();
-    Get.offAllNamed(AppRoutes.onboarding);
+    try {
+      // First, sign out from Firebase
+      await FirebaseAuth.instance.signOut();
+
+      // Add a small delay to ensure Firebase operations complete
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Use Get.offAll instead of Get.offAllNamed for more reliable navigation
+      Get.offAll(
+        () => const OnBoardingPage(),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 300),
+      );
+    } catch (e) {
+      debugPrint('Logout error: $e');
+      // If there's an error, still try to navigate to onboarding
+      Get.offAll(() => const OnBoardingPage());
+    }
   }
 }
