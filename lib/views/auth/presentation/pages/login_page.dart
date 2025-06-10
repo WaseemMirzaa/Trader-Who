@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: controller.passwordController,
                         hintText: 'Password',
                         obscureText: true,
-                        showPasswordToggle: true,
+                        showPasswordToggle: false,
                         borderRadius: 11,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
