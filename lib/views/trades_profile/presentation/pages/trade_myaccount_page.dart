@@ -5,7 +5,7 @@ class TradeMyaccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: const MyAccountAppBar(),
       body: Padding(
         padding: kHV20,
@@ -99,7 +99,7 @@ class TradeMyaccountPage extends StatelessWidget {
               height: 55,
               text: 'Update Profile',
               onTap: () {},
-              color: AppColor.darkBlue,
+              color: AppColor.primaryButton,
               textColor: Colors.white,
             ),
             SizedBox(height: 20),

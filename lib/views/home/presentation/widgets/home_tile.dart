@@ -43,7 +43,7 @@ class HomeTiles extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: AppColor.grey,
+                color: AppColor.secondaryText,
               ),
             ),
           ],

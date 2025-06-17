@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: const HomeAppBar(),
       body: Stack(
         children: [

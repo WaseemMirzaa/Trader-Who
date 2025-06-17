@@ -110,7 +110,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
               text: widget.fieldHeading!,
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: AppColor.mediumGray,
+              color: AppColor.secondaryText,
             ),
           ),
         SizedBox(

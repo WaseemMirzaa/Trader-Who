@@ -211,7 +211,7 @@ class _MapScreenState extends State<_MapScreenView> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())

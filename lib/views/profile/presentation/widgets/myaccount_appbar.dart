@@ -16,7 +16,7 @@ class MyAccountAppBar extends StatelessWidget implements PreferredSizeWidget {
           text: 'My Account',
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: AppColor.black,
+          color: AppColor.primaryText,
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColor.black),

@@ -49,9 +49,10 @@ class TradesPeopleCard extends StatelessWidget {
                         Text(
                           person.name,
                           style: const TextStyle(
-                            color: AppColor.black,
+                            color: AppColor.primaryText,
                             fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'openSans',
                           ),
                         ),
                         Row(
@@ -67,16 +68,18 @@ class TradesPeopleCard extends StatelessWidget {
                               'Price: ',
                               style: TextStyle(
                                 fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.primaryText,
+                                fontFamily: 'openSans',
                               ),
                             ),
                             Text(
                               '£${person.price}',
                               style: TextStyle(
                                 fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppColor.darkerGray,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.secondaryText,
+                                fontFamily: 'openSans',
                               ),
                             ),
                           ],
@@ -119,12 +122,17 @@ class TradesPeopleCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w400,
-                      color: Colors.black,
+                      fontFamily: 'openSans',
+                      color: AppColor.primaryText,
                     ),
                   ),
                   TextSpan(
                     text: person.expertise,
-                    style: TextStyle(fontSize: 18, color: AppColor.darkerGray),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: AppColor.secondaryText,
+                      fontFamily: 'openSans',
+                    ),
                   ),
                 ],
               ),
@@ -134,9 +142,9 @@ class TradesPeopleCard extends StatelessWidget {
               person.description,
               style: TextStyle(
                 fontSize: 12,
-                color: AppColor.darkerGray,
-
+                color: AppColor.secondaryText,
                 fontWeight: FontWeight.w500,
+                fontFamily: 'openSans',
               ),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,

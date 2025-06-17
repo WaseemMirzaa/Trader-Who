@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_color.dart';
 
@@ -70,16 +71,27 @@ class CustomText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(
-        fontFamily: fontFamily,
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        color: color ?? AppColor.black,
-        decoration: decoration,
-        letterSpacing: letterSpacing,
-        decorationColor: decorationColor,
-        height: textHeight,
-      ),
+      style:
+          fontFamily != null
+              ? TextStyle(
+                fontFamily: fontFamily,
+                fontSize: fontSize,
+                fontWeight: fontWeight,
+                color: color ?? AppColor.black,
+                decoration: decoration,
+                letterSpacing: letterSpacing,
+                decorationColor: decorationColor,
+                height: textHeight,
+              )
+              : GoogleFonts.openSans(
+                fontSize: fontSize,
+                fontWeight: fontWeight,
+                color: color ?? AppColor.black,
+                decoration: decoration,
+                letterSpacing: letterSpacing,
+                decorationColor: decorationColor,
+                height: textHeight,
+              ),
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,

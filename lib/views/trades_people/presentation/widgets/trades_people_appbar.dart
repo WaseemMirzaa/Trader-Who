@@ -16,7 +16,7 @@ class TradesPeopleAppbar extends StatelessWidget
 
     return Obx(
       () => AppBar(
-        backgroundColor: AppColor.appbarBackground,
+        backgroundColor: AppColor.appBackground,
         elevation: 0,
         toolbarHeight: 120,
         flexibleSpace: Container(
@@ -41,20 +41,18 @@ class TradesPeopleAppbar extends StatelessWidget
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Expanded(
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         Positioned.fill(
                           child: Center(
-                            child: Text(
-                              "Tradespeople",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal,
-                              ),
+                            child: CustomText(
+                              text: "Tradespeople",
+                              color: AppColor.primaryText,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),

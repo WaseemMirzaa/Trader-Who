@@ -14,7 +14,7 @@ class _JobHistoryAppbarState extends State<JobHistoryAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 120,
@@ -47,13 +47,12 @@ class _JobHistoryAppbarState extends State<JobHistoryAppbar> {
                       // Centered title - takes full width but text is centered
                       Align(
                         alignment: Alignment.center,
-                        child: Text(
-                          "Job History",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        child: CustomText(
+                          text: "Job History",
+
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       // Right-aligned icon

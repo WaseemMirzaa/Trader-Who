@@ -5,7 +5,7 @@ class TradeNotificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: const NotificationAppbar(),
       body: SingleChildScrollView(
         child: Padding(
@@ -21,7 +21,9 @@ class TradeNotificationPage extends StatelessWidget {
                 child: Text(
                   'New Notifications',
                   style: TextStyle(
-                    color: AppColor.black,
+                    fontFamily: 'openSans',
+
+                    color: AppColor.primaryText,
                     fontWeight: FontWeight.w500,
                     fontSize: context.responsiveFontSize(18),
                   ),

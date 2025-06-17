@@ -17,7 +17,7 @@ class _TradeCustomerFeedbackAppbarState
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 120,
@@ -61,13 +61,12 @@ class _TradeCustomerFeedbackAppbarState
                       // Centered title
                       Align(
                         alignment: Alignment.center,
-                        child: Text(
-                          'Customer Feedback',
-                          style: TextStyle(
-                            color: AppColor.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        child: CustomText(
+                          text: 'Customer Feedback',
+
+                          color: AppColor.primaryText,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],

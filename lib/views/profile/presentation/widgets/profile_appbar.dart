@@ -11,7 +11,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
     final double avatarImageSize = avatarRadius * 2;
 
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 280, // Increased height to accommodate the layout
@@ -49,13 +49,11 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                       // Centered "Profile" text
                       Expanded(
                         child: Center(
-                          child: const Text(
-                            'Profile',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
-                            ),
+                          child: CustomText(
+                            text: 'Profile',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.primaryText,
                           ),
                         ),
                       ),
@@ -90,16 +88,16 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                 CustomText(
                   text: 'Alex Jerome!',
                   fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.primaryText,
                 ),
                 const SizedBox(height: 4),
                 // Username text
                 CustomText(
                   text: '@katemiddleton',
                   fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: AppColor.darkerGray,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.secondaryText,
                 ),
               ],
             ),

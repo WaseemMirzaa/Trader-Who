@@ -54,15 +54,16 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                       children: [
                         CustomButton(
                           text: 'Login',
+
                           onTap: () {
                             Get.toNamed(AppRoutes.login);
                           },
                           width: double.infinity,
 
-                          color: AppColor.orangecustomColor,
+                          color: AppColor.primaryButton,
                           textColor: Colors.white,
                           fontSize: screenWidth > 600 ? 18 : 16,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.w600,
                           radius: 25,
                         ),
                         const Gap(20), // Space between buttons
@@ -77,7 +78,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                           color: AppColor.white,
                           textColor: AppColor.black,
                           fontSize: screenWidth > 600 ? 18 : 16,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.w600,
                           enableBorder: true,
                           borderColor: AppColor.white,
                           radius: 24,

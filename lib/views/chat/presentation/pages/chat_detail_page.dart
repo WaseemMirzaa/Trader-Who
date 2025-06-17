@@ -63,7 +63,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: ChatPageDetailAppBar(
         userName: widget.userName,
         avatarImage: widget.avatarImage,
@@ -118,10 +118,12 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                         controller: _messageController,
                         decoration: const InputDecoration(
                           hintStyle: TextStyle(
-                            color: AppColor.grey,
+                            color: AppColor.secondaryText,
                             fontWeight: FontWeight.w500,
+                            fontFamily: 'openSans',
                           ),
                           hintText: 'Write message',
+
                           border: InputBorder.none,
                         ),
                       ),

@@ -53,14 +53,19 @@ class MessageBubble extends StatelessWidget {
                 child: Text(
                   text,
                   style: TextStyle(
-                    color: isMe ? AppColor.white : AppColor.black,
+                    color: isMe ? AppColor.white : AppColor.primaryText,
+                    fontFamily: 'openSans',
                   ),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 time,
-                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: AppColor.secondaryText,
+                  fontFamily: 'openSans',
+                ),
               ),
             ],
           ),

@@ -15,13 +15,13 @@ class TradeMyaccountAppbar extends StatelessWidget
         bottomRight: Radius.circular(20.0),
       ),
       child: AppBar(
-        backgroundColor: AppColor.appbarBackground,
+        backgroundColor: AppColor.appBackground,
         centerTitle: true,
         title: const CustomText(
           text: 'My Account',
           fontSize: 18,
-          fontWeight: FontWeight.w500,
-          color: AppColor.black,
+          fontWeight: FontWeight.w600,
+          color: AppColor.primaryText,
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColor.black),

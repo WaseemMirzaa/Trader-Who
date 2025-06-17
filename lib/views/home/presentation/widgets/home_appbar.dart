@@ -10,7 +10,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     final double avatarImageSize = avatarRadius * 2;
 
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 200,
@@ -47,13 +47,12 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(top: 10),
                           child: Center(
-                            child: const Text(
-                              'Home',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                              ),
+                            child: const CustomText(
+                              text: 'Home',
+
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.primaryText,
                             ),
                           ),
                         ),
@@ -95,12 +94,12 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                               text: 'Hi, Alex Jerome!',
                               fontSize: 24,
                               fontWeight: FontWeight.normal,
-                              color: Colors.black,
+                              color: AppColor.primaryText,
                             ),
                             kGap10,
                             CustomText(
                               text: 'customer',
-                              decorationColor: AppColor.midGray,
+                              decorationColor: AppColor.secondaryText,
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
                               color: AppColor.darkerGray,

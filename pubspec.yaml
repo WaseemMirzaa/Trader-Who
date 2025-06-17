@@ -127,17 +127,7 @@ flutter:
     - assets/images/
     - assets/svgs/
     - assets/fonts/
-  fonts: # Added fonts section
-    - family: HelveticaNeue
-      fonts:
-        - asset: assets/fonts/HelveticaNeue-Bold.ttf
-          
-    - family: HelveticaNeue
-      fonts:
-        - asset: assets/fonts/HelveticaNeue-Regular.ttf
-    - family: HelveticaNeue
-      fonts:    
-       - asset: assets/fonts/HelveticaNeue-Light.ttf
+  # Using Google Fonts instead of local font files
         
          
 

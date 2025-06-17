@@ -20,7 +20,7 @@ class TradesJobHistoryAppbar extends StatelessWidget
 
     return Obx(
       () => AppBar(
-        backgroundColor: AppColor.appbarBackground,
+        backgroundColor: AppColor.appBackground,
         elevation: 0,
         toolbarHeight: 120,
         flexibleSpace: Container(
@@ -52,13 +52,12 @@ class TradesJobHistoryAppbar extends StatelessWidget
                       children: [
                         Positioned.fill(
                           child: Center(
-                            child: Text(
-                              "Job History",
-                              style: TextStyle(
-                                color: AppColor.darkBlueText,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            child: CustomText(
+                              text: "Job History",
+
+                              color: AppColor.primaryText,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),

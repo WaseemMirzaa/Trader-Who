@@ -14,7 +14,7 @@ class _TradeRatesAppbarState extends State<TradeRatesAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 100,
@@ -57,13 +57,11 @@ class _TradeRatesAppbarState extends State<TradeRatesAppbar> {
                     // Centered title
                     Expanded(
                       child: Center(
-                        child: Text(
-                          "Set Fixed Prices for Small Jobs",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        child: CustomText(
+                          text: "Set Fixed Prices for Small Jobs",
+                          color: AppColor.primaryText,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),

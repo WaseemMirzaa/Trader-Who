@@ -179,7 +179,8 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
                           'No ${controller.selectedTab.value.toLowerCase()} found',
                           style: TextStyle(
                             fontSize: 16,
-                            color: AppColor.darkGray,
+                            color: AppColor.secondaryText,
+                            fontFamily: 'openSans',
                           ),
                         ),
                       ),

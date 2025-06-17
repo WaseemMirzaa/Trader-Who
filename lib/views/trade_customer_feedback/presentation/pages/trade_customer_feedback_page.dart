@@ -11,7 +11,7 @@ class TradeCustomerFeedbackPage extends StatefulWidget {
 class _TradeCustomerFeedbackPageState extends State<TradeCustomerFeedbackPage> {
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: TradeCustomerFeedbackAppbar(),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -44,8 +44,10 @@ class _TradeCustomerFeedbackPageState extends State<TradeCustomerFeedbackPage> {
                   "He always gives a perfect service. Great attention to detail and awesome "
                   "service every time. Highly recommended!",
                   style: TextStyle(
+                    fontFamily: 'openSans',
+
                     fontSize: 12,
-                    color: AppColor.grey,
+                    color: AppColor.secondaryText,
                     height: 1.5,
                   ),
                 ),
@@ -55,9 +57,11 @@ class _TradeCustomerFeedbackPageState extends State<TradeCustomerFeedbackPage> {
                 const Text(
                   "Jason Rao",
                   style: TextStyle(
+                    fontFamily: 'openSans',
+
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.black,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.primaryText,
                   ),
                 ),
               ],

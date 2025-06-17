@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// This [AppColor] defines a set of colors used throughout the app.
 /// A utility class that defines the color palette used throughout the application.
@@ -161,13 +162,32 @@ class AppColor {
 
   static const Color darkGrayText = Color(0xFF575757);
 
+  // New color scheme
+  /// Primary text – Charcoal/Navy (#1A2238)
+  static const Color primaryText = Color(0xFF1A2238);
+
+  /// Secondary text – Mid grey (#6B7280)
+  static const Color secondaryText = Color(0xFF6B7280);
+
+  /// Primary button / CTA – Orange (#F97316)
+  static const Color primaryButton = Color(0xFFF97316);
+
+  /// Button hover / darker accent – Burnt orange (#EA580C)
+  static const Color buttonHover = Color(0xFFEA580C);
+
+  /// Borders / subtle outlines – Light grey (#E5E7EB)
+  static const Color borderGrey = Color(0xFFE5E7EB);
+
+  /// Success / positive UI – Emerald (#10B981)
+  static const Color successGreen = Color(0xFF10B981);
+
+  static const Color appBackground = Color(0xFFF7F8FA);
+
   static const LinearGradient defaultGradient = LinearGradient(
     colors: [
-      Color(0xFFFCF3ED), // #FCF3ED
-      Color(0xFFEFEFF0), // #EFEFF0
+      Color(0xFFF7F8FA), // Matches the background #F7F8FA
+      Color(0xFFE8ECEF), // Slightly darker, cooler grey #E8ECEF
     ],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
   );
   static const LinearGradient splashGradient = LinearGradient(
     colors: [
@@ -187,6 +207,8 @@ class AppColor {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+
+  static var p;
 }
 
 ThemeData lightTheme = ThemeData.light().copyWith(
@@ -199,18 +221,67 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     0xFFFCF3ED,
   ), // Fallback to one gradient color
   drawerTheme: const DrawerThemeData(backgroundColor: AppColor.white),
-  textTheme: const TextTheme(
-    displayLarge: TextStyle(
-      fontFamily: 'HelveticaNeue',
-      fontWeight: FontWeight.w700,
+  textTheme: GoogleFonts.openSansTextTheme().copyWith(
+    // Headings - Bold or Semi-bold
+    displayLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.bold, // Bold for large headings
+      color: AppColor.darkBlueText,
     ),
-    displayMedium: TextStyle(
-      fontFamily: 'HelveticaNeue',
-      fontWeight: FontWeight.w400,
+    displayMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for medium headings
+      color: AppColor.darkBlueText,
     ),
-    bodyLarge: TextStyle(
-      fontFamily: 'HelveticaNeue',
-      fontWeight: FontWeight.w300,
+    headlineLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.bold, // Bold for large headings
+      color: AppColor.darkBlueText,
+    ),
+    headlineMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for medium headings
+      color: AppColor.darkBlueText,
+    ),
+    headlineSmall: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for small headings
+      color: AppColor.darkBlueText,
+    ),
+    titleLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for titles
+      color: AppColor.darkBlueText,
+    ),
+    titleMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for titles
+      color: AppColor.darkBlueText,
+    ),
+    titleSmall: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for titles
+      color: AppColor.darkBlueText,
+    ),
+
+    // Body text - Regular
+    bodyLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.normal, // Regular for body text
+      color: AppColor.darkBlueText,
+    ),
+    bodyMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.normal, // Regular for body text
+      color: AppColor.darkBlueText,
+    ),
+    bodySmall: GoogleFonts.openSans(
+      fontWeight: FontWeight.normal, // Regular for body text
+      color: AppColor.mediumGray,
+    ),
+
+    // Button text - Bold or Semi-bold
+    labelLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.bold, // Bold for large buttons
+      color: AppColor.darkBlueText,
+    ),
+    labelMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for medium buttons
+      color: AppColor.darkBlueText,
+    ),
+    labelSmall: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for small buttons
+      color: AppColor.mediumGray,
     ),
   ),
   progressIndicatorTheme: const ProgressIndicatorThemeData(
@@ -228,18 +299,67 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
     0xFFEFEFF0,
   ), // Fallback to one gradient color
   drawerTheme: const DrawerThemeData(backgroundColor: AppColor.black),
-  textTheme: const TextTheme(
-    displayLarge: TextStyle(
-      fontFamily: 'HelveticaNeue',
-      fontWeight: FontWeight.w700,
+  textTheme: GoogleFonts.openSansTextTheme(ThemeData.dark().textTheme).copyWith(
+    // Headings - Bold or Semi-bold
+    displayLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.bold, // Bold for large headings
+      color: AppColor.white,
     ),
-    displayMedium: TextStyle(
-      fontFamily: 'HelveticaNeue',
-      fontWeight: FontWeight.w400,
+    displayMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for medium headings
+      color: AppColor.white,
     ),
-    bodyLarge: TextStyle(
-      fontFamily: 'HelveticaNeue',
-      fontWeight: FontWeight.w300,
+    headlineLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.bold, // Bold for large headings
+      color: AppColor.white,
+    ),
+    headlineMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for medium headings
+      color: AppColor.white,
+    ),
+    headlineSmall: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for small headings
+      color: AppColor.white,
+    ),
+    titleLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for titles
+      color: AppColor.white,
+    ),
+    titleMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for titles
+      color: AppColor.white,
+    ),
+    titleSmall: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for titles
+      color: AppColor.white,
+    ),
+
+    // Body text - Regular
+    bodyLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.normal, // Regular for body text
+      color: AppColor.white,
+    ),
+    bodyMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.normal, // Regular for body text
+      color: AppColor.white,
+    ),
+    bodySmall: GoogleFonts.openSans(
+      fontWeight: FontWeight.normal, // Regular for body text
+      color: AppColor.lightGray,
+    ),
+
+    // Button text - Bold or Semi-bold
+    labelLarge: GoogleFonts.openSans(
+      fontWeight: FontWeight.bold, // Bold for large buttons
+      color: AppColor.white,
+    ),
+    labelMedium: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for medium buttons
+      color: AppColor.white,
+    ),
+    labelSmall: GoogleFonts.openSans(
+      fontWeight: FontWeight.w600, // Semi-bold for small buttons
+      color: AppColor.lightGray,
     ),
   ),
   progressIndicatorTheme: const ProgressIndicatorThemeData(

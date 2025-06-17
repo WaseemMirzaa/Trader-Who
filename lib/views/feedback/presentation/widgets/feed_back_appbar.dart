@@ -6,7 +6,7 @@ class FeedBackAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       elevation: 0,
       toolbarHeight: 60,
       leading: IconButton(

@@ -16,7 +16,7 @@ class _TradeServicesSignupAppbarState extends State<TradeServicesSignupAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 90,

@@ -18,7 +18,7 @@ class TradeJobHistoryDetailAppbar extends StatelessWidget
             : 'New Job Details';
 
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       elevation: 0,
       toolbarHeight: 120, // Decreased height
       leading: IconButton(
@@ -56,7 +56,8 @@ class TradeJobHistoryDetailAppbar extends StatelessWidget
                       style: const TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.w500,
-                        color: AppColor.darkBlueText,
+                        color: AppColor.primaryText,
+                        fontFamily: 'openSans',
                       ),
                     ),
                   ),

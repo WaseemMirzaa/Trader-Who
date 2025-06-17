@@ -28,9 +28,11 @@ class CustomToggleButton extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-              color: isActive ? Colors.white : AppColor.darkGray,
+              color: isActive ? Colors.white : AppColor.primaryText,
+              fontFamily: 'openSans',
+
               fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

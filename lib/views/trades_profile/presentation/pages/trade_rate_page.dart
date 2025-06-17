@@ -4,318 +4,330 @@ class TradeRatePage extends StatefulWidget {
   const TradeRatePage({super.key});
 
   @override
-  State<TradeRatePage> createState() => _TradeRatePageState();
+  _TraderSetupScreenState createState() => _TraderSetupScreenState();
 }
 
-class _TradeRatePageState extends State<TradeRatePage> {
-  // Flag to check if we came from profile page
-  bool isFromProfilePage = false;
+class _TraderSetupScreenState extends State<TradeRatePage> {
+  String? selectedCategory;
 
-  // State for checkboxes
-  Map<String, bool> taskToggles = {
-    'Change light switch': false,
-    'Replace socket': false,
-    'Install light fixture': false,
-    'Repair light fixture': false,
+  final Map<String, List<ServiceItem>> tradeServices = {
+    'Electrician': [
+      ServiceItem(title: 'Replace socket'),
+      ServiceItem(title: 'Install light fitting'),
+      ServiceItem(title: 'Replace light switch'),
+      ServiceItem(title: 'Install extractor fan'),
+      ServiceItem(title: 'Replace fuse'),
+      ServiceItem(title: 'Install outside security light'),
+    ],
+    'Plumber': [
+      ServiceItem(title: 'Fix leaking tap'),
+      ServiceItem(title: 'Replace tap'),
+      ServiceItem(title: 'Unblock sink or toilet'),
+      ServiceItem(title: 'Install new kitchen or basin tap'),
+      ServiceItem(title: 'Replace toilet flush mechanism'),
+      ServiceItem(title: 'Fit outside tap'),
+      ServiceItem(title: 'Seal around sink or bath'),
+    ],
+    'Heating Engineer / Gas Engineer': [
+      ServiceItem(title: 'Bleed radiators'),
+      ServiceItem(title: 'Replace thermostat'),
+      ServiceItem(title: 'Service boiler'),
+      ServiceItem(title: 'Replace radiator valve'),
+      ServiceItem(title: 'Balance heating system'),
+      ServiceItem(title: 'Fit new radiator'),
+    ],
+    'Carpenter / Joiner': [
+      ServiceItem(title: 'Hang internal door'),
+      ServiceItem(title: 'Trim door'),
+      ServiceItem(title: 'Fit door handles or locks'),
+      ServiceItem(title: 'Fit skirting board'),
+      ServiceItem(title: 'Install shelves'),
+      ServiceItem(title: 'Repair floorboard'),
+      ServiceItem(title: 'Box in pipework'),
+    ],
+    'Painter & Decorator': [
+      ServiceItem(title: 'Paint a single wall'),
+      ServiceItem(title: 'Touch up marked walls'),
+      ServiceItem(title: 'Paint internal door'),
+      ServiceItem(title: 'Paint front door'),
+    ],
+    'Tiler': [
+      ServiceItem(title: 'Re-grout tiles'),
+      ServiceItem(title: 'Replace cracked tile'),
+      ServiceItem(title: 'Tile kitchen splashback'),
+      ServiceItem(title: 'Seal around tiles'),
+    ],
   };
 
-  // State for prices
-  Map<String, TextEditingController> priceControllers = {
-    'Change light switch': TextEditingController(),
-    'Replace socket': TextEditingController(),
-    'Install light fixture': TextEditingController(),
-    'Repair light fixture': TextEditingController(),
+  final Map<String, IconData> categoryIcons = {
+    'Electrician': Icons.electrical_services,
+    'Plumber': Icons.plumbing,
+    'Heating Engineer / Gas Engineer': Icons.local_fire_department,
+    'Carpenter / Joiner': Icons.handyman,
+    'Painter & Decorator': Icons.brush,
+    'Tiler': Icons.grid_4x4,
   };
 
-  // Controller for custom task description
-  final TextEditingController customTaskController = TextEditingController();
-  // Controller for custom task price
-  final TextEditingController customPriceController = TextEditingController();
-  // State for custom task checkbox
-  bool customTaskToggle = false;
+  void _showPriceDialog(ServiceItem service, int index) {
+    final titleController = TextEditingController(text: service.title);
+    final descController = TextEditingController(
+      text: service.description ?? '',
+    );
+    final priceController = TextEditingController(
+      text: service.price?.toStringAsFixed(0) ?? '',
+    );
 
-  @override
-  void initState() {
-    super.initState();
-    // Check the previous route to determine if we came from profile
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        isFromProfilePage =
-            Get.arguments == true ||
-            ModalRoute.of(context)?.settings.arguments == true ||
-            Get.previousRoute == AppRoutes.tradeProfile;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    // Dispose controllers to prevent memory leaks
-    priceControllers.forEach((_, controller) => controller.dispose());
-    customTaskController.dispose();
-    customPriceController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GradientScaffold(
-      appBar: const TradeRatesAppbar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 14.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Custom text for specifying rates
-              const Text(
-                'Specify your fixed rates for common small tasks.',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: AppColor.black,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // List of tasks with checkboxes and price fields
-              ...taskToggles.keys.map(
-                (task) => Container(
-                  margin: const EdgeInsets.symmetric(vertical: 4.0),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColor.white, width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.lightGray.withValues(alpha: 0.3),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          task,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.grayChat,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: context.responsiveWidth(
-                              25,
-                            ), // Adjust width to be responsive
-                            child: CustomTextField(
-                              controller: priceControllers[task],
-                              enabled: taskToggles[task]!,
-                              keyboardType: TextInputType.number,
-                              textColor:
-                                  taskToggles[task]!
-                                      ? AppColor.darkBlueText
-                                      : AppColor.mediumGray,
-                              hintText: '0.00',
-
-                              hintStyle: TextStyle(color: AppColor.midGray),
-                              prefix: const Padding(
-                                padding: EdgeInsets.only(
-                                  right: 4.0,
-                                ), // Small padding to separate £ from text
-                                child: Text(
-                                  '£',
-                                  style: TextStyle(
-                                    color:
-                                        AppColor
-                                            .darkBlueText, // Match enabled/disabled state if needed
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              borderColor:
-                                  taskToggles[task]!
-                                      ? AppColor.offWhite
-                                      : AppColor.veryLightGray,
-                              fillColor:
-                                  taskToggles[task]!
-                                      ? AppColor.offWhite
-                                      : AppColor.veryLightGray,
-                              borderRadius: 8,
-                              height: 36.0,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 15, // Reduced and balanced padding
-                                vertical: 6,
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,2}'),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Transform.scale(
-                            scale: 0.9,
-                            child: Checkbox(
-                              value: taskToggles[task],
-                              onChanged: (value) {
-                                setState(() {
-                                  taskToggles[task] = value!;
-                                });
-                              },
-                              activeColor: AppColor.darkBlue,
-                              checkColor: AppColor.white,
-                              side: BorderSide(color: AppColor.grey),
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              // Custom text for other small job
-              const Text(
-                'Other Small Job',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.darkBlueText,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Custom task description text field using CustomTextField
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              service.isCustom ? 'Add Custom Service' : 'Set Fixed Price',
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  CustomTextField(
-                    controller: customTaskController,
-                    textColor: AppColor.grayChat,
-                    hintText: 'Description',
-                    hintStyle: TextStyle(color: AppColor.midGray),
-                    borderColor: AppColor.offWhite,
-                    fillColor: AppColor.offWhite,
-                    borderRadius: 8,
-                    height: 55.0,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 15,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Price text and input for custom task
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Price',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.darkBlueText,
-                        ),
+                  if (service.isCustom) ...[
+                    TextField(
+                      controller: titleController,
+
+                      decoration: const InputDecoration(
+                        labelText: 'Service Title',
+                        border: OutlineInputBorder(),
                       ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            child: CustomTextField(
-                              controller: customPriceController,
-                              keyboardType: TextInputType.number,
-                              textColor: AppColor.darkBlueText,
-                              hintText: '0.00',
-                              hintStyle: TextStyle(color: AppColor.midGray),
-                              prefix: const Text(
-                                '£',
-                                style: TextStyle(
-                                  color: AppColor.darkBlueText,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              borderColor: AppColor.offWhite,
-                              fillColor: AppColor.offWhite,
-                              borderRadius: 8,
-                              height: 55.0,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 22,
-                                vertical: 15,
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,2}'),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Transform.scale(
-                            scale: 0.9,
-                            child: Checkbox(
-                              value: customTaskToggle,
-                              onChanged: (value) {
-                                setState(() {
-                                  customTaskToggle = value!;
-                                });
-                              },
-                              activeColor: AppColor.darkBlue,
-                              checkColor: AppColor.white,
-                              side: BorderSide(color: AppColor.grey),
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                            ),
-                          ),
-                        ],
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      style: TextStyle(color: AppColor.black),
+                      controller: descController,
+                      decoration: const InputDecoration(
+                        labelText: 'Description (Optional)',
+                        border: OutlineInputBorder(),
+                        hintText: 'Brief description of what\'s included',
+                      ),
+                      maxLines: 2,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  TextField(
+                    style: TextStyle(color: AppColor.secondaryText),
+                    controller: priceController,
+                    decoration: const InputDecoration(
+                      labelText: 'Fixed Price (£)',
+                      border: OutlineInputBorder(),
+                      prefixText: '£ ',
+                    ),
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}'),
                       ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
-              // Save changes button
-              Center(
-                child: CustomButton(
-                  text: 'Save Changes',
-                  onTap: () {
-                    // Save the changes
-                    // Show success message
-                    Get.snackbar(
-                      'Success',
-                      'Rates saved successfully',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: AppColor.lightCyan,
-                      colorText: AppColor.darkBlueText,
-                    );
-
-                    if (isFromProfilePage) {
-                      // If coming from profile, just go back
-                      Get.back();
-                    } else {
-                      // Normal flow - navigate to main page
-                      final navController = NavigationController.to;
-                      navController.setUserType(true); // Set as tradesperson
-                      navController.navigateToMainPage();
-                    }
+            ),
+            actions: [
+              if (service.isCustom)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      tradeServices[selectedCategory!]!.removeAt(index);
+                    });
+                    Navigator.pop(context);
                   },
-                  width: double.infinity,
-                  color: AppColor.darkBlue,
-                  textColor: AppColor.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  radius: 24,
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    if (service.isCustom) {
+                      service.title = titleController.text.trim();
+                      service.description =
+                          descController.text.trim().isEmpty
+                              ? null
+                              : descController.text.trim();
+                    }
+                    service.price = double.tryParse(priceController.text);
+                    service.isEnabled =
+                        service.price != null && service.price! > 0;
+                  });
+                  Navigator.pop(context);
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _addCustomService() {
+    final service = ServiceItem(title: '', isCustom: true);
+    setState(() {
+      tradeServices[selectedCategory!]!.add(service);
+    });
+    _showPriceDialog(service, tradeServices[selectedCategory!]!.length - 1);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TraderWhoScaffold(
+      appBar: TradeRatesAppbar(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomText(
+                text: 'Set Your Prices',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppColor.primaryText,
+              ),
+              const SizedBox(height: 8),
+              CustomText(
+                text:
+                    'Configure your small job services and set fixed prices for instant bookings.',
+                fontSize: 13,
+                maxLines: 2,
+                color: AppColor.secondaryText,
+              ),
+              const SizedBox(height: 18),
+
+              if (selectedCategory == null) ...[
+                const CustomText(
+                  text: 'Select your trade category:',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.primaryText,
+                ),
+                const SizedBox(height: 16),
+                ...tradeServices.keys.map((category) {
+                  int enabledServices =
+                      tradeServices[category]!.where((s) => s.isEnabled).length;
+                  int totalServices = tradeServices[category]!.length;
+
+                  return CategoryCard(
+                    category: category,
+                    icon: categoryIcons[category] ?? Icons.build,
+                    enabledServices: enabledServices,
+                    totalServices: totalServices,
+                    onTap: () {
+                      setState(() {
+                        selectedCategory = category;
+                      });
+                    },
+                  );
+                }),
+              ] else ...[
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedCategory = null;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back_ios,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF6B35).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        categoryIcons[selectedCategory] ?? Icons.build,
+                        color: const Color(0xFFFF6B35),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        selectedCategory!,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E3A8A),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Configure your services:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.secondaryText,
+                    fontFamily: 'openSans',
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Service Cards List
+                ...tradeServices[selectedCategory]!.asMap().entries.map((
+                  entry,
+                ) {
+                  int index = entry.key;
+                  ServiceItem service = entry.value;
+                  return ServiceCardWidget(
+                    service: service,
+                    onEditPressed: () => _showPriceDialog(service, index),
+                  );
+                }),
+
+                // Add Custom Service Button (positioned after service cards)
+                const SizedBox(height: 16),
+                AddCustomServiceButton(onPressed: _addCustomService),
+                const SizedBox(height: 32),
+
+                // Save Configuration Button
+                CustomButton(
+                  onTap: () {
+                    int enabledCount =
+                        tradeServices[selectedCategory!]!
+                            .where((s) => s.isEnabled)
+                            .length;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '$enabledCount services configured for $selectedCategory',
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  },
+                  color: AppColor.primaryButton,
+                  text: 'Save Configuration',
+                  textColor: AppColor.white,
+                ),
+              ],
             ],
           ),
         ),

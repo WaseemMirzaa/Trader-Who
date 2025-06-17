@@ -27,7 +27,7 @@ class NotificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: const NotificationAppbar(),
       body: SingleChildScrollView(
         child: Padding(
@@ -54,7 +54,7 @@ class NotificationPage extends StatelessWidget {
                         child: CustomText(
                           text: 'Job Reassessment - Action Required',
                           fontWeight: FontWeight.w500,
-                          fontSize: context.responsiveFontSize(16),
+                          fontSize: context.responsiveFontSize(14),
                         ),
                       ),
                       CustomText(
@@ -70,8 +70,10 @@ class NotificationPage extends StatelessWidget {
                   Text(
                     'Your trader has marked the job as "Not as described", as the work required appears to be more extensive than initially outlined.',
                     style: TextStyle(
+                      fontFamily: 'openSans',
+
                       fontSize: context.responsiveFontSize(13),
-                      color: AppColor.mediumGray,
+                      color: AppColor.secondaryText,
                     ),
                   ),
                   SizedBox(height: context.responsiveHeight(1.5)),
@@ -92,7 +94,7 @@ class NotificationPage extends StatelessWidget {
                           height: context.responsiveHeight(
                             4,
                           ), // 4% of screen height
-                          color: AppColor.orangecustomColor,
+                          color: AppColor.primaryButton,
                           textColor: AppColor.white,
                           radius: 25,
                           fontSize: context.responsiveFontSize(10),

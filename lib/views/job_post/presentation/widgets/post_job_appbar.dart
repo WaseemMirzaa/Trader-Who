@@ -6,7 +6,7 @@ class JobAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       elevation: 0,
       toolbarHeight: 120, // Decreased height
       leading: IconButton(
@@ -39,13 +39,12 @@ class JobAppBar extends StatelessWidget implements PreferredSizeWidget {
                 // This is the row with centered Job and right-aligned notification
                 const Expanded(
                   child: Center(
-                    child: Text(
-                      'Post a Job',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
+                    child: CustomText(
+                      text: 'Post a Job',
+
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.primaryText,
                     ),
                   ),
                 ),

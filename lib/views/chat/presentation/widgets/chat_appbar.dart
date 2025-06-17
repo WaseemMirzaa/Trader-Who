@@ -14,7 +14,7 @@ class _ChatAppbarState extends State<ChatAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 120,
@@ -40,20 +40,18 @@ class _ChatAppbarState extends State<ChatAppbar> {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
               children: [
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Expanded(
                   child: Stack(
                     children: [
                       // Centered title - takes full width but text is centered
                       Align(
                         alignment: Alignment.center,
-                        child: Text(
-                          "Chat",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        child: CustomText(
+                          text: "Chat",
+                          color: AppColor.primaryText,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       // Right-aligned icon

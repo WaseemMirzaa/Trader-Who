@@ -60,7 +60,9 @@ class TradeHomeCard extends StatelessWidget {
                       Text(
                         job.title,
                         style: const TextStyle(
-                          color: AppColor.black,
+                          fontFamily: 'openSans',
+
+                          color: AppColor.primaryText,
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -84,7 +86,9 @@ class TradeHomeCard extends StatelessWidget {
                                     text: 'Small Job - Fixed Price: ',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColor.black,
+                                      fontFamily: 'openSans',
+
+                                      color: AppColor.primaryText,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -92,7 +96,8 @@ class TradeHomeCard extends StatelessWidget {
                                     text: '£${job.price}',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColor.darkerGray,
+                                      color: AppColor.secondaryText,
+                                      fontFamily: 'openSans',
                                     ),
                                   ),
                                 ],
@@ -125,8 +130,10 @@ class TradeHomeCard extends StatelessWidget {
                       Text(
                         job.status,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 11,
                           color: AppColor.green,
+                          fontFamily: 'openSans',
+
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -136,7 +143,7 @@ class TradeHomeCard extends StatelessWidget {
                         Icon(
                           Icons.check_circle_outline,
                           color: AppColor.green,
-                          size: 16,
+                          size: 15,
                         ),
                     ],
                   ),
@@ -156,15 +163,17 @@ class TradeHomeCard extends StatelessWidget {
                         text: 'Preferred Time: ',
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.black,
+                          color: AppColor.primaryText,
                           fontWeight: FontWeight.w500,
+                          fontFamily: 'openSans',
                         ),
                       ),
                       TextSpan(
                         text: job.preferredTime,
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.darkerGray,
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
                         ),
                       ),
                     ],
@@ -185,15 +194,17 @@ class TradeHomeCard extends StatelessWidget {
                         text: 'Address: ',
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.darkGray,
+                          color: AppColor.primaryText,
                           fontWeight: FontWeight.w500,
+                          fontFamily: 'openSans',
                         ),
                       ),
                       TextSpan(
                         text: job.address,
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColor.darkerGray,
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
                         ),
                       ),
                     ],
@@ -226,9 +237,11 @@ class TradeHomeCard extends StatelessWidget {
               Text(
                 'Jason Rao',
                 style: TextStyle(
+                  fontFamily: 'openSans',
+
                   fontSize: 14,
-                  color: AppColor.black,
-                  fontWeight: FontWeight.bold,
+                  color: AppColor.primaryText,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -245,13 +258,12 @@ class TradeHomeCard extends StatelessWidget {
                       child: CustomButton(
                         text: rejectText,
                         onTap: onReject,
-                        color: AppColor.orangecustomColor,
+                        color: AppColor.primaryButton,
                         textColor: AppColor.white,
                         enableBorder: true,
                         height: 32,
                         radius: 30,
                         fontSize: 10,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -266,7 +278,6 @@ class TradeHomeCard extends StatelessWidget {
                         height: 32,
                         radius: 30,
                         fontSize: 10,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

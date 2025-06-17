@@ -5,7 +5,7 @@ class MyAccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: const MyAccountAppBar(),
       body: Padding(
         padding: kHV20,
@@ -31,7 +31,7 @@ class MyAccountPage extends StatelessWidget {
             TextFieldCustom(
               prefixLabel: 'First Name',
               initialValue: 'Alex',
-              textColor: AppColor.black,
+              textColor: AppColor.primaryText,
               fillColor: Colors.white,
               borderColor: AppColor.white,
               contentPadding: const EdgeInsets.symmetric(
@@ -99,7 +99,7 @@ class MyAccountPage extends StatelessWidget {
               height: 55,
               text: 'Update Profile',
               onTap: () {},
-              color: AppColor.darkBlue,
+              color: AppColor.primaryButton,
               textColor: Colors.white,
             ),
             SizedBox(height: 20),

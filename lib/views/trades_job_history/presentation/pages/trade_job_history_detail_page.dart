@@ -56,7 +56,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                 child: CustomButton(
                   text: 'Reassess Quote',
                   onTap: _showReassessBottomSheet,
-                  color: AppColor.orangecustomColor,
+                  color: AppColor.primaryButton,
                   textColor: AppColor.white,
                   enableBorder: true,
                   height: 50,
@@ -99,6 +99,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
             fontSize: 16,
             color: AppColor.black,
             fontWeight: FontWeight.w500,
+            fontFamily: 'openSans',
           ),
         ),
         kGap10, // Rating stars
@@ -120,15 +121,20 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
         const SizedBox(height: 8),
         Text(
           'He always give me a perfect service.',
-          style: TextStyle(fontSize: 14, color: AppColor.darkGray),
+          style: TextStyle(
+            fontSize: 14,
+            color: AppColor.secondaryText,
+            fontFamily: 'openSans',
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           'Jason Rao',
           style: TextStyle(
             fontSize: 14,
-            color: AppColor.black,
+            color: AppColor.primaryText,
             fontStyle: FontStyle.normal,
+            fontFamily: 'openSans',
           ),
         ),
       ],
@@ -139,7 +145,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
   Widget build(BuildContext context) {
     final isCompleted = widget.job.status.toLowerCase() == 'completed';
 
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: TradeJobHistoryDetailAppbar(status: widget.job.status),
       body: Column(
         children: [
@@ -174,9 +180,10 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                             Text(
                               widget.job.title,
                               style: const TextStyle(
-                                color: AppColor.black,
+                                color: AppColor.primaryText,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                fontFamily: 'openSans',
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -196,15 +203,17 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                                           text: 'Small Job - Fixed Price: ',
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: AppColor.black,
+                                            color: AppColor.primaryText,
                                             fontWeight: FontWeight.w500,
+                                            fontFamily: 'openSans',
                                           ),
                                         ),
                                         TextSpan(
                                           text: '£${widget.job.price}',
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: AppColor.darkerGray,
+                                            color: AppColor.secondaryText,
+                                            fontFamily: 'openSans',
                                           ),
                                         ),
                                       ],
@@ -234,6 +243,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                             fontSize: 12,
                             color: AppColor.green,
                             fontWeight: FontWeight.w500,
+                            fontFamily: 'openSans',
                           ),
                         ),
                       ),
@@ -251,8 +261,10 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                             const TextSpan(
                               text: 'Preferred Time: ',
                               style: TextStyle(
+                                fontFamily: 'openSans',
+
                                 fontSize: 14,
-                                color: AppColor.black,
+                                color: AppColor.primaryText,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -260,7 +272,8 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                               text: widget.job.preferredTime,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.darkerGray,
+                                color: AppColor.secondaryText,
+                                fontFamily: 'openSans',
                               ),
                             ),
                           ],
@@ -275,14 +288,19 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: AppColor.black,
+                      color: AppColor.primaryText,
+                      fontFamily: 'openSans',
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     widget.job.tradesPerson.description ??
                         'No description available',
-                    style: TextStyle(fontSize: 14, color: AppColor.darkerGray),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColor.secondaryText,
+                      fontFamily: 'openSans',
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -325,8 +343,10 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   CustomText(
                     text: 'Location',
                     fontWeight: FontWeight.w500,
+                    fontFamily: 'openSans',
+
                     fontSize: 16,
-                    color: AppColor.black,
+                    color: AppColor.primaryText,
                   ),
                   kGap10,
                   Row(
@@ -344,15 +364,17 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                               text: 'Address: ',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.black,
+                                color: AppColor.primaryText,
                                 fontWeight: FontWeight.w500,
+                                fontFamily: 'openSans',
                               ),
                             ),
                             TextSpan(
                               text: widget.job.address,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.darkerGray,
+                                color: AppColor.secondaryText,
+                                fontFamily: 'openSans',
                               ),
                             ),
                           ],
@@ -405,8 +427,9 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                       'Custom Feedback',
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppColor.black,
+                        color: AppColor.primaryText,
                         fontWeight: FontWeight.w500,
+                        fontFamily: 'openSans',
                       ),
                     ),
                     kGap10,
@@ -425,15 +448,20 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                     const SizedBox(height: 12),
                     Text(
                       'He always give me a perfect service.',
-                      style: TextStyle(fontSize: 14, color: AppColor.darkGray),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColor.secondaryText,
+                        fontFamily: 'openSans',
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Jason Rao',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColor.black,
+                        color: AppColor.primaryText,
                         fontStyle: FontStyle.normal,
+                        fontFamily: 'openSans',
                       ),
                     ),
                   ],

@@ -33,7 +33,7 @@ class _JobPageState extends State<JobPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: const JobAppBar(),
       body: SafeArea(
         child: Center(
@@ -190,9 +190,9 @@ class _JobPageState extends State<JobPage> {
                     },
                     width: double.infinity,
 
-                    color: AppColor.darkBlue,
+                    color: AppColor.primaryButton,
                     textColor: AppColor.white,
-                    fontWeight: FontWeight.normal,
+
                     radius: 25,
                     fontSize: screenWidth > 600 ? 18 : 16,
                   ),

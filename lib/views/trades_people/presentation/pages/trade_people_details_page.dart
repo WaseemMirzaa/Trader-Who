@@ -12,7 +12,7 @@ class TradePersonDetailsPage extends StatefulWidget {
 class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: TradePersonDetailsAppBar(
         person: widget.person,
         onBackPressed: () {
@@ -37,7 +37,8 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 "focus on getting the job done right the first time.",
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppColor.darkerGray,
+                  color: AppColor.secondaryText,
+                  fontFamily: 'openSans',
                   height: 1.5,
                 ),
               ),
@@ -99,7 +100,8 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 "service every time. Highly recommended!",
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppColor.darkerGray,
+                  color: AppColor.secondaryText,
+                  fontFamily: 'openSans',
                   height: 1.5,
                 ),
               ),
@@ -136,7 +138,8 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 "great service provided by the tradesperson.",
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppColor.darkerGray,
+                  color: AppColor.secondaryText,
+                  fontFamily: 'openSans',
                   height: 1.5,
                 ),
               ),
@@ -163,6 +166,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: AppColor.white,
+                                fontFamily: 'openSans',
                               ),
                             ),
                             backgroundColor: AppColor.mediumGray,
@@ -196,8 +200,9 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
       title,
       style: const TextStyle(
         fontSize: 18,
-        fontWeight: FontWeight.w400,
-        color: Colors.black,
+        fontWeight: FontWeight.w600,
+        color: AppColor.primaryText,
+        fontFamily: 'openSans',
       ),
     );
   }

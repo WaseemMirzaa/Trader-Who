@@ -14,7 +14,7 @@ class _TradeChatAppbarState extends State<TradeChatAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 120,
@@ -47,13 +47,12 @@ class _TradeChatAppbarState extends State<TradeChatAppbar> {
                       // Centered title - takes full width but text is centered
                       Align(
                         alignment: Alignment.center,
-                        child: Text(
-                          "Chat",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        child: CustomText(
+                          text: "Chat",
+
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       // Right-aligned icon

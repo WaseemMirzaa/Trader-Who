@@ -64,7 +64,7 @@ class _TradesPageState extends State<TradesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

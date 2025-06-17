@@ -54,7 +54,7 @@ class TradeProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: const TradeProfileAppbar(),
       body: Column(
         children: [
@@ -89,7 +89,7 @@ class TradeProfilePage extends StatelessWidget {
               onTap: () {
                 Get.offAllNamed(AppRoutes.onboarding);
               },
-              color: AppColor.darkBlue,
+              color: AppColor.primaryButton,
               textColor: Colors.white,
               enableIcon: true,
               icon: SvgPicture.asset(

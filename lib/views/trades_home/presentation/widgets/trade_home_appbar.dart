@@ -11,7 +11,7 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     ).format(DateTime.now());
 
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 400, // Adjusted to accommodate new row
@@ -46,13 +46,12 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                       SizedBox(width: 20),
                       Expanded(
                         child: Center(
-                          child: const Text(
-                            'Home',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.darkBlueText,
-                            ),
+                          child: CustomText(
+                            text: 'Home',
+
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.primaryText,
                           ),
                         ),
                       ),
@@ -79,7 +78,8 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
                         ),
                       ),
                       Text(
@@ -87,7 +87,8 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w400,
-                          color: AppColor.darkBlue,
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
                         ),
                       ),
                     ],

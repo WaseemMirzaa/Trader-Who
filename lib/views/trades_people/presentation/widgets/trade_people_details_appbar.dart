@@ -16,7 +16,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       elevation: 0,
       toolbarHeight: screenHeight,
       automaticallyImplyLeading: false,
@@ -60,13 +60,11 @@ class TradePersonDetailsAppBar extends StatelessWidget
                       constraints: const BoxConstraints(),
                     ),
                     SizedBox(width: 100),
-                    Text(
-                      'Details',
-                      style: TextStyle(
-                        fontSize: context.responsiveFontSize(18),
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
+                    CustomText(
+                      text: 'Details',
+                      fontSize: context.responsiveFontSize(18),
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.primaryText,
                     ),
                   ],
                 ),
@@ -80,8 +78,9 @@ class TradePersonDetailsAppBar extends StatelessWidget
                       person.name,
                       style: TextStyle(
                         fontSize: context.responsiveFontSize(20),
-                        fontWeight: FontWeight.normal,
-                        color: AppColor.black,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.primaryText,
+                        fontFamily: 'openSans',
                       ),
                     ),
                     kGap10,
@@ -101,15 +100,17 @@ class TradePersonDetailsAppBar extends StatelessWidget
                                 text: 'Price: ',
                                 style: TextStyle(
                                   fontSize: context.responsiveFontSize(15),
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.primaryText,
+                                  fontFamily: 'openSans',
                                 ),
                               ),
                               TextSpan(
                                 text: '£${person.price}',
                                 style: TextStyle(
                                   fontSize: context.responsiveFontSize(15),
-                                  color: AppColor.mutedGray,
+                                  color: AppColor.secondaryText,
+                                  fontFamily: 'openSans',
                                 ),
                               ),
                             ],
@@ -134,15 +135,17 @@ class TradePersonDetailsAppBar extends StatelessWidget
                                 text: 'Available Time: ',
                                 style: TextStyle(
                                   fontSize: context.responsiveFontSize(14),
-                                  color: AppColor.black,
-                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.primaryText,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'openSans',
                                 ),
                               ),
                               TextSpan(
                                 text: '9:00 AM - 5:00 PM',
                                 style: TextStyle(
                                   fontSize: context.responsiveFontSize(14),
-                                  color: AppColor.mutedGray,
+                                  color: AppColor.secondaryText,
+                                  fontFamily: 'openSans',
                                 ),
                               ),
                             ],
@@ -170,7 +173,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                                 height: context.responsiveHeight(4.5),
                                 color: AppColor.orangecustomColor,
                                 textColor: Colors.white,
-                                fontWeight: FontWeight.normal,
+
                                 radius: 25,
                               ),
                               const SizedBox(width: 10),

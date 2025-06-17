@@ -14,7 +14,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
   Widget build(BuildContext context) {
     final isWaitingForProposal = widget.job.status == 'Waiting for porposal';
 
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: JobHistoryDetailAppBar(
         job: widget.job,
         onBackPressed: () => Navigator.pop(context),
@@ -52,9 +52,10 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                             Text(
                               widget.job.title,
                               style: const TextStyle(
-                                color: AppColor.black,
+                                color: AppColor.primaryText,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'openSans',
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -73,18 +74,20 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                                         TextSpan(
                                           text: 'Small Job - Fixed Price: ',
                                           style: TextStyle(
+                                            fontFamily: 'openSans',
                                             fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColor.black,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColor.primaryText,
                                           ),
                                         ),
                                         TextSpan(
                                           text: '£${widget.job.price}',
                                           style: TextStyle(
+                                            fontFamily: 'openSans',
                                             fontSize: 14,
                                             color:
                                                 AppColor
-                                                    .darkerGray, // Or any other color you prefer
+                                                    .secondaryText, // Or any other color you prefer
                                           ),
                                         ),
                                       ],
@@ -109,9 +112,10 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                         child: Text(
                           widget.job.status,
                           style: const TextStyle(
+                            fontFamily: 'openSans',
                             fontSize: 12,
-                            color: AppColor.black,
-                            fontWeight: FontWeight.bold,
+                            color: AppColor.primaryText,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -130,15 +134,17 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                               text: 'Preferred Time: ',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppColor.black,
-                                fontWeight: FontWeight.w500,
+                                color: AppColor.primaryText,
+                                fontFamily: 'openSans',
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             TextSpan(
                               text: widget.job.preferredTime,
                               style: TextStyle(
+                                fontFamily: 'openSans',
                                 fontSize: 14,
-                                color: AppColor.darkerGray,
+                                color: AppColor.secondaryText,
                               ),
                             ),
                           ],
@@ -151,16 +157,21 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                   Text(
                     'Description',
                     style: TextStyle(
+                      fontFamily: 'openSans',
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.black,
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.primaryText,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     widget.job.tradesPerson.description ??
                         'No description available',
-                    style: TextStyle(fontSize: 13, color: AppColor.darkerGray),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColor.secondaryText,
+                      fontFamily: 'openSans',
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -207,9 +218,9 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                     ],
                     CustomText(
                       text: 'Location',
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       fontSize: 16,
-                      color: AppColor.black,
+                      color: AppColor.primaryText,
                     ),
                     kGap10,
                     Row(
@@ -227,15 +238,17 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                                 text: 'Address: ',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: AppColor.darkGray,
-                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.primaryText,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'openSans',
                                 ),
                               ),
                               TextSpan(
                                 text: widget.job.address,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: AppColor.darkGray,
+                                  color: AppColor.secondaryText,
+                                  fontFamily: 'openSans',
                                 ),
                               ),
                             ],
@@ -314,9 +327,9 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                         );
                       },
                       height: 45,
-                      color: AppColor.darkBlue,
+                      color: AppColor.primaryButton,
                       textColor: Colors.white,
-                      fontWeight: FontWeight.bold,
+
                       radius: 25,
                     )
                     : Row(
@@ -327,9 +340,9 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                             text: 'Cancel Job',
                             onTap: () {},
                             height: 50,
-                            color: AppColor.darkBlue,
+                            color: AppColor.primaryButton,
                             textColor: Colors.white,
-                            fontWeight: FontWeight.bold,
+
                             radius: 25,
                           ),
                         ),
@@ -355,8 +368,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           height: 50,
                           decoration: BoxDecoration(
                             color:
-                                AppColor
-                                    .orangecustomColor, // Dark blue background
+                                AppColor.primaryButton, // Dark blue background
                             shape: BoxShape.circle,
                           ),
                           child: Center(

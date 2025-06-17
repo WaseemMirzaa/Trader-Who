@@ -12,7 +12,7 @@ class MainPageWithNavbar extends StatelessWidget {
     final navController = NavigationController.to;
 
     return Obx(
-      () => GradientScaffold(
+      () => TraderWhoScaffold(
         body: navController.currentPages.elementAt(
           navController.currentIndex.value,
         ),

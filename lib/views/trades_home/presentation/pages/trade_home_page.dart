@@ -32,7 +32,7 @@ class _TradeHomePageState extends State<TradeHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: TradeHomeAppBar(),
       body: SingleChildScrollView(
         child: Padding(
@@ -48,7 +48,7 @@ class _TradeHomePageState extends State<TradeHomePage> {
                     text: 'New Jobs',
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: AppColor.black,
+                    color: AppColor.primaryText,
                   ),
                   TextButton(
                     onPressed: () {
@@ -56,7 +56,7 @@ class _TradeHomePageState extends State<TradeHomePage> {
                     },
                     child: CustomText(
                       text: 'View All',
-                      color: AppColor.orangecustomColor,
+                      color: AppColor.primaryButton,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

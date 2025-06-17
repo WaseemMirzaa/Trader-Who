@@ -29,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: const ProfileAppBar(),
       body: Column(
         children: [
@@ -64,7 +64,7 @@ class ProfileScreen extends StatelessWidget {
               onTap: () {
                 Get.offAllNamed(AppRoutes.onboarding);
               },
-              color: AppColor.darkBlue,
+              color: AppColor.primaryButton,
               textColor: Colors.white,
               enableIcon: true,
               icon: SvgPicture.asset(

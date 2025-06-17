@@ -32,16 +32,19 @@ class NotificationCard extends StatelessWidget {
                     Text(
                       title,
                       style: const TextStyle(
+                        fontFamily: 'openSans',
+
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColor.black,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.primaryText,
                       ),
                     ),
                     Text(
                       time,
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColor.darkGrayText,
+                        color: AppColor.secondaryText,
+                        fontFamily: 'openSans',
                       ),
                     ),
                   ],
@@ -49,7 +52,11 @@ class NotificationCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(fontSize: 12, color: AppColor.darkGrayText),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColor.secondaryText,
+                    fontFamily: 'openSans',
+                  ),
                 ),
               ],
             ),

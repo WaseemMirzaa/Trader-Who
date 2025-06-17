@@ -54,7 +54,7 @@ class TradeProfileCard extends StatelessWidget {
                   text: title,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: AppColor.darkGray,
+                  color: AppColor.primaryText,
                 ),
               ),
               // Forward icon

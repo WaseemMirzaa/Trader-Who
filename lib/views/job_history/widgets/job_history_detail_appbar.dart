@@ -14,7 +14,7 @@ class JobHistoryDetailAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       flexibleSpace: Container(
@@ -65,9 +65,10 @@ class JobHistoryDetailAppBar extends StatelessWidget
                               ? 'Details'
                               : job.title,
                           style: const TextStyle(
+                            fontFamily: 'openSans',
                             fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.primaryText,
                           ),
                         ),
                       ),

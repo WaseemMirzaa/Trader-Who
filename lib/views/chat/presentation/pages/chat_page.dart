@@ -57,7 +57,7 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return TraderWhoScaffold(
       appBar: const ChatAppbar(),
       body: SingleChildScrollView(
         child: Column(

@@ -44,7 +44,8 @@ class JobHistoryCard extends StatelessWidget {
                       Text(
                         job.title,
                         style: const TextStyle(
-                          color: AppColor.black,
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                         ),
@@ -64,8 +65,10 @@ class JobHistoryCard extends StatelessWidget {
                             child: Text(
                               'Small Job– Fixed Price: \$${job.price}',
                               style: TextStyle(
+                                color: AppColor.primaryText,
+                                fontFamily: 'openSans',
                                 fontSize: 12,
-                                color: AppColor.black,
+
                                 fontWeight: FontWeight.w600,
                               ),
                               overflow:
@@ -95,8 +98,9 @@ class JobHistoryCard extends StatelessWidget {
                   child: Text(
                     job.status,
                     style: const TextStyle(
+                      color: AppColor.primaryText,
+                      fontFamily: 'openSans',
                       fontSize: 12,
-                      color: AppColor.black,
                       fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis, // Truncate long status
@@ -117,16 +121,19 @@ class JobHistoryCard extends StatelessWidget {
                       const TextSpan(
                         text: 'Preferred Time: ',
                         style: TextStyle(
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
                           fontSize: 14,
-                          color: AppColor.darkGray,
+
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       TextSpan(
                         text: job.preferredTime,
                         style: TextStyle(
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
                           fontSize: 14,
-                          color: AppColor.darkerGray,
                         ),
                       ),
                     ],
@@ -146,16 +153,19 @@ class JobHistoryCard extends StatelessWidget {
                       const TextSpan(
                         text: 'Address: ',
                         style: TextStyle(
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
                           fontSize: 14,
-                          color: AppColor.darkGray,
+
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       TextSpan(
                         text: job.address,
                         style: TextStyle(
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
                           fontSize: 14,
-                          color: AppColor.darkerGray,
                         ),
                       ),
                     ],

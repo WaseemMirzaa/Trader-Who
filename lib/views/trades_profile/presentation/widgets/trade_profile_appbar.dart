@@ -12,7 +12,7 @@ class TradeProfileAppbar extends StatelessWidget
     final double avatarImageSize = avatarRadius * 2;
 
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 280, // Increased height to accommodate the layout
@@ -56,8 +56,9 @@ class TradeProfileAppbar extends StatelessWidget
                             'Profile',
                             style: TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.primaryText,
+                              fontFamily: 'openSans',
                             ),
                           ),
                         ),
@@ -94,7 +95,7 @@ class TradeProfileAppbar extends StatelessWidget
                   text: 'Kate Middleton',
                   fontSize: 24,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                  color: AppColor.primaryText,
                 ),
                 const SizedBox(height: 4),
                 // Username text
@@ -102,7 +103,7 @@ class TradeProfileAppbar extends StatelessWidget
                   text: '@katemiddleton',
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
-                  color: AppColor.grey,
+                  color: AppColor.secondaryText,
                 ),
               ],
             ),

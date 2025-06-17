@@ -56,7 +56,9 @@ class SearchBarTile extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: hintText ?? 'Search...',
                 hintStyle: TextStyle(
-                  color: AppColor.customsLightGray,
+                  color: AppColor.secondaryText,
+                  fontFamily: 'openSans',
+
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),

@@ -29,7 +29,7 @@ class _SignupPageState extends State<SignupPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return GradientScaffold(
+    return TraderWhoScaffold(
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -59,7 +59,8 @@ class _SignupPageState extends State<SignupPage> {
                                   ? 'Create an Account'
                                   : 'Customer Signup',
                           fontSize: 18,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.primaryText,
                         ),
                         const SizedBox(
                           width: 48,
@@ -162,10 +163,10 @@ class _SignupPageState extends State<SignupPage> {
                         }
                       },
                       width: double.infinity,
-                      color: AppColor.orangecustomColor,
+                      color: AppColor.primaryButton,
                       textColor: Colors.white,
                       fontSize: screenWidth > 600 ? 18 : 16,
-                      fontWeight: FontWeight.normal,
+
                       radius: 25,
                     ),
                     const Gap(20),

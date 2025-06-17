@@ -82,16 +82,18 @@ class CustomBottomSheet extends StatelessWidget {
                             Text(
                               professionalName,
                               style: const TextStyle(
+                                color: AppColor.primaryText,
+                                fontFamily: 'openSans',
                                 fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppColor.black,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             Text(
                               profession,
                               style: TextStyle(
                                 fontSize: 16,
-                                color: AppColor.mutedGray,
+                                color: AppColor.secondaryText,
+                                fontFamily: 'openSans',
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -126,9 +128,10 @@ class CustomBottomSheet extends StatelessWidget {
                   Text(
                     description,
                     style: const TextStyle(
+                      color: AppColor.secondaryText,
+                      fontFamily: 'openSans',
                       fontSize: 15,
                       height: 1.4,
-                      color: AppColor.mutedGray,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -138,17 +141,19 @@ class CustomBottomSheet extends StatelessWidget {
                     'Additional Qualifications',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[800],
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.primaryText,
+                      fontFamily: 'openSans',
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     qualifications,
                     style: const TextStyle(
+                      color: AppColor.secondaryText,
+                      fontFamily: 'openSans',
                       fontSize: 15,
                       height: 1.4,
-                      color: AppColor.mutedGray,
                     ),
                   ),
                 ],
@@ -169,7 +174,7 @@ class CustomBottomSheet extends StatelessWidget {
                     text: 'Book Now',
                     onTap: () {},
                     height: 50,
-                    color: AppColor.darkBlue,
+                    color: AppColor.primaryButton,
                     textColor: Colors.white,
                     fontWeight: FontWeight.bold,
                     radius: 25,

@@ -14,7 +14,7 @@ class ChatPageDetailAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColor.appbarBackground,
+      backgroundColor: AppColor.appBackground,
       automaticallyImplyLeading: false,
       elevation: 0,
       toolbarHeight: 80,
@@ -61,9 +61,10 @@ class ChatPageDetailAppBar extends StatelessWidget
                         child: Text(
                           'Chat With $userName',
                           style: const TextStyle(
-                            color: Colors.black,
+                            fontFamily: 'openSans',
+                            color: AppColor.primaryText,
                             fontSize: 20,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),

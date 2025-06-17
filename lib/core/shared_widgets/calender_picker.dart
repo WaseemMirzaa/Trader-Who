@@ -41,8 +41,10 @@ class CalendarPicker extends StatelessWidget {
           fontSize: 12,
         ),
         weekendStyle: TextStyle(
-          color: Colors.black,
+          color: AppColor.primaryText,
           fontWeight: FontWeight.w400,
+          fontFamily: 'openSans',
+
           fontSize: 12,
         ),
       ),
@@ -58,7 +60,8 @@ class CalendarPicker extends StatelessWidget {
         ),
         defaultDecoration: BoxDecoration(shape: BoxShape.circle),
         todayTextStyle: TextStyle(
-          color: Colors.black,
+          color: AppColor.primaryText,
+          fontFamily: 'openSans',
         ), // Same text style as default
         selectedTextStyle: TextStyle(color: Colors.white),
         defaultTextStyle: TextStyle(color: Colors.black),
