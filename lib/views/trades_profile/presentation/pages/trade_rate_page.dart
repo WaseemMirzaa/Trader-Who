@@ -4,13 +4,14 @@ class TradeRatePage extends StatefulWidget {
   const TradeRatePage({super.key});
 
   @override
-  _TraderSetupScreenState createState() => _TraderSetupScreenState();
+  TraderSetupScreenState createState() => TraderSetupScreenState();
 }
 
-class _TraderSetupScreenState extends State<TradeRatePage> {
+class TraderSetupScreenState extends State<TradeRatePage> {
   String? selectedCategory;
 
   final Map<String, List<ServiceItem>> tradeServices = {
+    'Custom Services': [], // New category for user-added services
     'Electrician': [
       ServiceItem(title: 'Replace socket'),
       ServiceItem(title: 'Install light fitting'),
@@ -60,6 +61,7 @@ class _TraderSetupScreenState extends State<TradeRatePage> {
   };
 
   final Map<String, IconData> categoryIcons = {
+    'Custom Services': Icons.add_circle_outline,
     'Electrician': Icons.electrical_services,
     'Plumber': Icons.plumbing,
     'Heating Engineer / Gas Engineer': Icons.local_fire_department,
@@ -85,49 +87,70 @@ class _TraderSetupScreenState extends State<TradeRatePage> {
               service.isCustom ? 'Add Custom Service' : 'Set Fixed Price',
             ),
             content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (service.isCustom) ...[
-                    TextField(
-                      controller: titleController,
-
-                      decoration: const InputDecoration(
-                        labelText: 'Service Title',
-                        border: OutlineInputBorder(),
+              child: SizedBox(
+                width:
+                    MediaQuery.of(context).size.width *
+                    0.8, // 80% of screen width
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (service.isCustom) ...[
+                      TextField(
+                        style: TextStyle(color: AppColor.secondaryText),
+                        controller: titleController,
+                        decoration: const InputDecoration(
+                          labelText: 'Service Title',
+                          labelStyle: TextStyle(
+                            color: AppColor.secondaryText,
+                            fontFamily: 'openSans',
+                          ),
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.all(12),
+                        ),
+                        autofocus: true,
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      style: TextStyle(color: AppColor.black),
-                      controller: descController,
-                      decoration: const InputDecoration(
-                        labelText: 'Description (Optional)',
-                        border: OutlineInputBorder(),
-                        hintText: 'Brief description of what\'s included',
+                      const SizedBox(height: 16),
+                      TextField(
+                        style: TextStyle(color: AppColor.secondaryText),
+                        controller: descController,
+                        decoration: const InputDecoration(
+                          labelText: 'Description (Optional)',
+                          labelStyle: TextStyle(
+                            color: AppColor.secondaryText,
+                            fontFamily: 'openSans',
+                          ),
+                          border: OutlineInputBorder(),
+                          hintText: 'Brief description of what\'s included',
+                          hintStyle: TextStyle(
+                            color: AppColor.secondaryText,
+                            fontFamily: 'openSans',
+                          ),
+                          contentPadding: EdgeInsets.all(12),
+                        ),
+                        maxLines: 2,
                       ),
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                  TextField(
-                    style: TextStyle(color: AppColor.secondaryText),
-                    controller: priceController,
-                    decoration: const InputDecoration(
-                      labelText: 'Fixed Price (£)',
-                      border: OutlineInputBorder(),
-                      prefixText: '£ ',
-                    ),
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d*\.?\d{0,2}'),
-                      ),
+                      const SizedBox(height: 16),
                     ],
-                  ),
-                ],
+                    TextField(
+                      style: TextStyle(color: AppColor.secondaryText),
+                      controller: priceController,
+                      decoration: const InputDecoration(
+                        labelText: 'Fixed Price (£)',
+                        border: OutlineInputBorder(),
+                        prefixText: '£ ',
+                        contentPadding: EdgeInsets.all(12),
+                      ),
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d*\.?\d{0,2}'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             actions: [
@@ -174,9 +197,10 @@ class _TraderSetupScreenState extends State<TradeRatePage> {
   void _addCustomService() {
     final service = ServiceItem(title: '', isCustom: true);
     setState(() {
-      tradeServices[selectedCategory!]!.add(service);
+      tradeServices['Custom Services']!.add(service);
+      selectedCategory = 'Custom Services';
     });
-    _showPriceDialog(service, tradeServices[selectedCategory!]!.length - 1);
+    _showPriceDialog(service, tradeServices['Custom Services']!.length - 1);
   }
 
   @override
@@ -230,6 +254,24 @@ class _TraderSetupScreenState extends State<TradeRatePage> {
                     },
                   );
                 }),
+                const SizedBox(height: 20),
+                // Add Custom Service Button (always visible)
+                AddCustomServiceButton(onPressed: _addCustomService),
+                const SizedBox(height: 20),
+                // Continue Button
+                CustomButton(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TraderOnboardingPage(),
+                      ),
+                    );
+                  },
+                  color: AppColor.primaryButton,
+                  text: 'Continue',
+                  textColor: AppColor.white,
+                ),
               ] else ...[
                 Row(
                   children: [
@@ -302,27 +344,14 @@ class _TraderSetupScreenState extends State<TradeRatePage> {
                   );
                 }),
 
-                // Add Custom Service Button (positioned after service cards)
+                // Add Custom Service Button (in category view)
                 const SizedBox(height: 16),
                 AddCustomServiceButton(onPressed: _addCustomService),
                 const SizedBox(height: 32),
 
                 // Save Configuration Button
                 CustomButton(
-                  onTap: () {
-                    int enabledCount =
-                        tradeServices[selectedCategory!]!
-                            .where((s) => s.isEnabled)
-                            .length;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          '$enabledCount services configured for $selectedCategory',
-                        ),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                  },
+                  onTap: () {},
                   color: AppColor.primaryButton,
                   text: 'Save Configuration',
                   textColor: AppColor.white,

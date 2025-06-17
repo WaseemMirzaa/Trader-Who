@@ -17,7 +17,7 @@ class _JobPageState extends State<JobPage> {
   // Job type options
   final List<Map<String, String>> _jobTypes = [
     {'value': 'small', 'label': 'Book Instantly: Small Fixed-Price Job'},
-    {'value': 'large', 'label': 'Request Quote:  Large-Scale Job'},
+    {'value': 'large', 'label': 'Request Quote: Large-Scale Job'},
   ];
 
   @override
@@ -26,6 +26,26 @@ class _JobPageState extends State<JobPage> {
     _locationController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  Widget _buildBulletPoint(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(text: '•', fontSize: 16, color: Colors.black),
+          const SizedBox(width: 8),
+          Expanded(
+            child: CustomText(
+              text: text,
+              fontSize: 14,
+              color: AppColor.secondaryText,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -50,6 +70,37 @@ class _JobPageState extends State<JobPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Simple bullet points instructions
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomText(
+                        text: 'How to post your job:',
+                        fontSize: screenWidth > 600 ? 18 : 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColor.primaryText,
+                      ),
+                      const Gap(8),
+                      _buildBulletPoint(
+                        'Choose from pre-listed quick jobs with fixed prices (like "replace a tap")',
+                      ),
+                      _buildBulletPoint(
+                        'Or describe your job in your own words',
+                      ),
+                      _buildBulletPoint(
+                        'We\'ll match you with trusted local traders',
+                      ),
+                      _buildBulletPoint(
+                        'Traders can offer instant booking or send quotes',
+                      ),
+                      _buildBulletPoint(
+                        'Upload photos to help traders quote faster',
+                      ),
+                      const Gap(16),
+                    ],
+                  ),
+
+                  // Original form fields continue...
                   CustomText(
                     text: 'Category Select',
                     fontSize: screenWidth > 600 ? 18 : 16,
@@ -83,6 +134,7 @@ class _JobPageState extends State<JobPage> {
                       return null;
                     },
                   ),
+                  // ... rest of your original form fields remain unchanged
                   const Gap(10),
 
                   // Job Type
@@ -118,7 +170,6 @@ class _JobPageState extends State<JobPage> {
                   CustomText(
                     text: 'Location',
                     fontSize: screenWidth > 600 ? 18 : 16,
-
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
@@ -168,7 +219,7 @@ class _JobPageState extends State<JobPage> {
                     ),
                     keyboardType: TextInputType.multiline,
                     maxLines: 5,
-                    height: screenHeight * 0.13, // Increased height
+                    height: screenHeight * 0.13,
                     contentPadding: EdgeInsets.symmetric(
                       vertical: screenHeight * 0.02,
                       horizontal: screenWidth * 0.04,
@@ -189,10 +240,8 @@ class _JobPageState extends State<JobPage> {
                       Get.toNamed(AppRoutes.tradeContainer);
                     },
                     width: double.infinity,
-
                     color: AppColor.primaryButton,
                     textColor: AppColor.white,
-
                     radius: 25,
                     fontSize: screenWidth > 600 ? 18 : 16,
                   ),

@@ -13,6 +13,7 @@ import 'package:traderwho/core/shared_widgets/textFieldCustom.dart';
 import 'package:traderwho/core/theme/theme.dart';
 import 'package:traderwho/models/models.dart';
 import 'package:traderwho/views/profile/presentation/widgets/widgets.dart';
+import 'package:traderwho/views/trade_onboarding/presentation/pages/pages.dart';
 import 'package:traderwho/views/trades_profile/presentation/widgets/widgets.dart';
 
 part 'trade_myaccount_page.dart';

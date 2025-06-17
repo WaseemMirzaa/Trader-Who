@@ -155,7 +155,7 @@ class _SignupPageState extends State<SignupPage> {
                       onTap: () {
                         // If user is a tradesperson, navigate to trade service signup page
                         if (widget.isTradesperson) {
-                          Get.toNamed(AppRoutes.tradeServices);
+                          Get.toNamed(AppRoutes.tradeRate);
                         } else {
                           // For regular customers, navigate to main page
                           final navController = NavigationController.to;
