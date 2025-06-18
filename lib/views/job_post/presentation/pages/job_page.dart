@@ -1,7 +1,11 @@
 part of 'pages.dart';
 
+// lib/pages/job_page.dart
+
 class JobPage extends StatefulWidget {
-  const JobPage({super.key});
+  final String selectedCategory;
+
+  const JobPage({super.key, required this.selectedCategory});
 
   @override
   State<JobPage> createState() => _JobPageState();
@@ -13,11 +17,11 @@ class _JobPageState extends State<JobPage> {
   final TextEditingController _descriptionController = TextEditingController();
 
   String? _selectedJobType;
+  String? _selectedSubCategory;
 
-  // Job type options
   final List<Map<String, String>> _jobTypes = [
-    {'value': 'small', 'label': 'Book Instantly: Small Fixed-Price Job'},
-    {'value': 'large', 'label': 'Request Quote: Large-Scale Job'},
+    {'value': 'small', 'label': 'Instant Book-Fixed Price'},
+    {'value': 'large', 'label': 'Custom QuoteFlexible Price'},
   ];
 
   @override
@@ -52,6 +56,8 @@ class _JobPageState extends State<JobPage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final subCategories =
+        CategoryData.subCategories[widget.selectedCategory] ?? [];
 
     return TraderWhoScaffold(
       appBar: const JobAppBar(),
@@ -70,7 +76,7 @@ class _JobPageState extends State<JobPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Simple bullet points instructions
+                  // How to post your job instructions
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -100,42 +106,158 @@ class _JobPageState extends State<JobPage> {
                     ],
                   ),
 
-                  // Original form fields continue...
+                  // Selected Category
                   CustomText(
-                    text: 'Category Select',
+                    text: 'Selected Category',
                     fontSize: screenWidth > 600 ? 18 : 16,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
                   const Gap(10),
-
-                  // Title Field
-                  CustomTextField(
-                    fillColor: AppColor.white,
-                    controller: _titleController,
-                    borderColor: AppColor.white,
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 9,
-                      horizontal: 14,
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColor.white,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    borderRadius: 10,
-                    height: 45,
-                    hintText: 'Write title',
-                    fontStyle: FontStyle.normal,
-                    hintStyle: const TextStyle(
-                      color: AppColor.grayHintText,
-                      fontSize: 15,
+                    child: Row(
+                      children: [
+                        Icon(Icons.check_circle, color: AppColor.primaryButton),
+                        const SizedBox(width: 8),
+                        Text(
+                          widget.selectedCategory,
+                          style: TextStyle(
+                            color: AppColor.secondaryText,
+                            fontFamily: 'openSans',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                    keyboardType: TextInputType.text,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a title';
-                      }
-                      return null;
-                    },
                   ),
-                  // ... rest of your original form fields remain unchanged
-                  const Gap(10),
+                  const Gap(20),
+
+                  // Quick Job Selection
+                  if (subCategories.isNotEmpty) ...[
+                    CustomText(
+                      text: 'Quick Job Selection',
+                      fontSize: screenWidth > 600 ? 18 : 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                    const Gap(10),
+                    Text(
+                      'Select from common jobs with fixed prices (optional)',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColor.secondaryText,
+                      ),
+                    ),
+                    const Gap(15),
+
+                    // Subcategories List
+                    ...subCategories.map((subCat) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedSubCategory = subCat['name'];
+                              _titleController.text =
+                                  '${widget.selectedCategory} - ${subCat['name']}';
+                              _descriptionController.text =
+                                  'I need a ${subCat['name']} service. Estimated price: ${subCat['price']}';
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color:
+                                  _selectedSubCategory == subCat['name']
+                                      ? AppColor.primaryButton.withOpacity(0.1)
+                                      : AppColor.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color:
+                                    Colors
+                                        .white, // Changed to white border color
+                                width:
+                                    1.0, // You can adjust the border width if needed
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    subCat['name'],
+                                    style: TextStyle(
+                                      fontFamily: 'openSans',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color:
+                                          _selectedSubCategory == subCat['name']
+                                              ? AppColor.primaryButton
+                                              : Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  subCat['price'],
+                                  style: TextStyle(
+                                    fontFamily: 'openSans',
+                                    fontSize: 15,
+                                    color:
+                                        _selectedSubCategory == subCat['name']
+                                            ? AppColor.primaryButton
+                                            : AppColor.primaryButton,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+
+                    const Gap(10),
+                  ],
+
+                  // Job Title
+                  // CustomText(
+                  //   text: 'Job Title',
+                  //   fontSize: screenWidth > 600 ? 18 : 16,
+                  //   fontWeight: FontWeight.w500,
+                  //   color: Colors.black,
+                  // ),
+
+                  // CustomTextField(
+                  //   fillColor: AppColor.white,
+                  //   controller: _titleController,
+                  //   borderColor: AppColor.white,
+                  //   contentPadding: const EdgeInsets.symmetric(
+                  //     vertical: 9,
+                  //     horizontal: 14,
+                  //   ),
+                  //   borderRadius: 10,
+                  //   height: 45,
+                  //   hintText: 'Write title',
+                  //   fontStyle: FontStyle.normal,
+                  //   hintStyle: const TextStyle(
+                  //     color: AppColor.grayHintText,
+                  //     fontSize: 15,
+                  //   ),
+                  //   keyboardType: TextInputType.text,
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'Please enter a title';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  // const Gap(10),
 
                   // Job Type
                   CustomText(
@@ -176,7 +298,7 @@ class _JobPageState extends State<JobPage> {
                   const Gap(10),
                   CustomTextField(
                     height: 45,
-                    contentPadding: EdgeInsets.symmetric(
+                    contentPadding: const EdgeInsets.symmetric(
                       vertical: 9,
                       horizontal: 14,
                     ),

@@ -39,7 +39,7 @@ class AppRouter {
     ),
     GetPage(
       name: AppRoutes.jobPage,
-      page: () => const JobPage(),
+      page: () => JobPage(selectedCategory: Get.arguments),
       binding: JobPageBinding(),
     ),
     GetPage(

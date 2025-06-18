@@ -64,7 +64,10 @@ class _HomePageState extends State<HomePage> {
                           imagePath: services[index]['image']!,
                           title: services[index]['title']!,
                           onTap: () {
-                            Get.toNamed(AppRoutes.jobPage);
+                            Get.toNamed(
+                              AppRoutes.jobPage,
+                              arguments: services[index]['title']!,
+                            );
                           },
                         );
                       },
