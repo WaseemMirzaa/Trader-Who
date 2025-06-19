@@ -20,7 +20,8 @@ class ServiceCardWidget extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: service.isEnabled ? Colors.green[300]! : Colors.grey[200]!,
+            color:
+                service.isEnabled ? AppColor.primaryButton : Colors.grey[200]!,
             width: service.isEnabled ? 2 : 1,
           ),
         ),
@@ -30,7 +31,10 @@ class ServiceCardWidget extends StatelessWidget {
               width: 12,
               height: 12,
               decoration: BoxDecoration(
-                color: service.isEnabled ? Colors.green : Colors.grey[300],
+                color:
+                    service.isEnabled
+                        ? AppColor.primaryButton
+                        : Colors.grey[300],
                 shape: BoxShape.circle,
               ),
             ),

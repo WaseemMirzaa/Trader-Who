@@ -79,8 +79,8 @@ class _TraderOnboardingPageState extends State<TraderOnboardingPage> {
                     text: "Getting Started",
 
                     fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    color: AppColor.secondaryText,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.primaryText,
                   ),
                   TextButton(
                     onPressed: () {

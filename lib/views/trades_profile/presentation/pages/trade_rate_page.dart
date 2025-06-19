@@ -294,6 +294,11 @@ class TraderSetupScreenState extends State<TradeRatePage> {
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.primaryButton, // Background color
+                  foregroundColor: Colors.white, // Text color (optional)
+                  // You can add other styling properties here as needed
+                ),
                 onPressed: () {
                   setState(() {
                     if (service.isCustom) {
