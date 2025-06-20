@@ -90,4 +90,7 @@ class AppRoutes {
 
   /// The trade service signup page route.
   static const String tradeShortPage = '/tradeservicesignuppage';
+
+  /// The custom job post page route.
+  static const String customJobPost = '/custom-jobpost';
 }

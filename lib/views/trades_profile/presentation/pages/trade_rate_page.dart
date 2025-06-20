@@ -382,10 +382,7 @@ class TraderSetupScreenState extends State<TradeRatePage> {
                   );
                 }),
                 const SizedBox(height: 20),
-                // Add Custom Service Button (always visible)
-                AddCustomServiceButton(onPressed: _addCustomService),
-                const SizedBox(height: 20),
-                // Continue Button
+                // Continue Button (kept at the bottom)
                 CustomButton(
                   onTap: () {
                     Navigator.push(
@@ -471,9 +468,11 @@ class TraderSetupScreenState extends State<TradeRatePage> {
                   );
                 }),
 
-                // Add Custom Service Button (in category view)
-                const SizedBox(height: 16),
-                AddCustomServiceButton(onPressed: _addCustomService),
+                // Add Custom Service Button (only shown in Custom Services category)
+                if (selectedCategory == 'Custom Services') ...[
+                  const SizedBox(height: 16),
+                  AddCustomServiceButton(onPressed: _addCustomService),
+                ],
                 const SizedBox(height: 32),
 
                 // Save Configuration Button

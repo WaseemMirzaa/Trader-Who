@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:traderwho/controller/chat_controller.dart';
+import 'package:traderwho/controller/custom_job_post_controller.dart';
 import 'package:traderwho/controller/homepage_controller.dart';
 import 'package:traderwho/controller/job_controller.dart';
 import 'package:traderwho/controller/job_history_page_controller.dart';

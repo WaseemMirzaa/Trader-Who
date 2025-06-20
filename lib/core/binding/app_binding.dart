@@ -202,3 +202,10 @@ class TradeShortPageBinding extends Bindings {
     Get.lazyPut<TradeShortPageController>(() => TradeShortPageController());
   }
 }
+
+class CustomJobPostPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<CustomJobPostController>(() => CustomJobPostController());
+  }
+}

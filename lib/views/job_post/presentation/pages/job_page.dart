@@ -1,7 +1,5 @@
 part of 'pages.dart';
 
-// lib/pages/job_page.dart
-
 class JobPage extends StatefulWidget {
   final String selectedCategory;
 
@@ -15,6 +13,7 @@ class _JobPageState extends State<JobPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _budgetController = TextEditingController();
 
   String? _selectedJobType;
   String? _selectedSubCategory;
@@ -29,6 +28,7 @@ class _JobPageState extends State<JobPage> {
     _titleController.dispose();
     _locationController.dispose();
     _descriptionController.dispose();
+    _budgetController.dispose();
     super.dispose();
   }
 
@@ -106,6 +106,40 @@ class _JobPageState extends State<JobPage> {
                     ],
                   ),
 
+                  // Job Type Selection
+                  CustomText(
+                    text: 'Job Type',
+                    fontSize: screenWidth > 600 ? 18 : 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                  const Gap(10),
+                  CustomDropdown<String>(
+                    value: _selectedJobType,
+                    hintText: 'Select job type',
+                    fieldHeading: null,
+                    items:
+                        _jobTypes.map((jobType) {
+                          return DropdownMenuItem<String>(
+                            value: jobType['value'],
+                            child: Text(jobType['label']!),
+                          );
+                        }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedJobType = newValue;
+                        _selectedSubCategory = null;
+                        if (newValue == 'large') {
+                          _titleController.clear();
+                          _descriptionController.clear();
+                        }
+                      });
+                    },
+                    fillColor: AppColor.white,
+                    borderRadius: 10,
+                  ),
+                  const Gap(20),
+
                   // Selected Category
                   CustomText(
                     text: 'Selected Category',
@@ -138,8 +172,10 @@ class _JobPageState extends State<JobPage> {
                   ),
                   const Gap(20),
 
-                  // Quick Job Selection
-                  if (subCategories.isNotEmpty) ...[
+                  // Conditional Sections Based on Job Type
+                  if (_selectedJobType == 'small' &&
+                      subCategories.isNotEmpty) ...[
+                    // Quick Job Selection for Fixed Price
                     CustomText(
                       text: 'Quick Job Selection',
                       fontSize: screenWidth > 600 ? 18 : 16,
@@ -179,11 +215,8 @@ class _JobPageState extends State<JobPage> {
                                       : AppColor.white,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color:
-                                    Colors
-                                        .white, // Changed to white border color
-                                width:
-                                    1.0, // You can adjust the border width if needed
+                                color: Colors.white,
+                                width: 1.0,
                               ),
                             ),
                             child: Row(
@@ -221,72 +254,45 @@ class _JobPageState extends State<JobPage> {
                         ),
                       );
                     }),
-
                     const Gap(10),
+                  ] else if (_selectedJobType == 'large') ...[
+                    // Budget Field for Custom Quote
+                    CustomText(
+                      text: 'Your Budget (Optional)',
+                      fontSize: screenWidth > 600 ? 18 : 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                    const Gap(10),
+                    CustomTextField(
+                      controller: _budgetController,
+                      height: 45,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 9,
+                        horizontal: 14,
+                      ),
+                      fillColor: AppColor.white,
+                      borderColor: AppColor.white,
+                      fontStyle: FontStyle.normal,
+                      hintText: 'Enter your estimated budget',
+                      hintStyle: const TextStyle(
+                        color: AppColor.grayHintText,
+                        fontSize: 15,
+                      ),
+                      keyboardType: TextInputType.number,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          '£',
+                          style: TextStyle(
+                            color: AppColor.secondaryText,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Gap(20),
                   ],
-
-                  // Job Title
-                  // CustomText(
-                  //   text: 'Job Title',
-                  //   fontSize: screenWidth > 600 ? 18 : 16,
-                  //   fontWeight: FontWeight.w500,
-                  //   color: Colors.black,
-                  // ),
-
-                  // CustomTextField(
-                  //   fillColor: AppColor.white,
-                  //   controller: _titleController,
-                  //   borderColor: AppColor.white,
-                  //   contentPadding: const EdgeInsets.symmetric(
-                  //     vertical: 9,
-                  //     horizontal: 14,
-                  //   ),
-                  //   borderRadius: 10,
-                  //   height: 45,
-                  //   hintText: 'Write title',
-                  //   fontStyle: FontStyle.normal,
-                  //   hintStyle: const TextStyle(
-                  //     color: AppColor.grayHintText,
-                  //     fontSize: 15,
-                  //   ),
-                  //   keyboardType: TextInputType.text,
-                  //   validator: (value) {
-                  //     if (value == null || value.isEmpty) {
-                  //       return 'Please enter a title';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
-                  // const Gap(10),
-
-                  // Job Type
-                  CustomText(
-                    text: 'Job Type',
-                    fontSize: screenWidth > 600 ? 18 : 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                  const Gap(10),
-                  CustomDropdown<String>(
-                    value: _selectedJobType,
-                    hintText: 'Select job type',
-                    fieldHeading: null,
-                    items:
-                        _jobTypes.map((jobType) {
-                          return DropdownMenuItem<String>(
-                            value: jobType['value'],
-                            child: Text(jobType['label']!),
-                          );
-                        }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedJobType = newValue;
-                      });
-                    },
-                    fillColor: AppColor.white,
-                    borderRadius: 10,
-                  ),
-                  const Gap(10),
 
                   // Location
                   CustomText(
@@ -319,7 +325,7 @@ class _JobPageState extends State<JobPage> {
                       return null;
                     },
                   ),
-                  const Gap(10),
+                  const Gap(20),
 
                   // Job Description
                   CustomText(

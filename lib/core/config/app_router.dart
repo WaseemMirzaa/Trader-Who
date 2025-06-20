@@ -143,5 +143,10 @@ class AppRouter {
       page: () => const TradeShortServicesPage(),
       binding: TradeServiceSignupBinding(),
     ),
+    GetPage(
+      name: AppRoutes.customJobPost,
+      page: () => CustomJobPost(),
+      binding: CustomJobPostPageBinding(),
+    ),
   ];
 }

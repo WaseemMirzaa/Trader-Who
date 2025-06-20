@@ -12,6 +12,7 @@ import 'package:traderwho/models/models.dart';
 import 'package:traderwho/views/trades_people/presentation/pages/pages.dart';
 
 part '../../../trades_job_history/presentation/widgets/map_view_card.dart';
+part 'custom_job_request_appbar.dart';
 part 'trade_container.dart';
 part 'trade_people_details_appbar.dart';
 part 'trades_people_appbar.dart';

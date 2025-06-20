@@ -42,7 +42,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
               IntrinsicWidth(
                 child: CustomButton(
                   text: 'Accept',
-                  onTap: _showReassessBottomSheet,
+                  // onTap: _showReassessBottomSheet,
                   color: AppColor.darkBlue,
                   textColor: AppColor.white,
                   height: 50,

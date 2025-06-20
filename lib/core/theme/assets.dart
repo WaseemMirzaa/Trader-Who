@@ -290,6 +290,10 @@ class Assets {
   /// assets/svgs/home.svg
   static const String svgsHome = "assets/svgs/home.svg";
 
+  /// Assets for svgsIconAwesomeImage
+  /// assets/svgs/Icon_awesome-image.svg
+  static const String svgsIconAwesomeImage = "assets/svgs/Icon_awesome-image.svg";
+
   /// Assets for svgsLocation
   /// assets/svgs/location.svg
   static const String svgsLocation = "assets/svgs/location.svg";
