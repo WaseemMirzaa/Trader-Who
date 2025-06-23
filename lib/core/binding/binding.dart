@@ -25,6 +25,7 @@ import 'package:traderwho/controller/trade_rate_controller.dart';
 import 'package:traderwho/controller/trade_service_controller.dart';
 import 'package:traderwho/controller/trade_service_signup_controller.dart';
 import 'package:traderwho/controller/trade_short_page_controller.dart';
+import 'package:traderwho/controller/user_controller.dart';
 import 'package:traderwho/views/splash/controller.dart';
 
 part 'app_binding.dart';

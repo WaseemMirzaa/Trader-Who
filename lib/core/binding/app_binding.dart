@@ -45,6 +45,7 @@ class SignUpBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<SignupController>(() => SignupController());
+    Get.lazyPut<NavigationController>(() => NavigationController());
   }
 }
 
@@ -52,6 +53,7 @@ class HomePageBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<HomepageController>(() => HomepageController());
+    Get.lazyPut<UserController>(() => UserController());
   }
 }
 
@@ -124,6 +126,19 @@ class MainPageWithNavBarBinding extends Bindings {
     Get.lazyPut<MainPageWithNavBarController>(
       () => MainPageWithNavBarController(),
     );
+    // Add controllers for all pages accessible through navigation
+    // Customer pages controllers
+    Get.lazyPut<UserController>(() => UserController());
+    Get.lazyPut<ProfileController>(() => ProfileController());
+    Get.lazyPut<HomepageController>(() => HomepageController());
+    Get.lazyPut<JobHistoryPageController>(() => JobHistoryPageController());
+    Get.lazyPut<ChatController>(() => ChatController());
+
+    // Trade pages controllers
+    Get.lazyPut<TradeHomeController>(() => TradeHomeController());
+    Get.lazyPut<TradeJobHistoryController>(() => TradeJobHistoryController());
+    Get.lazyPut<TradeChatController>(() => TradeChatController());
+    Get.lazyPut<TradeProfileController>(() => TradeProfileController());
   }
 }
 

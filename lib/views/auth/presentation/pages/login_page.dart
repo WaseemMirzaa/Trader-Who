@@ -8,16 +8,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _rememberMe = false;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
+  late LoginController controller;
   @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    controller = Get.put(LoginController(), permanent: true);
+    // This ensures the controller is initialized and loadSavedCredentials is called
   }
 
   @override
@@ -60,17 +57,17 @@ class _LoginPageState extends State<LoginPage> {
                       CustomTextField(
                         fillColor: AppColor.darkSlateBlue,
                         borderColor: AppColor.darkSlateBlue,
-                        controller: _emailController,
+                        controller: controller.emailController,
                         borderRadius: 11,
                         hintText: 'Email/Phone',
 
                         keyboardType: TextInputType.emailAddress,
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please enter your email or phone';
-                        //   }
-                        //   return null;
-                        // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email or phone';
+                          }
+                          return null;
+                        },
                       ),
                       const Gap(20),
 
@@ -79,54 +76,62 @@ class _LoginPageState extends State<LoginPage> {
                         fillColor: AppColor.darkSlateBlue,
                         borderColor: AppColor.darkSlateBlue,
 
-                        controller: _passwordController,
+                        controller: controller.passwordController,
                         hintText: 'Password',
                         obscureText: true,
-                        showPasswordToggle: true,
+                        showPasswordToggle: false,
                         borderRadius: 11,
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please enter your password';
-                        //   }
-                        //   if (value.length < 6) {
-                        //     return 'Password must be at least 6 characters';
-                        //   }
-                        //   return null;
-                        // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          }
+                          return null;
+                        },
                       ),
                       kGap10,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Remember Me Checkbox
-                          Row(
-                            children: [
-                              Checkbox(
-                                fillColor: WidgetStateProperty.all(
-                                  AppColor.darkSlateBlue,
+                          Obx(
+                            () => Row(
+                              children: [
+                                Checkbox(
+                                  fillColor: WidgetStateProperty.resolveWith<
+                                    Color?
+                                  >((Set<WidgetState> states) {
+                                    if (states.contains(WidgetState.selected)) {
+                                      return AppColor
+                                          .offWhite; // Background color when checked
+                                    }
+                                    return AppColor
+                                        .darkSlateBlue; // Background color when unchecked
+                                  }),
+                                  side: BorderSide(color: AppColor.silverGray),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
+                                  value: controller.rememberMe.value,
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      controller.rememberMe.value = value;
+                                    }
+                                  },
+                                  activeColor:
+                                      AppColor
+                                          .offWhite, // Set activeColor to offWhite for consistency
+                                  checkColor: AppColor.black,
                                 ),
-
-                                side: BorderSide(color: AppColor.silverGray),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    6.0,
-                                  ), // Adjust for roundness (e.g., 4.0 for slight rounding)
+                                const CustomText(
+                                  text: 'Remember me',
+                                  color: AppColor.lightGrayText,
+                                  fontSize: 14,
                                 ),
-                                value: _rememberMe,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _rememberMe = value!;
-                                  });
-                                },
-                                activeColor: AppColor.orangecustomColor,
-                                checkColor: AppColor.midGray,
-                              ),
-                              const CustomText(
-                                text: 'Remember me',
-                                color: AppColor.lightGrayText,
-                                fontSize: 14,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
 
                           // Forgot Password
@@ -145,20 +150,22 @@ class _LoginPageState extends State<LoginPage> {
                       const Gap(30),
 
                       // Sign In Button
-                      CustomButton(
-                        text: 'Sign in',
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            // Add sign in functionality
-                          }
-                        },
-                        width: double.infinity,
-
-                        color: AppColor.primaryButton,
-                        textColor: Colors.white,
-                        fontSize: screenWidth > 600 ? 18 : 16,
-                        fontWeight: FontWeight.w600,
-                        radius: 25,
+                      Obx(
+                        () => CustomButton(
+                          text: 'Login',
+                          onTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              controller.login();
+                            }
+                          },
+                          isLoading: controller.isLoading.value,
+                          width: double.infinity,
+                          color: AppColor.orangecustomColor,
+                          textColor: Colors.white,
+                          fontSize: screenWidth > 600 ? 18 : 16,
+                          fontWeight: FontWeight.normal,
+                          radius: 25,
+                        ),
                       ),
                       const Gap(20),
 
@@ -205,7 +212,8 @@ class _LoginPageState extends State<LoginPage> {
                               enableIcon: true,
                               color: Colors.white,
                               textColor: Colors.black,
-                              onTap: () {},
+                              onTap: controller.signInWithApple,
+
                               radius: 18,
                               height: 50,
                             ),
@@ -222,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                               enableIcon: true,
                               color: Colors.white,
                               textColor: Colors.black,
-                              onTap: () {},
+                              onTap: controller.signInWithGoogle,
                               radius: 18,
                               height: 50,
                             ),

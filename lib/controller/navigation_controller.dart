@@ -42,18 +42,35 @@ class NavigationController extends GetxController {
         // This preserves the existing navbar instance
         Get.back();
       }
+      update(); // Force UI update
     }
   }
 
   void setUserType(bool isTrades) {
+    debugPrint(
+      'SETTING USER TYPE IN NAVIGATION CONTROLLER: isTrades = $isTrades',
+    );
     isTradesPerson.value = isTrades;
     currentIndex.value = 0; // Reset to first tab
   }
 
   void navigateToMainPage() {
     Get.offAll(() => const MainPageWithNavbar()); // Navigate to main page
+
+    // Force update
+    update();
+
+    // Print the current value to verify it was set
+    debugPrint(
+      'USER TYPE AFTER SETTING: isTradesperson = ${isTradesPerson.value}',
+    );
   }
 
-  List<Widget> get currentPages =>
-      isTradesPerson.value ? tradesPersonPages : customerPages;
+  List<Widget> get currentPages {
+    final pages = isTradesPerson.value ? tradesPersonPages : customerPages;
+    debugPrint(
+      'Getting current pages based on user type: isTradesperson = ${isTradesPerson.value}',
+    );
+    return pages;
+  }
 }

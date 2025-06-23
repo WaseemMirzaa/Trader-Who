@@ -21,7 +21,7 @@ class App extends StatelessWidget {
     return SizerUtils(
       builder: (BuildContext context, Orientation orientation) {
         return GetMaterialApp(
-          title: 'My App',
+          title: 'traderWho',
           theme: lightTheme,
           darkTheme: darkTheme,
 

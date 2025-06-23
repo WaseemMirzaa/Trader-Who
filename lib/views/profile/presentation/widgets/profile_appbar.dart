@@ -9,6 +9,10 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
     final double avatarRadius =
         size.width * 0.14; // Slightly larger for profile
     final double avatarImageSize = avatarRadius * 2;
+    final ProfileController profileController =
+        Get.isRegistered<ProfileController>()
+            ? Get.find<ProfileController>()
+            : Get.put(ProfileController());
 
     return AppBar(
       backgroundColor: AppColor.appBackground,
@@ -57,15 +61,30 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                         ),
                       ),
-                      // Edit icon
+                      // Edit icon with refresh functionality
                       InkWell(
                         onTap: () {
-                          // Handle edit profile action
+                          // Refresh profile data
+                          profileController.fetchProfileData();
                         },
-                        child: SvgPicture.asset(
-                          Assets.svgsProfileEdit,
-                          width: 24,
-                          height: 24,
+                        child: Obx(
+                          () =>
+                              profileController.isLoading.value
+                                  ? SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        AppColor.orangecustomColor,
+                                      ),
+                                    ),
+                                  )
+                                  : SvgPicture.asset(
+                                    Assets.svgsProfileEdit,
+                                    width: 24,
+                                    height: 24,
+                                  ),
                         ),
                       ),
                     ],
@@ -84,21 +103,85 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 kGap30,
-                // Name text
-                CustomText(
-                  text: 'Alex Jerome!',
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.primaryText,
-                ),
-                const SizedBox(height: 4),
-                // Username text
-                CustomText(
-                  text: '@katemiddleton',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.secondaryText,
-                ),
+
+                // Name and email with loading/error handling
+                Obx(() {
+                  if (profileController.isLoading.value) {
+                    return Column(
+                      children: [
+                        Container(
+                          width: 150,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          width: 200,
+                          height: 15,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  if (profileController.error.value.isNotEmpty) {
+                    return Column(
+                      children: [
+                        Text(
+                          'Error loading profile',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Please try again',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor.darkerGray,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Column(
+                    children: [
+                      // Name text
+                      Text(
+                        profileController.name.value.isEmpty
+                            ? 'Loading...'
+                            : profileController.name.value,
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      // Email text
+                      Text(
+                        profileController.email.value.isEmpty
+                            ? 'Loading...'
+                            : profileController.email.value,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: AppColor.darkerGray,
+                        ),
+                      ),
+                    ],
+                  );
+                }),
               ],
             ),
           ),

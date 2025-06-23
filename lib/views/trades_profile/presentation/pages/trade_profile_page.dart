@@ -86,8 +86,21 @@ class TradeProfilePage extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: CustomButton(
               text: 'Log Out',
-              onTap: () {
-                Get.offAllNamed(AppRoutes.onboarding);
+              onTap: () async {
+                try {
+                  // Get the TradeProfileController
+                  final profileController = Get.find<TradeProfileController>();
+
+                  // Use the controller's logout method
+                  await profileController.logout();
+
+                  // No need for additional navigation, the controller handles it
+                } catch (e) {
+                  debugPrint('Error during logout: $e');
+                  // Fallback if controller not found or error occurs
+                  await FirebaseAuth.instance.signOut();
+                  Get.offAllNamed(AppRoutes.onboarding);
+                }
               },
               color: AppColor.primaryButton,
               textColor: Colors.white,

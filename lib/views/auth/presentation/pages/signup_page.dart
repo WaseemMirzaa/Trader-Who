@@ -9,20 +9,8 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final bool _rememberMe = false;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _fullNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  final SignupController controller = Get.put(SignupController());
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +39,7 @@ class _SignupPageState extends State<SignupPage> {
                             Icons.arrow_back,
                             color: Colors.black,
                           ),
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => Get.back(),
                         ),
                         CustomText(
                           text:
@@ -62,77 +50,172 @@ class _SignupPageState extends State<SignupPage> {
                           fontWeight: FontWeight.w600,
                           color: AppColor.primaryText,
                         ),
-                        const SizedBox(
-                          width: 48,
-                        ), // Invisible spacer to balance the row
+                        const SizedBox(width: 48),
                       ],
                     ),
                     const Gap(80),
 
-                    // Email/Phone Field
+                    // Name Field
                     CustomTextField(
-                      controller: _fullNameController,
+                      controller: controller.nameController,
                       borderColor: Colors.transparent,
                       hintText: 'Full Name',
                       hintStyle: const TextStyle(color: AppColor.midGray),
-                      keyboardType: TextInputType.emailAddress,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Please enter your full name';
-                      //   }
-                      //   return null;
-                      // },
+                      keyboardType: TextInputType.name,
+                      textColor: AppColor.midGray,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your full name';
+                        }
+                        return null;
+                      },
                     ),
                     const Gap(20),
+
+                    // Email Field
                     CustomTextField(
-                      controller: _emailController,
+                      controller: controller.emailController,
                       borderColor: Colors.transparent,
                       hintText: 'Email',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Please enter your email';
-                      //   }
-                      //   return null;
-                      // },
+                      textColor: AppColor.midGray,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        if (!GetUtils.isEmail(value)) {
+                          return 'Invalid email format';
+                        }
+                        return null;
+                      },
                     ),
                     const Gap(20),
+
+                    // Phone Field
                     CustomTextField(
-                      controller: _phoneController,
+                      controller: controller.phoneController,
                       borderColor: Colors.transparent,
                       hintText: 'Phone',
                       hintStyle: const TextStyle(color: AppColor.midGray),
-                      keyboardType: TextInputType.emailAddress,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Please enter your phone';
-                      //   }
-                      //   return null;
-                      // },
+                      keyboardType: TextInputType.phone,
+                      textColor: AppColor.midGray,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your phone number';
+                        }
+                        if (!GetUtils.isPhoneNumber(value)) {
+                          return 'Invalid phone number';
+                        }
+                        return null;
+                      },
                     ),
                     const Gap(20),
+
+                    // Address Field
                     CustomTextField(
-                      controller: _addressController,
+                      controller: controller.addressController,
                       borderColor: Colors.transparent,
-                      hintText: 'Address(auto-location/manual)',
+                      hintText: 'Address (auto-location/manual)',
                       hintStyle: const TextStyle(color: AppColor.midGray),
-                      keyboardType: TextInputType.emailAddress,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Please enter your Address';
-                      //   }
-                      //   return null;
-                      // },
+                      keyboardType: TextInputType.streetAddress,
+                      textColor: AppColor.midGray,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your address';
+                        }
+                        return null;
+                      },
                     ),
                     const Gap(20),
+
+                    // Tradesperson-specific fields
+                    if (widget.isTradesperson) ...[
+                      // Title Field
+                      CustomTextField(
+                        controller: controller.titleController,
+                        borderColor: Colors.transparent,
+                        hintText: 'Professional Title (e.g., Plumber)',
+                        hintStyle: const TextStyle(color: AppColor.midGray),
+                        keyboardType: TextInputType.text,
+                        textColor: AppColor.midGray,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your professional title';
+                          }
+                          return null;
+                        },
+                      ),
+                      const Gap(20),
+
+                      // Bio Field
+                      CustomTextField(
+                        controller: controller.bioController,
+                        borderColor: Colors.transparent,
+                        hintText: 'Bio (Describe your services)',
+                        hintStyle: const TextStyle(color: AppColor.midGray),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 4,
+                        textColor: AppColor.midGray,
+                      ),
+                      const Gap(20),
+
+                      // Working Hours Selection
+                      Obx(
+                        () => Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: CustomButton(
+                                text:
+                                    controller.startTime.value == null
+                                        ? 'Select Start Time'
+                                        : controller.startTime.value!.format(
+                                          context,
+                                        ),
+                                onTap:
+                                    () => controller.selectStartTime(context),
+                                color: Colors.white,
+                                textColor: AppColor.midGray,
+                                borderColor:
+                                    controller.startTime.value == null
+                                        ? Colors.red
+                                        : AppColor.midGray,
+                                radius: 10,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: CustomButton(
+                                text:
+                                    controller.endTime.value == null
+                                        ? 'Select End Time'
+                                        : controller.endTime.value!.format(
+                                          context,
+                                        ),
+                                onTap: () => controller.selectEndTime(context),
+                                color: Colors.white,
+                                textColor: AppColor.midGray,
+                                borderColor:
+                                    controller.endTime.value == null
+                                        ? Colors.red
+                                        : AppColor.midGray,
+                                radius: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Gap(20),
+                    ],
 
                     // Password Field
                     CustomTextField(
                       hintStyle: const TextStyle(color: AppColor.midGray),
 
-                      controller: _passwordController,
+                      controller: controller.passwordController,
                       borderColor: Colors.transparent,
+                      textColor: AppColor.midGray,
                       hintText: 'Password',
                       obscureText: true,
                       showPasswordToggle: true,
@@ -150,24 +233,49 @@ class _SignupPageState extends State<SignupPage> {
                     const Gap(30),
 
                     // Sign Up Button
-                    CustomButton(
-                      text: 'Sign Up',
-                      onTap: () {
-                        // If user is a tradesperson, navigate to trade service signup page
-                        if (widget.isTradesperson) {
-                          Get.toNamed(AppRoutes.tradeRate);
-                        } else {
-                          // For regular customers, navigate to main page
-                          final navController = NavigationController.to;
-                          navController.navigateToMainPage();
-                        }
-                      },
-                      width: double.infinity,
-                      color: AppColor.primaryButton,
-                      textColor: Colors.white,
-                      fontSize: screenWidth > 600 ? 18 : 16,
-
-                      radius: 25,
+                    Obx(
+                      () => CustomButton(
+                        text: 'Sign Up',
+                        onTap: () {
+                          if (_formKey.currentState!.validate()) {
+                            if (widget.isTradesperson &&
+                                (controller.startTime.value == null ||
+                                    controller.endTime.value == null)) {
+                              Get.snackbar(
+                                'Error',
+                                'Please select your working hours',
+                              );
+                              return;
+                            }
+                            print('Submitting signup form');
+                            controller.signup(
+                              name: controller.nameController.text,
+                              email: controller.emailController.text,
+                              phone: controller.phoneController.text,
+                              address: controller.addressController.text,
+                              password: controller.passwordController.text,
+                              bio:
+                                  widget.isTradesperson
+                                      ? controller.bioController.text
+                                      : null,
+                              title:
+                                  widget.isTradesperson
+                                      ? controller.titleController.text
+                                      : null,
+                            );
+                          } else {
+                            print('Form validation failed');
+                          }
+                        },
+                        width: double.infinity,
+                        color: AppColor.orangecustomColor,
+                        textColor: Colors.white,
+                        fontSize: screenWidth > 600 ? 18 : 16,
+                        fontWeight: FontWeight.normal,
+                        radius: 25,
+                        isLoading: controller.isLoading.value,
+                        loadingColor: Colors.white,
+                      ),
                     ),
                     const Gap(20),
 
@@ -176,7 +284,7 @@ class _SignupPageState extends State<SignupPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: 50, // length of left divider
+                          width: 50,
                           child: Divider(color: AppColor.midGray, thickness: 1),
                         ),
                         Padding(
@@ -188,17 +296,19 @@ class _SignupPageState extends State<SignupPage> {
                           ),
                         ),
                         SizedBox(
-                          width: 50, // length of right divider
+                          width: 50,
                           child: Divider(color: AppColor.midGray, thickness: 1),
                         ),
                       ],
                     ),
-                    kGap20,
+                    const Gap(20),
+
+                    // Social Sign-in Buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: 140, // adjust width as needed
+                          width: 140,
                           child: CustomButton(
                             text: 'Apple',
                             icon: SvgPicture.asset(
@@ -213,9 +323,9 @@ class _SignupPageState extends State<SignupPage> {
                             height: 50,
                           ),
                         ),
-                        kGap20,
+                        const Gap(20),
                         SizedBox(
-                          width: 140, // adjust width as needed
+                          width: 140,
                           child: CustomButton(
                             text: 'Google',
                             icon: SvgPicture.asset(
@@ -232,7 +342,9 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ],
                     ),
-                    kGap20,
+                    const Gap(20),
+
+                    // Terms and Policies
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
@@ -243,7 +355,6 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                         children: const [
                           TextSpan(text: 'By continuing, you agree to our\n'),
-
                           TextSpan(
                             text: 'Privacy Policy',
                             style: TextStyle(
