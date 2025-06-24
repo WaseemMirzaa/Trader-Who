@@ -107,22 +107,7 @@ class TradeProfileAppbar extends StatelessWidget
                     fit: BoxFit.cover,
                   ),
                 ),
-                kGap10,
-                // Name text
-                CustomText(
-                  text: 'Kate Middleton',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                  color: AppColor.primaryText,
-                ),
-                const SizedBox(height: 4),
-                // Username text
-                CustomText(
-                  text: '@katemiddleton',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: AppColor.secondaryText,
-                ),
+
                 Obx(() {
                   if (profileController.isLoading.value) {
                     return Column(

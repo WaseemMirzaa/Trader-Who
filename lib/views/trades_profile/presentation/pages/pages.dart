@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/controller/trade_myaccount_controller.dart';
 import 'package:traderwho/controller/trade_profile_controller.dart';
+import 'package:traderwho/controller/trade_rate_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';

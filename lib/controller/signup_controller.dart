@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
+import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/models/user_model.dart';
 
 class SignupController extends GetxController {
@@ -179,6 +180,7 @@ class SignupController extends GetxController {
       Get.snackbar(
         'Success',
         'Account created successfully! Please verify your email.',
+        colorText: AppColor.primaryText,
       );
       debugPrint('Showing success snackbar');
       NavigationController.to.setUserType(isTradesperson.value);

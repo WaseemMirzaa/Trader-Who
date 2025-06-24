@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:traderwho/controller/trade_profile_controller.dart';
 import 'package:traderwho/core/extensions/extensions.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
 import 'package:traderwho/core/shared_widgets/custom_dialogs.dart';
