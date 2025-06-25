@@ -27,9 +27,9 @@ class TradeRateController extends GetxController {
 
       // Check if predefined services exist in Firebase
       final existingData =
-          await _firestore.collection('smalljoblist').limit(1).get();
+          await _firestore.collection('Services').doc('smalljoblist').get();
 
-      if (existingData.docs.isEmpty) {
+      if (!existingData.exists) {
         // No predefined data exists, initialize it first
         await initializePredefinedServices();
       } else {
@@ -56,26 +56,25 @@ class TradeRateController extends GetxController {
       categories['Custom Services'] = [];
 
       final userDoc = await _firestore.collection('users').doc(userId).get();
-      final userTitle = userDoc.exists ? userDoc['title'] as String? : null;
+      // final userTitle = userDoc.exists ? userDoc['title'] as String? : null;
 
-      final snapshot = await _firestore.collection('smalljoblist').get();
+      final snapshot =
+          await _firestore.collection('Services').doc('smalljoblist').get();
 
-      if (snapshot.docs.isEmpty) {
+      if (!snapshot.exists || snapshot.data() == null) {
         Get.snackbar(
           'Warning',
           'No services found in smalljoblist. You can add custom services.',
         );
       } else {
-        for (var doc in snapshot.docs) {
-          final data = doc.data();
-          final category = data['category'] as String;
-          if (userTitle != null &&
-              category != 'Custom Services' &&
-              !category.toLowerCase().contains(userTitle.toLowerCase())) {
-            continue; // Skip irrelevant categories
-          }
+        final data = snapshot.data()!;
+        final predefinedServices =
+            data['predefinedServices'] as Map<String, dynamic>? ?? {};
+
+        for (String category in predefinedServices.keys) {
+          // Remove the userTitle filter to include all categories
           final services =
-              (data['services'] as List? ?? [])
+              (predefinedServices[category] as List? ?? [])
                   .map(
                     (item) => ServiceItem.fromMap(item as Map<String, dynamic>),
                   )
@@ -188,8 +187,8 @@ class TradeRateController extends GetxController {
 
       // Check if data already exists
       final existingData =
-          await _firestore.collection('smalljoblist').limit(1).get();
-      if (existingData.docs.isNotEmpty) {
+          await _firestore.collection('Services').doc('smalljoblist').get();
+      if (existingData.exists) {
         print('Predefined services already exist in Firebase');
         await loadCategories(); // Reload categories
         return;
@@ -348,7 +347,9 @@ class TradeRateController extends GetxController {
         ],
       };
 
-      // Create service items for each category
+      // Create service items for each category and organize them
+      Map<String, List<Map<String, dynamic>>> organizedServices = {};
+
       for (String category in predefinedServices.keys) {
         final services =
             predefinedServices[category]!
@@ -356,14 +357,15 @@ class TradeRateController extends GetxController {
                   (title) => ServiceItem(title: title, isCustom: false).toMap(),
                 )
                 .toList();
-
-        await _firestore.collection('smalljoblist').doc(category).set({
-          'category': category,
-          'services': services,
-          'createdAt': FieldValue.serverTimestamp(),
-          'updatedAt': FieldValue.serverTimestamp(),
-        });
+        organizedServices[category] = services;
       }
+
+      // Save all predefined services to Services/smalljoblist document
+      await _firestore.collection('Services').doc('smalljoblist').set({
+        'predefinedServices': organizedServices,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
 
       print(
         'Successfully initialized ${predefinedServices.length} categories with predefined services',
