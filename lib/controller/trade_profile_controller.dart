@@ -7,6 +7,7 @@ import 'package:traderwho/views/auth/presentation/pages/pages.dart';
 class TradeProfileController extends GetxController {
   final Rx<String> name = Rx<String>('');
   final Rx<String> email = Rx<String>('');
+  final RxString profileImageUrl = RxString('');
   final RxBool isLoading = true.obs;
   final RxString error = ''.obs;
 
@@ -14,6 +15,11 @@ class TradeProfileController extends GetxController {
   void onInit() {
     super.onInit();
     fetchProfileData();
+  }
+
+  // Add this method to manually refresh data
+  Future<void> refreshProfile() async {
+    await fetchProfileData();
   }
 
   Future<void> fetchProfileData() async {

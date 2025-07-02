@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: controller.passwordController,
                         hintText: 'Password',
                         obscureText: true,
-                        showPasswordToggle: false,
+                        showPasswordToggle: true,
                         borderRadius: 11,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -137,10 +137,10 @@ class _LoginPageState extends State<LoginPage> {
                           // Forgot Password
                           GestureDetector(
                             onTap: () {
-                              // Add forgot password functionality
+                              Get.to(() => const ForgotPasswordPage());
                             },
                             child: const CustomText(
-                              text: 'Forgot password?',
+                              text: 'Forget password?',
                               color: AppColor.lightGrayText,
                               fontSize: 14,
                             ),

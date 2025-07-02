@@ -27,7 +27,7 @@ class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  // Add Firestore instance
+  // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
@@ -50,18 +50,27 @@ class LoginController extends GetxController {
       // Check for existing session
       if (_auth.currentUser != null && _auth.currentUser!.emailVerified) {
         isLoggedIn.value = true;
-        Get.offAllNamed(AppRoutes.mainPageWithNavBar);
+        await _checkUserTypeAndNavigate(_auth.currentUser!.uid);
         return;
       }
 
-      // Check for saved credentials
-      await _loadSavedCredentials();
+      // Clear text fields on initialization to prevent pre-filling
+      emailController.clear();
+      passwordController.clear();
 
-      // Attempt auto-login if remember me is enabled
-      if (rememberMe.value &&
-          emailController.text.isNotEmpty &&
-          passwordController.text.isNotEmpty) {
-        await _attemptAutoLogin();
+      // Only load saved credentials if rememberMe is explicitly true
+      final remembered = await _secureStorage.read(key: 'rememberMe');
+      if (remembered == 'true') {
+        rememberMe.value = true;
+        await _loadSavedCredentials();
+        // Attempt auto-login only if credentials are available
+        if (emailController.text.isNotEmpty &&
+            passwordController.text.isNotEmpty) {
+          await _attemptAutoLogin();
+        }
+      } else {
+        // Ensure credentials are cleared if rememberMe is not set
+        await _clearAllCredentials();
       }
     } catch (e) {
       debugPrint('Auth initialization error: $e');
@@ -73,15 +82,9 @@ class LoginController extends GetxController {
 
   Future<void> _loadSavedCredentials() async {
     try {
-      final remembered = await _secureStorage.read(key: 'rememberMe');
-      rememberMe.value = remembered == 'true';
-
-      if (rememberMe.value) {
-        emailController.text =
-            await _secureStorage.read(key: 'savedEmail') ?? '';
-        passwordController.text =
-            await _secureStorage.read(key: 'savedPassword') ?? '';
-      }
+      emailController.text = await _secureStorage.read(key: 'savedEmail') ?? '';
+      passwordController.text =
+          await _secureStorage.read(key: 'savedPassword') ?? '';
     } catch (e) {
       debugPrint('Error loading credentials: $e');
       authException.value = 'Failed to load saved credentials';
@@ -97,7 +100,6 @@ class LoginController extends GetxController {
       );
 
       if (userCredential.user!.emailVerified) {
-        // Check user type from Firestore
         await _checkUserTypeAndNavigate(userCredential.user!.uid);
       } else {
         await _auth.signOut();
@@ -133,7 +135,6 @@ class LoginController extends GetxController {
         return;
       }
 
-      // Check user type from Firestore
       await _checkUserTypeAndNavigate(userCredential.user!.uid);
     } on FirebaseAuthException catch (e) {
       _handleLoginError(e);
@@ -186,9 +187,8 @@ class LoginController extends GetxController {
           value: passwordController.text.trim(),
         );
       } else {
-        await _secureStorage.delete(key: 'rememberMe');
-        await _secureStorage.delete(key: 'savedEmail');
-        await _secureStorage.delete(key: 'savedPassword');
+        // Clear credentials if rememberMe is not checked
+        await _clearAllCredentials();
       }
     } catch (e) {
       debugPrint('Error saving credentials: $e');
@@ -220,8 +220,6 @@ class LoginController extends GetxController {
       );
 
       final userCredential = await _auth.signInWithCredential(credential);
-
-      // Check user type from Firestore
       await _checkUserTypeAndNavigate(userCredential.user!.uid);
     } catch (e) {
       authException.value = 'Google Sign-In failed';
@@ -248,8 +246,6 @@ class LoginController extends GetxController {
       );
 
       final userCredential = await _auth.signInWithCredential(oauthCredential);
-
-      // Check user type from Firestore
       await _checkUserTypeAndNavigate(userCredential.user!.uid);
     } catch (e) {
       authException.value = 'Apple Sign-In failed';
@@ -266,6 +262,9 @@ class LoginController extends GetxController {
       await _googleSignIn.signOut();
       await _clearAllCredentials();
       isLoggedIn.value = false;
+      rememberMe.value = false; // Reset rememberMe state
+      emailController.clear(); // Clear text fields
+      passwordController.clear();
       Get.offAllNamed(AppRoutes.onboarding);
     } catch (e) {
       debugPrint('Logout error: $e');
@@ -328,10 +327,8 @@ class LoginController extends GetxController {
     }
   }
 
-  // Improved method to check user type and navigate accordingly
   Future<void> _checkUserTypeAndNavigate(String uid) async {
     try {
-      // Get user document from Firestore
       final userDoc = await _firestore.collection('users').doc(uid).get();
 
       if (userDoc.exists) {
@@ -344,44 +341,33 @@ class LoginController extends GetxController {
 
         debugPrint('FIRESTORE USER DATA: $userData');
 
-        // Check if user is tradesperson
         bool isTradesperson = false;
-
-        // Check userType field first (this is what your signup controller uses)
         if (userData.containsKey('user_type')) {
           final userType = userData['user_type'];
           debugPrint(
             'USER TYPE FROM FIRESTORE: $userType (${userType.runtimeType})',
           );
-
           if (userType is String) {
             isTradesperson = userType.toLowerCase() == 'tradesperson';
           }
           debugPrint('DETERMINED IS TRADESPERSON: $isTradesperson');
         }
 
-        // Make sure NavigationController is available
         if (!Get.isRegistered<NavigationController>()) {
           Get.put(NavigationController());
         }
 
-        // Set user type in NavigationController
         debugPrint(
           'SETTING USER TYPE IN NAVIGATION CONTROLLER: $isTradesperson',
         );
         NavigationController.to.setUserType(isTradesperson);
 
-        // Save credentials if remember me is checked
         await _saveCredentialsIfRemembered();
         isLoggedIn.value = true;
 
-        // Force update before navigation
         Get.forceAppUpdate();
-
-        // Add a small delay to ensure the user type is set
         await Future.delayed(const Duration(milliseconds: 100));
 
-        // Navigate to main page
         debugPrint('NAVIGATING TO MAIN PAGE WITH USER TYPE: $isTradesperson');
         Get.offAllNamed(AppRoutes.mainPageWithNavBar);
       } else {

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/core/binding/binding.dart';
 import 'package:traderwho/views/auth/presentation/pages/pages.dart';
+import 'package:traderwho/views/change_password/presentation/pages/pages.dart';
 import 'package:traderwho/views/chat/presentation/pages/pages.dart';
 import 'package:traderwho/views/home/presentation/pages/pages.dart';
 import 'package:traderwho/views/job_history/pages/pages.dart';

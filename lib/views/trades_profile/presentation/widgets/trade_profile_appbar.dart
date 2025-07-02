@@ -70,7 +70,7 @@ class TradeProfileAppbar extends StatelessWidget
                       // Edit icon
                       InkWell(
                         onTap: () {
-                          profileController.fetchProfileData();
+                          profileController.refreshProfile();
                         },
                         child: Obx(
                           () =>

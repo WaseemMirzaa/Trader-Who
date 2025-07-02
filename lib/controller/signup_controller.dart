@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
+import 'package:traderwho/core/shared_widgets/map_picker_screen.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/models/user_model.dart';
 
@@ -14,6 +15,7 @@ class SignupController extends GetxController {
   final phoneController = TextEditingController();
   final addressController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   final bioController = TextEditingController();
   final titleController = TextEditingController();
 
@@ -24,6 +26,8 @@ class SignupController extends GetxController {
   var availability = false.obs;
   var startTime = Rx<TimeOfDay?>(null);
   var endTime = Rx<TimeOfDay?>(null);
+  final selectedLat = Rx<double?>(null);
+  final selectedLon = Rx<double?>(null);
 
   // Firebase instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -41,8 +45,11 @@ class SignupController extends GetxController {
     required String phone,
     required String address,
     required String password,
+    required String confirmPassword,
     String? bio,
     String? title,
+    double? lat, // Add lat parameter
+    double? lon,
   }) async {
     try {
       isLoading.value = true;
@@ -89,6 +96,11 @@ class SignupController extends GetxController {
       if (!password.contains(RegExp(r'[0-9]'))) {
         debugPrint('Validation failed: No number in password');
         Get.snackbar('Error', 'Password must contain at least one number.');
+        return;
+      }
+      if (password != confirmPassword) {
+        debugPrint('Validation failed: Passwords do not match');
+        Get.snackbar('Error', 'Passwords do not match.');
         return;
       }
 
@@ -155,6 +167,8 @@ class SignupController extends GetxController {
         email: email.trim(),
         phone: phone.trim(),
         address: address.trim(),
+        lat: lat, // Add latitude
+        lon: lon, // Add longitude
         userType: isTradesperson.value ? 'tradesperson' : 'customer',
         createdAt: DateTime.now(),
         password: password.trim(),
@@ -186,10 +200,13 @@ class SignupController extends GetxController {
       NavigationController.to.setUserType(isTradesperson.value);
       debugPrint('User type set in NavigationController');
       if (Get.context != null) {
-        debugPrint('Navigating to mainPageWithNavBar');
-        Get.offNamed(AppRoutes.mainPageWithNavBar);
-      } else {
-        debugPrint('Navigation context is null');
+        if (isTradesperson.value) {
+          // Redirect tradespeople to TradeRatePage
+          Get.offAllNamed(AppRoutes.tradeRate);
+        } else {
+          // Redirect customers to main page
+          Get.offAllNamed(AppRoutes.mainPageWithNavBar);
+        }
       }
     } on FirebaseAuthException catch (e) {
       isLoading.value = false;
@@ -242,6 +259,22 @@ class SignupController extends GetxController {
     }
   }
 
+  Future<void> pickLocationFromMap() async {
+    try {
+      final result = await Get.to<Map<String, dynamic>>(
+        () => const MapPickerScreen(),
+      );
+      if (result != null) {
+        addressController.text = result['address'];
+        selectedLat.value = result['lat'];
+        selectedLon.value = result['lon'];
+      }
+    } catch (e) {
+      debugPrint("Error picking location: $e");
+      Get.snackbar('Error', 'Could not pick location');
+    }
+  }
+
   @override
   void onClose() {
     nameController.dispose();
@@ -249,6 +282,7 @@ class SignupController extends GetxController {
     phoneController.dispose();
     addressController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     bioController.dispose();
     titleController.dispose();
     super.onClose();

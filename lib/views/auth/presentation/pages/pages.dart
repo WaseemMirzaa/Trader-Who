@@ -13,6 +13,7 @@ import 'package:traderwho/core/shared_widgets/custom_text.dart';
 import 'package:traderwho/core/shared_widgets/custom_textfield.dart';
 import 'package:traderwho/core/theme/theme.dart';
 
+part 'forget_password_page.dart';
 part 'login_page.dart';
 part 'new_account_page.dart';
 part 'onboarding_page.dart';

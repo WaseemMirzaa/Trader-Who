@@ -266,6 +266,10 @@ class Assets {
   /// assets/svgs/cross-white-icon.svg
   static const String svgsCrossWhiteIcon = "assets/svgs/cross-white-icon.svg";
 
+  /// Assets for svgsDeleteAccount
+  /// assets/svgs/delete_account.svg
+  static const String svgsDeleteAccount = "assets/svgs/delete_account.svg";
+
   /// Assets for svgsDetails
   /// assets/svgs/details.svg
   static const String svgsDetails = "assets/svgs/details.svg";

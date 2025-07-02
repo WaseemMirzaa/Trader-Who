@@ -126,6 +126,10 @@ class _SignupPageState extends State<SignupPage> {
                         }
                         return null;
                       },
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.map, color: AppColor.midGray),
+                        onPressed: () => controller.pickLocationFromMap(),
+                      ),
                     ),
                     const Gap(20),
 
@@ -169,7 +173,7 @@ class _SignupPageState extends State<SignupPage> {
                               child: CustomButton(
                                 text:
                                     controller.startTime.value == null
-                                        ? 'Select Start Time'
+                                        ? 'Job Start Time'
                                         : controller.startTime.value!.format(
                                           context,
                                         ),
@@ -189,7 +193,7 @@ class _SignupPageState extends State<SignupPage> {
                               child: CustomButton(
                                 text:
                                     controller.endTime.value == null
-                                        ? 'Select End Time'
+                                        ? 'Job End Time'
                                         : controller.endTime.value!.format(
                                           context,
                                         ),
@@ -220,18 +224,44 @@ class _SignupPageState extends State<SignupPage> {
                       obscureText: true,
                       showPasswordToggle: true,
                       passwordToggleIconColor: AppColor.midGray,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Please enter your password';
-                      //   }
-                      //   if (value.length < 6) {
-                      //     return 'Password must be at least 6 characters';
-                      //   }
-                      //   return null;
-                      // },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        if (value.length < 8) {
+                          return 'Password must be at least 8 characters';
+                        }
+                        if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                          return 'Password must contain at least one uppercase letter';
+                        }
+                        if (!RegExp(r'[0-9]').hasMatch(value)) {
+                          return 'Password must contain at least one number';
+                        }
+                        return null;
+                      },
+                    ),
+                    const Gap(20),
+                    CustomTextField(
+                      hintStyle: const TextStyle(color: AppColor.midGray),
+
+                      controller: controller.confirmPasswordController,
+                      borderColor: Colors.transparent,
+                      textColor: AppColor.midGray,
+                      hintText: 'Confirm Password',
+                      obscureText: true,
+                      showPasswordToggle: true,
+                      passwordToggleIconColor: AppColor.midGray,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password';
+                        }
+                        if (value != controller.passwordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
                     ),
                     const Gap(30),
-
                     // Sign Up Button
                     Obx(
                       () => CustomButton(
@@ -253,7 +283,12 @@ class _SignupPageState extends State<SignupPage> {
                               email: controller.emailController.text,
                               phone: controller.phoneController.text,
                               address: controller.addressController.text,
+                              lat:
+                                  controller.selectedLat.value, // Pass latitude
+                              lon: controller.selectedLon.value,
                               password: controller.passwordController.text,
+                              confirmPassword:
+                                  controller.confirmPasswordController.text,
                               bio:
                                   widget.isTradesperson
                                       ? controller.bioController.text

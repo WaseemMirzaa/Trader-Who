@@ -30,7 +30,7 @@ class TradeProfilePage extends StatelessWidget {
     {
       'title': 'Change Password',
       'icon': Assets.svgsPassword,
-      // 'route': AppRoutes.transactionHistory,
+      'route': AppRoutes.changePassword,
     },
   ];
 

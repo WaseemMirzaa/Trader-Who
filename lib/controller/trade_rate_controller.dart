@@ -8,7 +8,7 @@ import 'package:traderwho/views/trade_onboarding/presentation/pages/pages.dart';
 class TradeRateController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String userId = FirebaseAuth.instance.currentUser!.uid;
-
+  final RxBool fromProfile = false.obs;
   final RxMap<String, List<ServiceItem>> categories =
       <String, List<ServiceItem>>{}.obs;
   final RxString selectedCategory = RxString('');
@@ -17,6 +17,8 @@ class TradeRateController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Check if coming from profile when controller initializes
+    fromProfile.value = Get.arguments == true;
     initializeAndLoadCategories();
   }
 
@@ -174,7 +176,13 @@ class TradeRateController extends GetxController {
       }, SetOptions(merge: true));
 
       Get.snackbar('Success', 'Prices saved successfully');
-      Get.off(() => const TraderOnboardingPage());
+      if (fromProfile.value) {
+        // If came from profile, just go back
+        Get.back();
+      } else {
+        // If came from signup flow, proceed to onboarding
+        Get.off(() => const TraderOnboardingPage());
+      }
     } catch (e) {
       Get.snackbar('Error', 'Failed to save services: ${e.toString()}');
     }

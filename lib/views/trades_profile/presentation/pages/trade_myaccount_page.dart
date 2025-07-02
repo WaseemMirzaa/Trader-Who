@@ -78,21 +78,59 @@ class TradeMyaccountPage extends StatelessWidget {
               physics: const ClampingScrollPhysics(),
               child: Column(
                 children: [
-                  // Profile Avatar
-                  Center(
-                    child: CustomCircleAvatar(
-                      radius: 50,
-                      hasBorder: false,
-                      child: Image(
-                        image: AssetImage(Assets.imagesTradeProfile),
-                        width: context.width,
-                        height: context.height,
-                        fit: BoxFit.cover,
+                  // Profile Avatar with Edit Icon
+                  Stack(
+                    children: [
+                      Center(
+                        child: CustomCircleAvatar(
+                          radius: 50,
+                          hasBorder: false,
+                          child: Obx(
+                            () =>
+                                controller.profileImage.value != null
+                                    ? ClipOval(
+                                      child: Image.file(
+                                        controller.profileImage.value!,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                    : Image(
+                                      image: AssetImage(
+                                        Assets.imagesTradeProfile,
+                                      ),
+                                      width: context.width,
+                                      height: context.height,
+                                      fit: BoxFit.cover,
+                                    ),
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        bottom: 0,
+                        right: MediaQuery.of(context).size.width / 2 - 70,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColor.darkBlue,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            onPressed: () => controller.pickProfileImage(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 24),
 
+                  // Rest of your text fields...
                   // First Name Field
                   TextFieldCustom(
                     prefixLabel: 'First Name',

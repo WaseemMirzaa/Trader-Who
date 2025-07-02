@@ -56,14 +56,18 @@ class TradeRatePage extends StatelessWidget {
                             );
                           }),
                           const SizedBox(height: 20),
-                          CustomButton(
-                            onTap: () {
-                              Get.to(() => TraderOnboardingPage());
-                            },
-                            color: AppColor.primaryButton,
-                            text: 'Continue',
-                            textColor: AppColor.white,
-                          ),
+                          if (!controller.fromProfile.value) ...[
+                            const SizedBox(height: 20),
+                            CustomButton(
+                              onTap:
+                                  () => Get.to(
+                                    () => const TraderOnboardingPage(),
+                                  ),
+                              color: AppColor.primaryButton,
+                              text: 'Continue',
+                              textColor: AppColor.white,
+                            ),
+                          ],
                         ] else ...[
                           Row(
                             children: [

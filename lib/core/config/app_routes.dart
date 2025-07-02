@@ -93,4 +93,7 @@ class AppRoutes {
 
   /// The custom job post page route.
   static const String customJobPost = '/custom-jobpost';
+
+  /// The change password  page route.
+  static const String changePassword = '/change-password';
 }

@@ -148,5 +148,10 @@ class AppRouter {
       page: () => CustomJobPost(),
       binding: CustomJobPostPageBinding(),
     ),
+    GetPage(
+      name: AppRoutes.changePassword,
+      page: () => ChangePasswordPage(),
+      binding: ChangePasswordPageBinding(),
+    ),
   ];
 }
