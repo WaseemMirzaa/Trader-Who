@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/map_picker_screen.dart';
 import 'package:traderwho/core/theme/app_color.dart';
@@ -48,7 +47,7 @@ class SignupController extends GetxController {
     required String confirmPassword,
     String? bio,
     String? title,
-    double? lat, // Add lat parameter
+    double? lat,
     double? lon,
   }) async {
     try {
@@ -135,10 +134,6 @@ class SignupController extends GetxController {
       await userCredential.user?.updateDisplayName(name.trim());
       debugPrint('Display name updated');
 
-      // Send email verification
-      await userCredential.user?.sendEmailVerification();
-      debugPrint('Email verification sent');
-
       // Create user model with role-specific fields
       final now = DateTime.now();
       final startDateTime =
@@ -167,47 +162,48 @@ class SignupController extends GetxController {
         email: email.trim(),
         phone: phone.trim(),
         address: address.trim(),
-        lat: lat, // Add latitude
-        lon: lon, // Add longitude
+        lat: lat,
+        lon: lon,
         userType: isTradesperson.value ? 'tradesperson' : 'customer',
         createdAt: DateTime.now(),
-        password: password.trim(),
-        // Tradesperson specific fields (only set if tradesperson)
         title: isTradesperson.value ? title?.trim() : null,
         bio: isTradesperson.value ? bio?.trim() : null,
         status: isTradesperson.value ? 'pending' : null,
         availability: isTradesperson.value ? availability.value : null,
         startTime: isTradesperson.value ? startDateTime : null,
         endTime: isTradesperson.value ? endDateTime : null,
-        // Customer specific fields (only set if customer)
         username: !isTradesperson.value ? name.trim() : null,
       );
 
-      // Save all user data to single users collection
+      // Save user data to Firestore
       await _firestore
           .collection('users')
           .doc(userCredential.user?.uid)
           .set(userModel.toMap());
       debugPrint('User data saved to Firestore with role-specific fields');
 
+      // Send email verification
+      await userCredential.user?.sendEmailVerification();
+      debugPrint('Email verification sent');
+
       isLoading.value = false;
       Get.snackbar(
         'Success',
-        'Account created successfully! Please verify your email.',
+        'Verification email sent! Please verify your email.',
         colorText: AppColor.primaryText,
       );
       debugPrint('Showing success snackbar');
-      NavigationController.to.setUserType(isTradesperson.value);
-      debugPrint('User type set in NavigationController');
-      if (Get.context != null) {
-        if (isTradesperson.value) {
-          // Redirect tradespeople to TradeRatePage
-          Get.offAllNamed(AppRoutes.tradeRate);
-        } else {
-          // Redirect customers to main page
-          Get.offAllNamed(AppRoutes.mainPageWithNavBar);
-        }
-      }
+
+      // Navigate to EmailVerificationScreen and pass user data
+      Get.toNamed(
+        AppRoutes.emailVerification,
+        arguments: {
+          'email': email.trim(),
+          'userModel': userModel,
+          'isTradesperson': isTradesperson.value,
+          'userId': userCredential.user?.uid,
+        },
+      );
     } on FirebaseAuthException catch (e) {
       isLoading.value = false;
       String message = _getAuthErrorMessage(e.code);

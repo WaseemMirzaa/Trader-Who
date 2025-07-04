@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:traderwho/controller/login_controller.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/controller/signup_controller.dart';
+import 'package:traderwho/controller/verification_email_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/extensions/extensions.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
@@ -12,7 +13,9 @@ import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/shared_widgets/custom_text.dart';
 import 'package:traderwho/core/shared_widgets/custom_textfield.dart';
 import 'package:traderwho/core/theme/theme.dart';
+import 'package:traderwho/models/user_model.dart';
 
+part 'email_verification_page.dart';
 part 'forget_password_page.dart';
 part 'login_page.dart';
 part 'new_account_page.dart';

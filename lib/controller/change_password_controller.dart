@@ -52,19 +52,14 @@ class ChangePasswordController extends GetxController {
         return;
       }
 
-      if (!RegExp(r'[A-Z]').hasMatch(newPassword)) {
-        debugPrint('Validation failed: No uppercase letter in new password');
+      if (!RegExp(
+        r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$',
+      ).hasMatch(newPassword)) {
+        debugPrint('Validation failed: Password doesn\'t meet requirements');
         Get.snackbar(
           'Error',
-          'New password must contain at least one uppercase letter.',
+          'Password must contain at least one letter and one number.',
         );
-        isLoading.value = false;
-        return;
-      }
-
-      if (!RegExp(r'[0-9]').hasMatch(newPassword)) {
-        debugPrint('Validation failed: No number in new password');
-        Get.snackbar('Error', 'New password must contain at least one number.');
         isLoading.value = false;
         return;
       }
@@ -88,7 +83,8 @@ class ChangePasswordController extends GetxController {
         return;
       }
 
-      // Re-authenticate the user with the old password
+      // Re-authenticate the user
+      debugPrint('Attempting re-authentication for user: ${user.email}');
       AuthCredential credential = EmailAuthProvider.credential(
         email: user.email!,
         password: oldPassword,
@@ -96,44 +92,80 @@ class ChangePasswordController extends GetxController {
 
       try {
         await user.reauthenticateWithCredential(credential);
-        debugPrint('User re-authenticated successfully');
+        debugPrint('Re-authentication successful');
       } catch (e) {
         debugPrint('Re-authentication failed: $e');
-        Get.snackbar('Error', 'Incorrect old password.');
+        if (e is FirebaseAuthException) {
+          switch (e.code) {
+            case 'wrong-password':
+            case 'invalid-credential':
+              Get.snackbar('Error', 'Incorrect old password.');
+              break;
+            case 'too-many-requests':
+              Get.snackbar(
+                'Error',
+                'Too many attempts. Please try again later.',
+              );
+              break;
+            case 'user-disabled':
+              Get.snackbar('Error', 'This account has been disabled.');
+              break;
+            case 'user-not-found':
+              Get.snackbar('Error', 'User account not found.');
+              break;
+            default:
+              Get.snackbar('Error', 'Re-authentication failed: ${e.message}');
+          }
+        } else {
+          Get.snackbar('Error', 'Re-authentication failed. Please try again.');
+        }
         isLoading.value = false;
         return;
       }
 
-      // Update the password
+      // Update password
+      debugPrint('Attempting to update password');
       await user.updatePassword(newPassword);
       debugPrint('Password updated successfully');
-
-      // Optionally update Firestore if you're storing the password there
-      // Note: Storing passwords in Firestore is not recommended
-      // await FirebaseFirestore.instance
-      //     .collection('users')
-      //     .doc(user.uid)
-      //     .update({'password': newPassword.trim()});
 
       isLoading.value = false;
       Get.snackbar(
         'Success',
         'Password changed successfully!',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColor.white,
         colorText: AppColor.primaryText,
       );
-      debugPrint('Showing success snackbar');
+      debugPrint('Password change completed successfully');
 
-      // Navigate back to the previous screen
+      // Clear the form
+      oldPasswordController.clear();
+      newPasswordController.clear();
+      confirmPasswordController.clear();
+
+      // Navigate back
       Get.back();
     } on FirebaseAuthException catch (e) {
       isLoading.value = false;
       String message = _getAuthErrorMessage(e.code);
-      debugPrint('FirebaseAuthException: $message');
-      Get.snackbar('Error', message);
+      debugPrint('FirebaseAuthException: ${e.code} - $message');
+      Get.snackbar(
+        'Error',
+        message,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColor.red,
+        colorText: AppColor.primaryText,
+      );
     } catch (e) {
       isLoading.value = false;
       debugPrint('Unexpected error: $e');
-      Get.snackbar('Error', 'An unexpected error occurred: ${e.toString()}');
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColor.red,
+        colorText: AppColor.primaryText,
+      );
     }
   }
 
@@ -145,8 +177,16 @@ class ChangePasswordController extends GetxController {
         return 'The new password is too weak.';
       case 'requires-recent-login':
         return 'Please log in again to change your password.';
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      case 'user-not-found':
+        return 'User account not found.';
+      case 'invalid-email':
+        return 'Invalid email address.';
       default:
-        return 'An authentication error occurred.';
+        return 'An authentication error occurred. Please try again.';
     }
   }
 

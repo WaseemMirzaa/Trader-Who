@@ -96,4 +96,7 @@ class AppRoutes {
 
   /// The change password  page route.
   static const String changePassword = '/change-password';
+
+  /// The email verification screen  page route.
+  static const String emailVerification = '/email-verification';
 }

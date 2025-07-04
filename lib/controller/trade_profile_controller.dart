@@ -17,7 +17,6 @@ class TradeProfileController extends GetxController {
     fetchProfileData();
   }
 
-  // Add this method to manually refresh data
   Future<void> refreshProfile() async {
     await fetchProfileData();
   }
@@ -39,13 +38,11 @@ class TradeProfileController extends GetxController {
               .doc(authUser.uid)
               .get();
 
-      // Set values from Firestore or fallback to auth data
       if (doc.exists) {
         final data = doc.data();
         name.value = data?['name'] ?? authUser.displayName ?? 'User';
         email.value = data?['email'] ?? authUser.email ?? 'No email';
       } else {
-        // Document doesn't exist, use auth data
         name.value = authUser.displayName ?? 'User';
         email.value = authUser.email ?? 'No email';
       }
@@ -63,13 +60,8 @@ class TradeProfileController extends GetxController {
 
   Future<void> logout() async {
     try {
-      // First, sign out from Firebase
       await FirebaseAuth.instance.signOut();
-
-      // Add a small delay to ensure Firebase operations complete
       await Future.delayed(const Duration(milliseconds: 100));
-
-      // Use Get.offAll instead of Get.offAllNamed for more reliable navigation
       Get.offAll(
         () => const OnBoardingPage(),
         transition: Transition.fadeIn,
@@ -77,8 +69,68 @@ class TradeProfileController extends GetxController {
       );
     } catch (e) {
       debugPrint('Logout error: $e');
-      // If there's an error, still try to navigate to onboarding
       Get.offAll(() => const OnBoardingPage());
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      // Show loading dialog
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+
+      // Delete from Firestore first
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .delete();
+
+      // Then delete the auth user
+      await user.delete();
+
+      // Close loading dialog
+      Get.back();
+
+      // Navigate to onboarding
+      Get.offAll(
+        () => const OnBoardingPage(),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 300),
+      );
+
+      // Show success message
+      Get.snackbar(
+        'Success',
+        'Your account has been deleted successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } on FirebaseAuthException catch (e) {
+      Get.back();
+      debugPrint('Error deleting account: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to delete account: ${e.message}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.back();
+      debugPrint('Error deleting account: $e');
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 }

@@ -14,6 +14,7 @@ import 'package:traderwho/core/shared_widgets/custom_dropdown.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/shared_widgets/custom_shimmer.dart';
 import 'package:traderwho/core/shared_widgets/custom_text.dart';
+import 'package:traderwho/core/shared_widgets/delete_dialog_box.dart';
 import 'package:traderwho/core/shared_widgets/textFieldCustom.dart';
 import 'package:traderwho/core/theme/theme.dart';
 import 'package:traderwho/models/models.dart';

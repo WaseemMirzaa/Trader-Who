@@ -1,6 +1,13 @@
 part of 'pages.dart';
 
-class TradeProfilePage extends StatelessWidget {
+class TradeProfilePage extends StatefulWidget {
+  const TradeProfilePage({super.key});
+
+  @override
+  State<TradeProfilePage> createState() => _TradeProfilePageState();
+}
+
+class _TradeProfilePageState extends State<TradeProfilePage> {
   final List<Map<String, dynamic>> profileOptions = [
     {
       'title': 'My Account',
@@ -28,23 +35,46 @@ class TradeProfilePage extends StatelessWidget {
       'route': AppRoutes.tradeRate,
     },
     {
+      'title': 'Delete Account',
+      'icon': Assets.svgsDeleteAccount,
+      'isDelete': true, // Flag for delete option
+    },
+    {
       'title': 'Change Password',
       'icon': Assets.svgsPassword,
       'route': AppRoutes.changePassword,
     },
   ];
 
-  TradeProfilePage({super.key});
-  void _handleOptionTap(BuildContext context, Map<String, dynamic> option) {
+  @override
+  void initState() {
+    super.initState();
+    // Call refreshProfile when the page initializes
+    final profileController = Get.find<TradeProfileController>();
+    profileController.refreshProfile();
+  }
+
+  void _handleOptionTap(
+    BuildContext context,
+    Map<String, dynamic> option,
+  ) async {
     if (option['isLogout'] == true) {
       Get.offAllNamed(AppRoutes.onboarding);
+      return;
+    }
+
+    if (option['isDelete'] == true) {
+      final shouldDelete = await DeleteAccountDialog.show();
+      if (shouldDelete == true) {
+        final controller = Get.find<TradeProfileController>();
+        await controller.deleteAccount();
+      }
       return;
     }
 
     final String? route = option['route'];
     if (route != null) {
       if (route == AppRoutes.tradeServices || route == AppRoutes.tradeRate) {
-        // Pass true as argument to indicate navigation from profile
         Get.toNamed(route, arguments: true);
       } else {
         Navigator.pushNamed(context, route);
@@ -59,7 +89,6 @@ class TradeProfilePage extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            // Takes remaining space
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -81,23 +110,16 @@ class TradeProfilePage extends StatelessWidget {
               ),
             ),
           ),
-          // Logout button at the bottom
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: CustomButton(
               text: 'Log Out',
               onTap: () async {
                 try {
-                  // Get the TradeProfileController
                   final profileController = Get.find<TradeProfileController>();
-
-                  // Use the controller's logout method
                   await profileController.logout();
-
-                  // No need for additional navigation, the controller handles it
                 } catch (e) {
                   debugPrint('Error during logout: $e');
-                  // Fallback if controller not found or error occurs
                   await FirebaseAuth.instance.signOut();
                   Get.offAllNamed(AppRoutes.onboarding);
                 }

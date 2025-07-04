@@ -153,5 +153,11 @@ class AppRouter {
       page: () => ChangePasswordPage(),
       binding: ChangePasswordPageBinding(),
     ),
+
+    GetPage(
+      name: AppRoutes.emailVerification,
+      page: () => EmailVerificationScreen(),
+      binding: VerificationEmailPageBinding(),
+    ),
   ];
 }

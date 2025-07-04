@@ -231,3 +231,32 @@ class ChangePasswordPageBinding extends Bindings {
     Get.lazyPut<ChangePasswordController>(() => ChangePasswordController());
   }
 }
+
+class VerificationEmailPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    // Retrieve arguments from Get.arguments
+    final arguments = Get.arguments as Map<String, dynamic>?;
+
+    if (arguments == null) {
+      throw Exception(
+        'Required arguments for EmailVerificationController are missing',
+      );
+    }
+
+    final String userEmail = arguments['email'] as String;
+    final UserModel userModel = arguments['userModel'] as UserModel;
+    final String userId = arguments['userId'] as String;
+    final bool isTradesperson = arguments['isTradesperson'] as bool;
+
+    // Instantiate the controller with the required arguments
+    Get.lazyPut<EmailVerificationController>(
+      () => EmailVerificationController(
+        userEmail: userEmail,
+        userModel: userModel,
+        userId: userId,
+        isTradesperson: isTradesperson,
+      ),
+    );
+  }
+}
