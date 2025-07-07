@@ -112,6 +112,7 @@ dependencies:
   geolocator: ^14.0.2
   geocoding: ^4.0.0
   firebase_storage: ^12.4.8
+  firebase_app_check: ^0.3.2+9
  
 
 # Developer-specific dependencies for testing and tooling
