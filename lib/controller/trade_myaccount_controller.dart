@@ -6,7 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/models/user_model.dart';
 
 class TradeMyaccountController extends GetxController {
@@ -64,17 +63,79 @@ class TradeMyaccountController extends GetxController {
 
     try {
       final authUser = FirebaseAuth.instance.currentUser;
-      if (authUser == null) return null;
+      if (authUser == null) {
+        throw Exception('User not authenticated');
+      }
+
+      // Validate file existence
+      final file = profileImage.value!;
+      if (!await file.exists()) {
+        throw Exception('Selected file does not exist');
+      }
+
+      final fileExtension = file.path.split('.').last.toLowerCase();
+      final contentType = fileExtension == 'png' ? 'image/png' : 'image/jpeg';
 
       final storageRef = FirebaseStorage.instance
           .ref()
-          .child('profile_images')
-          .child('${authUser.uid}.jpg');
+          .child('user_profile_images')
+          .child(
+            '${authUser.uid}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension',
+          );
 
-      await storageRef.putFile(profileImage.value!);
-      return await storageRef.getDownloadURL();
-    } catch (e) {
-      error('Failed to upload image: ${e.toString()}');
+      final uploadTask = storageRef.putFile(
+        file,
+        SettableMetadata(
+          contentType: contentType,
+          customMetadata: {'uploadedBy': authUser.uid},
+        ),
+      );
+
+      // Monitor upload progress
+      uploadTask.snapshotEvents.listen(
+        (taskSnapshot) {
+          debugPrint(
+            'Upload progress: ${(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 100}%',
+          );
+        },
+        onError: (error) {
+          debugPrint('Upload error: $error');
+        },
+      );
+
+      // Wait for upload completion
+      final taskSnapshot = await uploadTask;
+
+      // Check upload state
+      if (taskSnapshot.state != TaskState.success) {
+        throw Exception('Upload failed with state: ${taskSnapshot.state}');
+      }
+
+      // Get download URL with retry mechanism
+      final downloadUrl = await storageRef.getDownloadURL().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw Exception('Timeout getting download URL'),
+      );
+
+      return downloadUrl;
+    } on FirebaseException catch (e) {
+      debugPrint('Firebase Storage error: ${e.code} - ${e.message}');
+      Get.snackbar(
+        'Upload Error',
+        'Failed to upload image: ${e.message ?? e.code}',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 5),
+      );
+      return null;
+    } catch (e, stackTrace) {
+      debugPrint('Image upload error: $e');
+      debugPrint(stackTrace.toString());
+      Get.snackbar(
+        'Upload Error',
+        'Failed to upload image: ${e.toString().replaceAll(RegExp(r'^Exception: '), '')}',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 5),
+      );
       return null;
     }
   }
@@ -166,64 +227,69 @@ class TradeMyaccountController extends GetxController {
   Future<void> updateProfile() async {
     try {
       showShimmer(true);
-      error('');
 
       final authUser = FirebaseAuth.instance.currentUser;
       if (authUser == null) {
-        error('No authenticated user');
+        Get.snackbar(
+          'Error',
+          'No authenticated user',
+          snackPosition: SnackPosition.BOTTOM,
+        );
         return;
       }
 
-      // Upload image if selected
-      final imageUrl = await _uploadProfileImage();
-
-      // Combine first and last name
-      final fullName =
-          '${firstNameController.text} ${lastNameController.text}'.trim();
-
-      // Prepare update data
-      final updateData = {
-        'name': fullName,
-        'email': emailController.text,
-        'phone': phoneController.text,
-        'address': addressController.text,
-        'title': titleController.text,
-        'bio': bioController.text,
-        'updatedAt': FieldValue.serverTimestamp(),
-        // Explicitly remove customer fields for tradespeople
-        'username': FieldValue.delete(),
-      };
-
-      // Add image URL if uploaded
-      if (imageUrl != null) {
-        updateData['profileImage'] = imageUrl;
+      // Upload image if selected and get URL
+      String? imageUrl;
+      if (profileImage.value != null) {
+        imageUrl = await _uploadProfileImage();
+        // Continue even if image upload fails (imageUrl will be null)
       }
 
-      // Update all user data in unified users collection
+      // Prepare update data including image URL
+      final updateData = {
+        'name': '${firstNameController.text} ${lastNameController.text}'.trim(),
+        'email': emailController.text.trim(),
+        'phone': phoneController.text.trim(),
+        'address': addressController.text.trim(),
+        'title': titleController.text.trim(),
+        'bio': bioController.text.trim(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        if (imageUrl != null) 'image': imageUrl,
+      };
+
+      // Update Firestore document
       await FirebaseFirestore.instance
           .collection('users')
           .doc(authUser.uid)
           .update(updateData);
 
-      // Update display name in Firebase Auth
-      await authUser.updateDisplayName(fullName);
-
-      // If email changed, update it in Firebase Auth
-      if (authUser.email != emailController.text) {
-        await authUser.verifyBeforeUpdateEmail(emailController.text);
-      }
+      // Update local user model
+      user.value = user.value?.copyWith(
+        name: updateData['name'] as String,
+        email: updateData['email'] as String,
+        phone: updateData['phone'] as String?,
+        address: updateData['address'] as String?,
+        title: updateData['title'] as String?,
+        bio: updateData['bio'] as String?,
+        image: imageUrl ?? user.value?.image,
+      );
 
       Get.snackbar(
-        backgroundColor: AppColor.darkerGray,
         'Success',
         'Profile updated successfully',
         snackPosition: SnackPosition.BOTTOM,
       );
-    } catch (e) {
-      error('Failed to update profile: ${e.toString()}');
+      Get.back();
+    } on FirebaseException catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to update profile: ${e.toString()}',
+        'Update failed: ${e.message ?? e.code}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Update failed: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {

@@ -85,26 +85,51 @@ class TradeMyaccountPage extends StatelessWidget {
                         child: CustomCircleAvatar(
                           radius: 50,
                           hasBorder: false,
-                          child: Obx(
-                            () =>
-                                controller.profileImage.value != null
-                                    ? ClipOval(
-                                      child: Image.file(
-                                        controller.profileImage.value!,
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                    : Image(
-                                      image: AssetImage(
-                                        Assets.imagesTradeProfile,
-                                      ),
-                                      width: context.width,
-                                      height: context.height,
-                                      fit: BoxFit.cover,
-                                    ),
-                          ),
+                          child: // In your build method
+                              Obx(() {
+                            // If new image was picked but not yet uploaded
+                            if (controller.profileImage.value != null) {
+                              return ClipOval(
+                                child: Image.file(
+                                  controller.profileImage.value!,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            }
+                            // If image URL exists in user data
+                            else if (controller.user.value?.image != null) {
+                              return ClipOval(
+                                child: Image.network(
+                                  controller.user.value!.image!,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (
+                                    context,
+                                    child,
+                                    loadingProgress,
+                                  ) {
+                                    if (loadingProgress == null) return child;
+                                    return CircularProgressIndicator();
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(Icons.error);
+                                  },
+                                ),
+                              );
+                            }
+                            // Default avatar
+                            else {
+                              return Image.asset(
+                                Assets.imagesTradeProfile,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              );
+                            }
+                          }),
                         ),
                       ),
                       Positioned(

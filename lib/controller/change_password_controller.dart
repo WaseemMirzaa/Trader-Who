@@ -129,12 +129,16 @@ class ChangePasswordController extends GetxController {
       debugPrint('Password updated successfully');
 
       isLoading.value = false;
-      Get.snackbar(
-        'Success',
-        'Password changed successfully!',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColor.white,
-        colorText: AppColor.primaryText,
+      Get.showSnackbar(
+        GetSnackBar(
+          title: "Success",
+          message: "Password changed successfully!",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green, // Changed to more visible color
+          duration: const Duration(seconds: 3),
+          margin: const EdgeInsets.all(10),
+          borderRadius: 8,
+        ),
       );
       debugPrint('Password change completed successfully');
 
@@ -144,6 +148,8 @@ class ChangePasswordController extends GetxController {
       confirmPasswordController.clear();
 
       // Navigate back
+      await Future.delayed(const Duration(seconds: 2)); // Small delay
+      Get.back();
       Get.back();
     } on FirebaseAuthException catch (e) {
       isLoading.value = false;

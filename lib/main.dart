@@ -10,15 +10,19 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialize Firebase App Check
-  await FirebaseAppCheck.instance.activate(
-    // Use Play Integrity for Android
-    androidProvider: AndroidProvider.playIntegrity,
-    // Use DeviceCheck for iOS
-    appleProvider: AppleProvider.deviceCheck,
-    // Use reCAPTCHA v3 for web (replace 'recaptcha-site-key' with your actual key)
-    // webProvider: ReCaptchaV3Provider('recaptcha-site-key'),
-  );
+  try {
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.playIntegrity,
+      appleProvider: AppleProvider.deviceCheck,
+      // webProvider: ReCaptchaV3Provider('recaptcha-site-key'),
+    );
+
+    // Optional: Get token for debugging
+    final token = await FirebaseAppCheck.instance.getToken();
+    debugPrint('App Check token: $token');
+  } catch (e) {
+    debugPrint('Error initializing App Check: $e');
+  }
 
   runApp(const App());
 }
