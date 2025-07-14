@@ -84,14 +84,76 @@ class TradeProfileController extends GetxController {
         barrierDismissible: false,
       );
 
-      // Delete from Firestore first
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .delete();
+      // Try to delete the auth user first
+      try {
+        await user.delete();
+        debugPrint('Auth user deleted successfully');
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'requires-recent-login') {
+          Get.back(); // Close loading dialog
+          debugPrint('Requires recent login, prompting for password');
+          // Prompt for password
+          String? password = await _promptForPassword();
+          if (password != null && password.isNotEmpty) {
+            try {
+              AuthCredential credential = EmailAuthProvider.credential(
+                email: user.email!,
+                password: password,
+              );
+              await user.reauthenticateWithCredential(credential);
+              Get.dialog(
+                const Center(child: CircularProgressIndicator()),
+                barrierDismissible: false,
+              );
+              final freshUser = FirebaseAuth.instance.currentUser;
+              await freshUser?.delete();
+              debugPrint('Auth user deleted after re-authentication');
+            } catch (reauthError) {
+              Get.back();
+              debugPrint('Re-authentication failed: $reauthError');
+              Get.snackbar(
+                'Error',
+                'Re-authentication failed. Account not deleted.',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+              return;
+            }
+          } else {
+            debugPrint('Account deletion cancelled by user');
+            Get.snackbar(
+              'Cancelled',
+              'Account deletion cancelled.',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            return;
+          }
+        } else {
+          Get.back();
+          debugPrint('Auth deletion error: $e');
+          Get.snackbar(
+            'Error',
+            'Failed to delete account: ${e.message}',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+      }
 
-      // Then delete the auth user
-      await user.delete();
+      // Now delete from Firestore
+      try {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .delete();
+        debugPrint('Firestore user document deleted successfully');
+      } catch (firestoreError) {
+        debugPrint('Firestore deletion error: $firestoreError');
+        // Optionally, show a snackbar or log
+      }
 
       // Close loading dialog
       Get.back();
@@ -132,5 +194,32 @@ class TradeProfileController extends GetxController {
         colorText: Colors.white,
       );
     }
+  }
+
+  // Helper to prompt for password using a dialog
+  Future<String?> _promptForPassword() async {
+    TextEditingController passwordController = TextEditingController();
+    String? result = await Get.dialog<String>(
+      AlertDialog(
+        title: const Text('Re-authenticate'),
+        content: TextField(
+          controller: passwordController,
+          obscureText: true,
+          decoration: const InputDecoration(labelText: 'Enter your password'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: null),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: passwordController.text),
+            child: const Text('Confirm'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+    return result;
   }
 }

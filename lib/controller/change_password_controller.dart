@@ -149,8 +149,9 @@ class ChangePasswordController extends GetxController {
 
       // Navigate back
       await Future.delayed(const Duration(seconds: 2)); // Small delay
+      debugPrint('Calling Get.back() after password change success');
       Get.back();
-      Get.back();
+      debugPrint('Get.back() called, should have navigated back');
     } on FirebaseAuthException catch (e) {
       isLoading.value = false;
       String message = _getAuthErrorMessage(e.code);

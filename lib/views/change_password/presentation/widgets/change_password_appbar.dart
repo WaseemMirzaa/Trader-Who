@@ -12,7 +12,7 @@ class ChangePasswordAppbar extends StatelessWidget
       toolbarHeight: 105, // Decreased height
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: AppColor.black),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => Get.back(),
       ),
       flexibleSpace: Container(
         margin: EdgeInsets.zero,

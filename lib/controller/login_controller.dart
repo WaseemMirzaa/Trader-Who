@@ -63,11 +63,11 @@ class LoginController extends GetxController {
       if (remembered == 'true') {
         rememberMe.value = true;
         await _loadSavedCredentials();
-        // Attempt auto-login only if credentials are available
-        if (emailController.text.isNotEmpty &&
-            passwordController.text.isNotEmpty) {
-          await _attemptAutoLogin();
-        }
+        // Do NOT auto-login here. Only pre-fill fields.
+        // if (emailController.text.isNotEmpty &&
+        //     passwordController.text.isNotEmpty) {
+        //   await _attemptAutoLogin();
+        // }
       } else {
         // Ensure credentials are cleared if rememberMe is not set
         await _clearAllCredentials();

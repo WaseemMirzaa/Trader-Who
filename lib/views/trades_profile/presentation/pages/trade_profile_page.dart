@@ -74,11 +74,7 @@ class _TradeProfilePageState extends State<TradeProfilePage> {
 
     final String? route = option['route'];
     if (route != null) {
-      if (route == AppRoutes.tradeServices || route == AppRoutes.tradeRate) {
-        Get.toNamed(route, arguments: true);
-      } else {
-        Navigator.pushNamed(context, route);
-      }
+      Get.toNamed(route);
     }
   }
 
