@@ -27,7 +27,7 @@ class _TradeProfilePageState extends State<TradeProfilePage> {
     {
       'title': 'Selected Large Jobs',
       'icon': Assets.svgsProvider,
-      'route': AppRoutes.tradeServices,
+      'route': AppRoutes.tradeLargeJobServices,
     },
     {
       'title': 'Selected Small Jobs',

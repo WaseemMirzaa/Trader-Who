@@ -115,11 +115,14 @@ class _LoginPageState extends State<LoginPage> {
                                     borderRadius: BorderRadius.circular(6.0),
                                   ),
                                   value: controller.rememberMe.value,
-                                  onChanged: (value) {
-                                    if (value != null) {
-                                      controller.rememberMe.value = value;
-                                    }
+                                  onChanged: (bool? value) {
+                                    controller.rememberMe.value = value ?? false;
                                   },
+                                  // onChanged: (value) {
+                                  //   if (value != null) {
+                                  //     controller.rememberMe.value = value;
+                                  //   }
+                                  // },
                                   activeColor:
                                       AppColor
                                           .offWhite, // Set activeColor to offWhite for consistency
@@ -220,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           kGap20,
                           SizedBox(
-                            width: 140, // adjust width as needed
+                            width: 140,
                             child: CustomButton(
                               text: 'Google',
                               icon: SvgPicture.asset(
@@ -230,7 +233,17 @@ class _LoginPageState extends State<LoginPage> {
                               enableIcon: true,
                               color: Colors.white,
                               textColor: Colors.black,
-                              onTap: controller.signInWithGoogle,
+                              onTap: () async {
+                                final selectedRole = await controller.promptForRole();
+                                if (selectedRole != null) {
+                                  // 👇 Add slight delay to ensure dialog closes fully
+                                  await Future.delayed(const Duration(milliseconds: 100));
+                                  controller.signInWithGoogle(role: selectedRole);
+                                }
+                              }
+
+                              ,
+                              // onTap: controller.signInWithGoogle,
                               radius: 18,
                               height: 50,
                             ),

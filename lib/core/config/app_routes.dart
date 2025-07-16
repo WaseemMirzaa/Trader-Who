@@ -81,6 +81,7 @@ class AppRoutes {
 
   /// The trade  people  services    route.
   static const String tradeServices = '/tradeservices';
+  static const String tradeLargeJobServices = '/tradeLargeJobServices';
 
   /// The trade  people  services    signup route.
   static const String tradeServicesSignup = '/tradeservicessignup';

@@ -1,8 +1,12 @@
 part of 'widgets.dart';
 
 class TradeRatesAppbar extends StatefulWidget implements PreferredSizeWidget {
-  const TradeRatesAppbar({super.key});
+  final String title;
 
+  const TradeRatesAppbar({
+    super.key,
+    required this.title,
+  });
   @override
   State<TradeRatesAppbar> createState() => _TradeRatesAppbarState();
 
@@ -58,7 +62,8 @@ class _TradeRatesAppbarState extends State<TradeRatesAppbar> {
                     Expanded(
                       child: Center(
                         child: CustomText(
-                          text: "Set Fixed Prices for Small Jobs",
+                          text: widget.title,
+
                           color: AppColor.primaryText,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,

@@ -8,7 +8,7 @@ class TradeRatePage extends StatelessWidget {
     final TradeRateController controller = Get.put(TradeRateController());
 
     return TraderWhoScaffold(
-      appBar: TradeRatesAppbar(),
+      appBar: TradeRatesAppbar(     title: "Set Fixed Prices for Small Jobs",),
       body: SafeArea(
         child: Obx(
           () =>
@@ -304,3 +304,9 @@ class TradeRatePage extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+

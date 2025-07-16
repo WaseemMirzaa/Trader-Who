@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/map_picker_screen.dart';
 import 'package:traderwho/core/theme/app_color.dart';
@@ -270,6 +272,118 @@ class SignupController extends GetxController {
       Get.snackbar('Error', 'Could not pick location');
     }
   }
+
+
+
+  Future<void> signUpWithGoogle() async {
+    try {
+      isLoading.value = true;
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return;
+
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await _auth.signInWithCredential(credential);
+      final user = userCredential.user;
+      if (user == null) throw Exception("Google sign-in failed");
+
+      final now = DateTime.now();
+
+      final userModel = UserModel(
+        name: user.displayName ?? '',
+        email: user.email ?? '',
+        phone: '',
+        address: '',
+        lat: selectedLat.value,
+        lon: selectedLon.value,
+        userType: isTradesperson.value ? 'tradesperson' : 'customer',
+        createdAt: now,
+        title: isTradesperson.value ? titleController.text.trim() : null,
+        bio: isTradesperson.value ? bioController.text.trim() : null,
+        status: isTradesperson.value ? 'pending' : null,
+        availability: isTradesperson.value ? availability.value : null,
+        startTime: isTradesperson.value && startTime.value != null
+            ? DateTime(now.year, now.month, now.day, startTime.value!.hour, startTime.value!.minute)
+            : null,
+        endTime: isTradesperson.value && endTime.value != null
+            ? DateTime(now.year, now.month, now.day, endTime.value!.hour, endTime.value!.minute)
+            : null,
+        username: !isTradesperson.value ? user.displayName : null,
+      );
+
+      await _firestore.collection('users').doc(user.uid).set(userModel.toMap());
+
+      isLoading.value = false;
+      Get.offAllNamed(AppRoutes.mainPageWithNavBar);
+    } catch (e) {
+      isLoading.value = false;
+      debugPrint("Google signup error: $e");
+      Get.snackbar("Error", "Google sign-up failed.");
+    }
+  }
+
+  Future<void> signUpWithApple() async {
+    try {
+      isLoading.value = true;
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      final userCredential = await _auth.signInWithCredential(oauthCredential);
+      final user = userCredential.user;
+      if (user == null) throw Exception("Apple sign-in failed");
+
+      final now = DateTime.now();
+
+      final userModel = UserModel(
+        name: user.displayName ?? appleCredential.givenName ?? '',
+        email: user.email ?? '',
+        phone: '',
+        address: '',
+        lat: selectedLat.value,
+        lon: selectedLon.value,
+        userType: isTradesperson.value ? 'tradesperson' : 'customer',
+        createdAt: now,
+        title: isTradesperson.value ? titleController.text.trim() : null,
+        bio: isTradesperson.value ? bioController.text.trim() : null,
+        status: isTradesperson.value ? 'pending' : null,
+        availability: isTradesperson.value ? availability.value : null,
+        startTime: isTradesperson.value && startTime.value != null
+            ? DateTime(now.year, now.month, now.day, startTime.value!.hour, startTime.value!.minute)
+            : null,
+        endTime: isTradesperson.value && endTime.value != null
+            ? DateTime(now.year, now.month, now.day, endTime.value!.hour, endTime.value!.minute)
+            : null,
+        username: !isTradesperson.value ? (user.displayName ?? appleCredential.givenName) : null,
+      );
+
+      await _firestore.collection('users').doc(user.uid).set(userModel.toMap());
+
+      isLoading.value = false;
+      Get.offAllNamed(AppRoutes.mainPageWithNavBar);
+    } catch (e) {
+      isLoading.value = false;
+      debugPrint("Apple signup error: $e");
+      Get.snackbar("Error", "Apple sign-up failed.");
+    }
+  }
+
+
 
   @override
   void onClose() {

@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/controller/trade_myaccount_controller.dart';
 import 'package:traderwho/controller/trade_profile_controller.dart';
-import 'package:traderwho/controller/trade_rate_controller.dart';
+import 'package:traderwho/controller/trade_small_job_rate_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
@@ -24,6 +24,6 @@ import 'package:traderwho/views/trades_profile/presentation/widgets/widgets.dart
 
 part 'trade_myaccount_page.dart';
 part 'trade_profile_page.dart';
-part 'trade_rate_page.dart';
+part 'trade_small_job_rate_page.dart';
 part 'trade_services.dart';
 part 'trade_short_services.dart';

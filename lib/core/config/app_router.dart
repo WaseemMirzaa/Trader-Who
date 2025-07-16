@@ -48,6 +48,13 @@ class AppRouter {
       binding: TradesPageBinding(),
     ),
     GetPage(
+      name: AppRoutes.tradeLargeJobServices,
+      page: () => const TradeLargerRatePage(),
+      binding: TradesLargerJoBPageBinding(),
+    ),
+
+
+    GetPage(
       name: AppRoutes.jobHistoryPage,
       page: () => const JobHistoryPage(),
       binding: JobHistoryPageBinding(),

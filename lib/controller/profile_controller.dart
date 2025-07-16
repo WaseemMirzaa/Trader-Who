@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/core/config/app_routes.dart';
+
+import 'login_controller.dart';
 
 class ProfileController extends GetxController {
   final Rx<String> name = Rx<String>('');
   final Rx<String> email = Rx<String>('');
   final RxBool isLoading = true.obs;
   final RxString error = ''.obs;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   @override
   void onInit() {
@@ -55,7 +60,23 @@ class ProfileController extends GetxController {
   }
 
   Future<void> logout() async {
-    await FirebaseAuth.instance.signOut();
-    Get.offAllNamed(AppRoutes.onboarding);
+    try {
+      await FirebaseAuth.instance.signOut();
+
+      await _secureStorage.delete(key: 'rememberMe');
+      await _secureStorage.delete(key: 'email');
+      await _secureStorage.delete(key: 'password');
+
+      final loginController = Get.find<LoginController>();
+      loginController.rememberMe.value = false;
+
+      Get.offAllNamed(AppRoutes.onboarding);
+    } catch (e) {
+      debugPrint('Logout error: $e');
+      Get.snackbar('Logout Failed', 'Something went wrong while logging out.');
+    }
   }
+
+
+
 }

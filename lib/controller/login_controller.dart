@@ -8,6 +8,8 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 
+import '../core/theme/assets.dart';
+
 class LoginController extends GetxController {
   // Controllers for text fields
   final emailController = TextEditingController();
@@ -47,29 +49,30 @@ class LoginController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Check for existing session
-      if (_auth.currentUser != null && _auth.currentUser!.emailVerified) {
+      // Check rememberMe flag from secure storage
+      final remembered = await _secureStorage.read(key: 'rememberMe');
+      rememberMe.value = remembered == 'true';
+
+      final currentUser = _auth.currentUser;
+
+      // ✅ Session management: if rememberMe is true AND user is logged in AND verified
+      if (rememberMe.value &&
+          currentUser != null &&
+          currentUser.emailVerified) {
+        debugPrint('🔐 Auto-login session: ${currentUser.uid}');
         isLoggedIn.value = true;
-        await _checkUserTypeAndNavigate(_auth.currentUser!.uid);
+        await _checkUserTypeAndNavigate(currentUser.uid);
         return;
       }
 
-      // Clear text fields on initialization to prevent pre-filling
+      // Clear input fields regardless
       emailController.clear();
       passwordController.clear();
 
-      // Only load saved credentials if rememberMe is explicitly true
-      final remembered = await _secureStorage.read(key: 'rememberMe');
-      if (remembered == 'true') {
-        rememberMe.value = true;
+      // Pre-fill saved credentials if rememberMe is set
+      if (rememberMe.value) {
         await _loadSavedCredentials();
-        // Do NOT auto-login here. Only pre-fill fields.
-        // if (emailController.text.isNotEmpty &&
-        //     passwordController.text.isNotEmpty) {
-        //   await _attemptAutoLogin();
-        // }
       } else {
-        // Ensure credentials are cleared if rememberMe is not set
         await _clearAllCredentials();
       }
     } catch (e) {
@@ -206,33 +209,90 @@ class LoginController extends GetxController {
     debugPrint('Unexpected error: $e');
   }
 
-  Future<void> signInWithGoogle() async {
+
+  Future<String?> promptForRole() async {
+    return await Get.dialog<String>(
+      AlertDialog(
+        title: const Text("Choose Your Role"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(
+              onTap: () => Get.back(result: "customer"),
+              child: Image.asset(
+                Assets.imagesCustomer,
+                height: Get.height * 0.3,
+                width: Get.width * 0.4,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: () => Get.back(result: "tradesperson"),
+              child: Image.asset(
+                Assets.imagesTradePerson,
+                height: Get.height * 0.3,
+                width: Get.width * 0.4,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+
+  Future<void> signInWithGoogle({required String role}) async {
     try {
       isLoading.value = true;
+
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return;
+      if (googleUser == null) {
+        isLoading.value = false;
+        return;
+      }
 
       final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await _auth.signInWithCredential(credential);
-      await _checkUserTypeAndNavigate(userCredential.user!.uid);
+      final userCredential =
+      await _auth.signInWithCredential(credential);
+      final uid = userCredential.user!.uid;
+
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+      if (!userDoc.exists) {
+        final newUser = {
+          "email": googleUser.email,
+          "name": googleUser.displayName ?? '',
+          "user_type": role,
+          "createdAt": DateTime.now(),
+          "status": role == 'tradesperson' ? 'pending' : null,
+        };
+
+        await _firestore.collection('users').doc(uid).set(newUser);
+      }
+
+      await _checkUserTypeAndNavigate(uid);
     } catch (e) {
       authException.value = 'Google Sign-In failed';
       Get.snackbar('Error', authException.value);
-      debugPrint('Google sign-in error: $e');
+      debugPrint('❌ Google sign-in error: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
+
   Future<void> signInWithApple() async {
     try {
       isLoading.value = true;
+
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -246,7 +306,30 @@ class LoginController extends GetxController {
       );
 
       final userCredential = await _auth.signInWithCredential(oauthCredential);
-      await _checkUserTypeAndNavigate(userCredential.user!.uid);
+      final uid = userCredential.user!.uid;
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+
+      if (!userDoc.exists) {
+        // Prompt for role if first time
+        final selectedRole = await promptForRole();
+        if (selectedRole == null) {
+          await _auth.signOut();
+          return;
+        }
+
+        final newUser = {
+          "email": userCredential.user?.email ?? '',
+          "name":
+          "${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}".trim(),
+          "user_type": selectedRole,
+          "createdAt": DateTime.now(),
+          "status": selectedRole == 'tradesperson' ? 'pending' : null,
+        };
+
+        await _firestore.collection('users').doc(uid).set(newUser);
+      }
+
+      await _checkUserTypeAndNavigate(uid);
     } catch (e) {
       authException.value = 'Apple Sign-In failed';
       Get.snackbar('Error', authException.value);
@@ -372,7 +455,7 @@ class LoginController extends GetxController {
         Get.offAllNamed(AppRoutes.mainPageWithNavBar);
       } else {
         debugPrint('USER DOCUMENT NOT FOUND IN FIRESTORE');
-        Get.snackbar('Error', 'User profile not found');
+        // Get.snackbar('Error', 'User profile not found');
       }
     } catch (e) {
       debugPrint('ERROR CHECKING USER TYPE: $e');

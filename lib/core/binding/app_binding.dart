@@ -67,7 +67,14 @@ class JobPageBinding extends Bindings {
 class TradesPageBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<JobController>(() => JobController());
+    Get.lazyPut<TradeRateController>(() => TradeRateController());
+  }
+}
+
+class TradesLargerJoBPageBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<TradeRateLargeJobController>(() => TradeRateLargeJobController());
   }
 }
 
