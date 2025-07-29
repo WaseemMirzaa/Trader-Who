@@ -105,7 +105,7 @@ class TradesPeopleCard extends StatelessWidget {
                         person.rating.toString(),
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppColor.orangecustomColor,
+                          color: AppColor.orangeCustomColor,
                         ),
                       ),
                     ],

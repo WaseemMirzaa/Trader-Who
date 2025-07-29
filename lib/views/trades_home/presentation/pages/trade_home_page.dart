@@ -18,6 +18,9 @@ class _TradeHomePageState extends State<TradeHomePage> {
       address: '123 Main St, Springfield',
       status: 'New',
       tradesPerson: TradesPerson(
+        id: 'john_smith',
+        bio:
+            "Experienced plumber with a knack for fixing leaks and installing fixtures.",
         expertise: 'Plumber',
         description:
             'Leaking kitchen sink, Pipe may be cracked. Water dripping into cabinet below. Happened after turning on garbage disposal.',

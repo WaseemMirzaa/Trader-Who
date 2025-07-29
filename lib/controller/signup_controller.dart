@@ -85,20 +85,6 @@ class SignupController extends GetxController {
         return;
       }
 
-      if (!password.contains(RegExp(r'[A-Z]'))) {
-        debugPrint('Validation failed: No uppercase letter in password');
-        Get.snackbar(
-          'Error',
-          'Password must contain at least one uppercase letter.',
-        );
-        return;
-      }
-
-      if (!password.contains(RegExp(r'[0-9]'))) {
-        debugPrint('Validation failed: No number in password');
-        Get.snackbar('Error', 'Password must contain at least one number.');
-        return;
-      }
       if (password != confirmPassword) {
         debugPrint('Validation failed: Passwords do not match');
         Get.snackbar('Error', 'Passwords do not match.');
@@ -119,6 +105,11 @@ class SignupController extends GetxController {
         if (startTime.value == null || endTime.value == null) {
           debugPrint('Validation failed: Working hours not selected');
           Get.snackbar('Error', 'Please select your working hours');
+          return;
+        }
+        if (endTime.value!.isBefore(startTime.value!)) {
+          debugPrint('Validation failed: End time is before start time');
+          Get.snackbar('Error', 'End time must be after start time');
           return;
         }
       }
@@ -215,6 +206,8 @@ class SignupController extends GetxController {
       isLoading.value = false;
       debugPrint('Unexpected error: $e');
       Get.snackbar('Error', 'An unexpected error occurred: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -273,8 +266,6 @@ class SignupController extends GetxController {
     }
   }
 
-
-
   Future<void> signUpWithGoogle() async {
     try {
       isLoading.value = true;
@@ -308,12 +299,26 @@ class SignupController extends GetxController {
         bio: isTradesperson.value ? bioController.text.trim() : null,
         status: isTradesperson.value ? 'pending' : null,
         availability: isTradesperson.value ? availability.value : null,
-        startTime: isTradesperson.value && startTime.value != null
-            ? DateTime(now.year, now.month, now.day, startTime.value!.hour, startTime.value!.minute)
-            : null,
-        endTime: isTradesperson.value && endTime.value != null
-            ? DateTime(now.year, now.month, now.day, endTime.value!.hour, endTime.value!.minute)
-            : null,
+        startTime:
+            isTradesperson.value && startTime.value != null
+                ? DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  startTime.value!.hour,
+                  startTime.value!.minute,
+                )
+                : null,
+        endTime:
+            isTradesperson.value && endTime.value != null
+                ? DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  endTime.value!.hour,
+                  endTime.value!.minute,
+                )
+                : null,
         username: !isTradesperson.value ? user.displayName : null,
       );
 
@@ -363,13 +368,30 @@ class SignupController extends GetxController {
         bio: isTradesperson.value ? bioController.text.trim() : null,
         status: isTradesperson.value ? 'pending' : null,
         availability: isTradesperson.value ? availability.value : null,
-        startTime: isTradesperson.value && startTime.value != null
-            ? DateTime(now.year, now.month, now.day, startTime.value!.hour, startTime.value!.minute)
-            : null,
-        endTime: isTradesperson.value && endTime.value != null
-            ? DateTime(now.year, now.month, now.day, endTime.value!.hour, endTime.value!.minute)
-            : null,
-        username: !isTradesperson.value ? (user.displayName ?? appleCredential.givenName) : null,
+        startTime:
+            isTradesperson.value && startTime.value != null
+                ? DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  startTime.value!.hour,
+                  startTime.value!.minute,
+                )
+                : null,
+        endTime:
+            isTradesperson.value && endTime.value != null
+                ? DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  endTime.value!.hour,
+                  endTime.value!.minute,
+                )
+                : null,
+        username:
+            !isTradesperson.value
+                ? (user.displayName ?? appleCredential.givenName)
+                : null,
       );
 
       await _firestore.collection('users').doc(user.uid).set(userModel.toMap());
@@ -382,8 +404,6 @@ class SignupController extends GetxController {
       Get.snackbar("Error", "Apple sign-up failed.");
     }
   }
-
-
 
   @override
   void onClose() {

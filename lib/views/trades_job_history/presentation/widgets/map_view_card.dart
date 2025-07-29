@@ -109,7 +109,7 @@ class MapViewCard extends StatelessWidget {
                         job.tradesPerson.rating.toString(),
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppColor.orangecustomColor,
+                          color: AppColor.orangeCustomColor,
                         ),
                       ),
                     ],

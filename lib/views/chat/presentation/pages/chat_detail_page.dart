@@ -3,11 +3,13 @@ part of 'pages.dart';
 class ChatDetailPage extends StatefulWidget {
   final String userName;
   final String avatarImage;
+  final String receiverId;
 
   const ChatDetailPage({
     super.key,
     required this.userName,
     required this.avatarImage,
+    required this.receiverId,
   });
 
   @override
@@ -15,40 +17,55 @@ class ChatDetailPage extends StatefulWidget {
 }
 
 class _ChatDetailPageState extends State<ChatDetailPage> {
-  final TextEditingController _messageController = TextEditingController();
-  // Reordered messages list to match the requested order
-  final List<Map<String, dynamic>> messages = [
-    {'text': 'Can I book for 3pm?', 'isMe': false, 'time': '10:30 AM'},
-    {
-      'text': 'Sure! 3PM works.I will confirm,',
-      'isMe': true,
-      'time': '10:32 AM',
-    },
-    // Optionally include other messages
-    {'text': 'Great Thanks!', 'isMe': false, 'time': '10:35 AM'},
-    {
-      'text': 'You are Welcome! See you at 3',
-      'isMe': true,
-      'time': '10:36 AM', // Adjusted time to maintain chronological sense
-    },
-  ];
+  String _formatTimestamp(dynamic sentAt) {
+    if (sentAt is DateTime) {
+      return "${sentAt.hour.toString().padLeft(2, '0')}:${sentAt.minute.toString().padLeft(2, '0')}";
+    } else if (sentAt is Timestamp) {
+      final dt = sentAt.toDate();
+      return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+    }
+    return "";
+  }
 
+  final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ChatController chatController = Get.put(ChatController());
+  late String chatId;
 
   @override
   void initState() {
     super.initState();
-    // Scroll to the bottom after the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    chatId = chatController.getChatId(
+      FirebaseAuth.instance.currentUser!.uid,
+      widget.receiverId,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+      await chatController.createChatIfNotExists(
+        currentUserId,
+        widget.receiverId,
+      );
+      chatController.listenToMessages(chatId, reset: true);
+      await chatController.markMessagesAsRead(chatId, currentUserId);
       _scrollToBottom();
     });
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    chatController.messageSubscription?.cancel();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels <=
+        _scrollController.position.minScrollExtent + 100) {
+      // Near the top, fetch more messages
+      chatController.fetchMoreMessages(chatId);
+    }
   }
 
   void _scrollToBottom() {
@@ -71,22 +88,30 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              reverse: true, // Keep reverse: true for chat-like experience
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                // Since reverse is true, reverse the index to access messages
-                final message = messages[messages.length - 1 - index];
-                return MessageBubble(
-                  text: message['text'],
-                  isMe: message['isMe'],
-                  time: message['time'],
-                  avatar: message['isMe'] ? null : widget.avatarImage,
-                );
-              },
-            ),
+            child: Obx(() {
+              final messages = chatController.messages;
+              return ListView.builder(
+                controller: _scrollController,
+                reverse: true,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final message = messages[index];
+                  final isMe =
+                      message.senderId ==
+                      FirebaseAuth.instance.currentUser!.uid;
+                  return MessageBubble(
+                    text: message.message,
+                    isMe: isMe,
+                    time: _formatTimestamp(message.sentAt),
+                    avatar: isMe ? null : widget.avatarImage,
+                  );
+                },
+              );
+            }),
           ),
           Container(
             decoration: BoxDecoration(
@@ -123,7 +148,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                             fontFamily: 'openSans',
                           ),
                           hintText: 'Write message',
-
                           border: InputBorder.none,
                         ),
                       ),
@@ -138,18 +162,17 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: () {
-                      // if (_messageController.text.isNotEmpty) {
-                      //   setState(() {
-                      //     messages.add({
-                      //       'text': _messageController.text,
-                      //       'isMe': true,
-                      //       'time': FormatCurrentTime(), // Use formatted time
-                      //     });
-                      //     _messageController.clear();
-                      //   });
-                      //   _scrollToBottom();
-                      // }
+                    onPressed: () async {
+                      if (_messageController.text.isNotEmpty) {
+                        await chatController.sendMessage(
+                          chatId: chatId,
+                          senderId: FirebaseAuth.instance.currentUser!.uid,
+                          receiverId: widget.userName,
+                          message: _messageController.text,
+                        );
+                        _scrollToBottom();
+                        _messageController.clear();
+                      }
                     },
                   ),
                 ),

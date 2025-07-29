@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:traderwho/core/theme/assets.dart';
 
 import '../theme/app_color.dart';
 import 'custom_circular_indicator.dart';
@@ -50,10 +51,13 @@ class CustomCircleAvatar extends StatelessWidget {
             CachedNetworkImage(
               imageUrl: imageUrl ?? '',
               placeholder: (context, url) => const CustomCircularIndicator(),
-              // errorWidget:
-              //     (context, url, error) =>
-              //         Image.asset(Assets.imagesAppLogo, width: 32, height: 32),
-              // fit: BoxFit.cover,
+              errorWidget:
+                  (context, url, error) => Image.asset(
+                    Assets.imagesTradePerson,
+                    width: 32,
+                    height: 32,
+                  ),
+              fit: BoxFit.cover,
             ),
       ),
     );

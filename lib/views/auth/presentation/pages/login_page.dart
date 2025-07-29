@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: AppColor.purplecustomColor,
+      backgroundColor: AppColor.purpleCustomColor,
       appBar: AppBar(
         centerTitle: true,
         title: const CustomText(
@@ -116,7 +116,8 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   value: controller.rememberMe.value,
                                   onChanged: (bool? value) {
-                                    controller.rememberMe.value = value ?? false;
+                                    controller.rememberMe.value =
+                                        value ?? false;
                                   },
                                   // onChanged: (value) {
                                   //   if (value != null) {
@@ -156,14 +157,14 @@ class _LoginPageState extends State<LoginPage> {
                       Obx(
                         () => CustomButton(
                           text: 'Login',
-                          onTap: () {
+                          onTap: () async {
                             if (_formKey.currentState!.validate()) {
-                              controller.login();
+                              await controller.login();
                             }
                           },
                           isLoading: controller.isLoading.value,
                           width: double.infinity,
-                          color: AppColor.orangecustomColor,
+                          color: AppColor.orangeCustomColor,
                           textColor: Colors.white,
                           fontSize: screenWidth > 600 ? 18 : 16,
                           fontWeight: FontWeight.normal,
@@ -234,15 +235,18 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.white,
                               textColor: Colors.black,
                               onTap: () async {
-                                final selectedRole = await controller.promptForRole();
+                                final selectedRole =
+                                    await controller.promptForRole();
                                 if (selectedRole != null) {
                                   // 👇 Add slight delay to ensure dialog closes fully
-                                  await Future.delayed(const Duration(milliseconds: 100));
-                                  controller.signInWithGoogle(role: selectedRole);
+                                  await Future.delayed(
+                                    const Duration(milliseconds: 100),
+                                  );
+                                  controller.signInWithGoogle(
+                                    role: selectedRole,
+                                  );
                                 }
-                              }
-
-                              ,
+                              },
                               // onTap: controller.signInWithGoogle,
                               radius: 18,
                               height: 50,

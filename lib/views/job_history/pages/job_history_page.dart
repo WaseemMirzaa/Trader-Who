@@ -20,6 +20,9 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
       address: '123 Main St, Springfield',
       status: 'Accepted',
       tradesPerson: TradesPerson(
+        id: 'john_smith',
+        bio:
+            "Experienced plumber with a knack for fixing leaks and installing fixtures.",
         expertise: 'Plumber',
         description:
             'Leaking kitchen sink, Pipe may be cracked. Water  dripping into cabinet below. Happened after  turning on  garbage disposal.',
@@ -38,6 +41,9 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
       address: '456 Oak Ave, Springfield',
       status: 'Waiting for porposal',
       tradesPerson: TradesPerson(
+        id: 'david',
+        bio:
+            "Experienced electrician specializing in residential and commercial work.",
         expertise: 'Electrical',
         description:
             'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after  turning on  garbage disposal.',
@@ -56,6 +62,9 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
       address: '789 Pine Rd, Springfield',
       status: 'Completed', // Changed to Completed for testing
       tradesPerson: TradesPerson(
+        id: 'sofiya',
+        bio:
+            "Experienced electrician specializing in residential and commercial work.",
         expertise: 'Electrical',
         description:
             'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after  turning on  garbage disposal.',

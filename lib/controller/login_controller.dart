@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
+import 'package:traderwho/core/theme/theme.dart';
 
 import '../core/theme/assets.dart';
 
@@ -200,15 +201,24 @@ class LoginController extends GetxController {
 
   void _handleLoginError(FirebaseAuthException e) {
     authException.value = _getAuthErrorMessage(e.code);
-    Get.snackbar('Login Failed', authException.value);
+    Get.snackbar(
+      'Login Failed',
+      authException.value,
+      colorText: AppColor.white,
+      backgroundColor: AppColor.red,
+    );
   }
 
   void _handleUnexpectedError(dynamic e) {
     authException.value = 'An unexpected error occurred';
-    Get.snackbar('Error', authException.value);
+    Get.snackbar(
+      'Error',
+      authException.value,
+      backgroundColor: AppColor.red,
+      colorText: AppColor.white,
+    );
     debugPrint('Unexpected error: $e');
   }
-
 
   Future<String?> promptForRole() async {
     return await Get.dialog<String>(
@@ -243,7 +253,6 @@ class LoginController extends GetxController {
     );
   }
 
-
   Future<void> signInWithGoogle({required String role}) async {
     try {
       isLoading.value = true;
@@ -255,14 +264,13 @@ class LoginController extends GetxController {
       }
 
       final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+          await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final userCredential =
-      await _auth.signInWithCredential(credential);
+      final userCredential = await _auth.signInWithCredential(credential);
       final uid = userCredential.user!.uid;
 
       final userDoc = await _firestore.collection('users').doc(uid).get();
@@ -287,7 +295,6 @@ class LoginController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
   Future<void> signInWithApple() async {
     try {
@@ -320,7 +327,8 @@ class LoginController extends GetxController {
         final newUser = {
           "email": userCredential.user?.email ?? '',
           "name":
-          "${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}".trim(),
+              "${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}"
+                  .trim(),
           "user_type": selectedRole,
           "createdAt": DateTime.now(),
           "status": selectedRole == 'tradesperson' ? 'pending' : null,
@@ -424,16 +432,16 @@ class LoginController extends GetxController {
 
         debugPrint('FIRESTORE USER DATA: $userData');
 
-        bool isTradesperson = false;
+        bool isTradesPerson = false;
         if (userData.containsKey('user_type')) {
           final userType = userData['user_type'];
           debugPrint(
             'USER TYPE FROM FIRESTORE: $userType (${userType.runtimeType})',
           );
           if (userType is String) {
-            isTradesperson = userType.toLowerCase() == 'tradesperson';
+            isTradesPerson = userType.toLowerCase() == 'tradesperson';
           }
-          debugPrint('DETERMINED IS TRADESPERSON: $isTradesperson');
+          debugPrint('DETERMINED IS TRADESPERSON: $isTradesPerson');
         }
 
         if (!Get.isRegistered<NavigationController>()) {
@@ -441,9 +449,9 @@ class LoginController extends GetxController {
         }
 
         debugPrint(
-          'SETTING USER TYPE IN NAVIGATION CONTROLLER: $isTradesperson',
+          'SETTING USER TYPE IN NAVIGATION CONTROLLER: $isTradesPerson',
         );
-        NavigationController.to.setUserType(isTradesperson);
+        NavigationController.to.setUserType(isTradesPerson);
 
         await _saveCredentialsIfRemembered();
         isLoggedIn.value = true;
@@ -451,7 +459,7 @@ class LoginController extends GetxController {
         Get.forceAppUpdate();
         await Future.delayed(const Duration(milliseconds: 100));
 
-        debugPrint('NAVIGATING TO MAIN PAGE WITH USER TYPE: $isTradesperson');
+        debugPrint('NAVIGATING TO MAIN PAGE WITH USER TYPE: $isTradesPerson');
         Get.offAllNamed(AppRoutes.mainPageWithNavBar);
       } else {
         debugPrint('USER DOCUMENT NOT FOUND IN FIRESTORE');

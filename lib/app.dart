@@ -21,12 +21,12 @@ class App extends StatelessWidget {
     return SizerUtils(
       builder: (BuildContext context, Orientation orientation) {
         return GetMaterialApp(
-
           title: 'traderWho',
           theme: lightTheme,
           darkTheme: darkTheme,
 
           debugShowCheckedModeBanner: false,
+
           getPages: AppRouter().getPages,
           initialRoute: AppRoutes.root,
         );

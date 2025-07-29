@@ -76,7 +76,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                        AppColor.orangecustomColor,
+                                        AppColor.orangeCustomColor,
                                       ),
                                     ),
                                   )
@@ -94,7 +94,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                 // Circular avatar
                 CustomCircleAvatar(
                   radius: avatarRadius,
-                  circleColor: AppColor.orangecustomColor,
+                  circleColor: AppColor.orangeCustomColor,
                   child: Image(
                     image: AssetImage(Assets.imagesCircularAvatar),
                     width: avatarImageSize,

@@ -105,7 +105,7 @@ class _TradeServicesAppbarState extends State<TradeServicesAppbar> {
                             decoration: BoxDecoration(
                               color:
                                   AppColor
-                                      .orangecustomColor, // Orange background
+                                      .orangeCustomColor, // Orange background
                               shape: BoxShape.circle,
                             ),
                             child: Center(

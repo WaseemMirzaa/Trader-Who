@@ -10,7 +10,7 @@ class ForgotPasswordPage extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: AppColor.purplecustomColor,
+      backgroundColor: AppColor.purpleCustomColor,
       appBar: AppBar(
         centerTitle: true,
         title: const CustomText(
@@ -72,7 +72,7 @@ class ForgotPasswordPage extends StatelessWidget {
                         },
                         isLoading: controller.isLoading.value,
                         width: double.infinity,
-                        color: AppColor.orangecustomColor,
+                        color: AppColor.orangeCustomColor,
                         textColor: Colors.white,
                         fontSize: screenWidth > 600 ? 18 : 16,
                         fontWeight: FontWeight.normal,

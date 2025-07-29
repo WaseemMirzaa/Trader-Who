@@ -90,7 +90,7 @@ class CustomNavBar extends StatelessWidget {
 
       return BottomNavigationBarItem(
         icon: Container(
-          padding: const EdgeInsets.only(top: 6), // Reduced padding
+          // padding: const EdgeInsets.only(top: 6), // Reduced padding
           child: SvgPicture.asset(
             iconPath,
             width: 22, // Slightly smaller icons

@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:traderwho/controller/trades_people_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/extensions/media_query_extension.dart';
 import 'package:traderwho/core/shared_widgets/custom_bottom_sheet.dart';
@@ -20,9 +21,8 @@ import 'package:traderwho/core/theme/assets.dart';
 import 'package:traderwho/core/theme/constant.dart';
 import 'package:traderwho/models/models.dart';
 import 'package:traderwho/views/job_post/presentation/widgets/widgets.dart';
+import 'package:traderwho/views/trades_people/presentation/pages/trade_people_details_page.dart';
 import 'package:traderwho/views/trades_people/presentation/widgets/widgets.dart';
-
 part 'custom_job_post.dart';
 part 'map_screen.dart';
-part 'trade_people_details_page.dart';
 part 'trades_page.dart';

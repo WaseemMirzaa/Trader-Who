@@ -135,7 +135,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ),
           ),
         SizedBox(
-          height: effectiveHeight,
           width: effectiveWidth,
           child: TextFormField(
             onTap: widget.onTap,
@@ -196,7 +195,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   widget.contentPadding ??
                   EdgeInsets.symmetric(
                     horizontal: widget.isCircular ? effectiveHeight / 3 : 16,
-                    vertical: widget.isCircular ? 0 : 15,
+                    vertical:
+                        widget.isCircular ? (effectiveHeight - 20) / 2 : 15,
                   ),
               errorStyle: const TextStyle(color: Colors.red),
               hintStyle:

@@ -147,7 +147,7 @@ class NotificationBottomSheet extends StatelessWidget {
                     text: 'Reject',
                     onTap: onReject ?? () {},
                     height: 50,
-                    color: AppColor.orangecustomColor,
+                    color: AppColor.orangeCustomColor,
                     textColor: AppColor.white,
                     fontWeight: FontWeight.bold,
                     radius: 25,

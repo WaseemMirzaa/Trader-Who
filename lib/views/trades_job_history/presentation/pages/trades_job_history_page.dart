@@ -20,6 +20,9 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
       status: 'New',
       showQuoteButtons: false,
       tradesPerson: TradesPerson(
+        id: 'john_smith',
+        bio:
+            "Experienced plumber with a knack for fixing leaks and installing fixtures.",
         expertise: 'Plumber',
         description:
             'Leaking kitchen sink, Pipe may be cracked. Water  dripping into cabinet below. Happened after turning on garbage disposal.',
@@ -39,6 +42,9 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
       status: 'New',
       showQuoteButtons: true,
       tradesPerson: TradesPerson(
+        id: 'david',
+        bio:
+            "Experienced electrician specializing in residential and commercial work.",
         expertise: 'Electrical',
         description:
             'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after turning on garbage disposal.',
@@ -58,6 +64,9 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
       status: 'Completed',
       showQuoteButtons: true,
       tradesPerson: TradesPerson(
+        id: 'sofiya',
+        bio:
+            "Experienced electrician specializing in residential and commercial work.",
         expertise: 'Electrical',
         description:
             'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after turning on garbage disposal.',

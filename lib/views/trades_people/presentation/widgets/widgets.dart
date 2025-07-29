@@ -9,7 +9,9 @@ import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/shared_widgets/custom_text.dart';
 import 'package:traderwho/core/theme/theme.dart';
 import 'package:traderwho/models/models.dart';
+import 'package:traderwho/views/chat/presentation/pages/pages.dart';
 import 'package:traderwho/views/trades_people/presentation/pages/pages.dart';
+import 'package:traderwho/views/trades_people/presentation/pages/trade_people_details_page.dart';
 
 part '../../../trades_job_history/presentation/widgets/map_view_card.dart';
 part 'custom_job_request_appbar.dart';

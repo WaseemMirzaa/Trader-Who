@@ -68,7 +68,7 @@ class CustomBottomSheet extends StatelessWidget {
                     children: [
                       CustomCircleAvatar(
                         radius: 30,
-                        circleColor: AppColor.orangecustomColor,
+                        circleColor: AppColor.orangeCustomColor,
                         child: Image(
                           image: AssetImage(Assets.imagesCircularAvatar),
                           fit: BoxFit.cover,
@@ -206,7 +206,7 @@ class CustomBottomSheet extends StatelessWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: AppColor.orangecustomColor, // Dark blue background
+                      color: AppColor.orangeCustomColor, // Dark blue background
                       shape: BoxShape.circle,
                     ),
                     child: Center(

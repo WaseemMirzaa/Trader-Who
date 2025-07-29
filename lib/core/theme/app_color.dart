@@ -25,10 +25,10 @@ class AppColor {
   static const Color grayHintText = Color(0xFF858585);
 
   ///
-  static const Color purplecustomColor = Color(0xFF1E2A44);
+  static const Color purpleCustomColor = Color(0xFF1E2A44);
 
   ///
-  static const Color orangecustomColor = Color(0xFFFF7618);
+  static const Color orangeCustomColor = Color(0xFFFF7618);
 
   /// Light gray color (#A4A4A4).
   static const Color customsLightGray = Color(0xFFA4A4A4);
@@ -207,8 +207,6 @@ class AppColor {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
-
-  static var p;
 }
 
 ThemeData lightTheme = ThemeData.light().copyWith(
@@ -216,6 +214,30 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   colorScheme: ColorScheme.fromSwatch().copyWith(
     primary: AppColor.white,
     secondary: AppColor.white,
+  ),
+  timePickerTheme: TimePickerThemeData(
+    backgroundColor: AppColor.white,
+    hourMinuteShape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    hourMinuteTextColor: AppColor.darkBlueText,
+    dialBackgroundColor: AppColor.lightGray,
+    dialHandColor: AppColor.primaryButton,
+    dayPeriodTextColor: AppColor.primaryButton,
+    dayPeriodShape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8)),
+    ),
+    helpTextStyle: TextStyle(
+      color: AppColor.primaryButton,
+      fontWeight: FontWeight.bold,
+    ),
+    entryModeIconColor: AppColor.primaryButton,
+    cancelButtonStyle: ButtonStyle(
+      foregroundColor: WidgetStatePropertyAll(AppColor.primaryButton),
+    ),
+    confirmButtonStyle: ButtonStyle(
+      foregroundColor: WidgetStatePropertyAll(AppColor.primaryButton),
+    ),
   ),
   scaffoldBackgroundColor: const Color(
     0xFFFCF3ED,
@@ -294,6 +316,30 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   colorScheme: ColorScheme.fromSwatch().copyWith(
     primary: AppColor.black,
     secondary: AppColor.black,
+  ),
+  timePickerTheme: TimePickerThemeData(
+    backgroundColor: AppColor.white,
+    hourMinuteShape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    hourMinuteTextColor: AppColor.darkBlueText,
+    dialBackgroundColor: AppColor.lightGray,
+    dialHandColor: AppColor.primaryButton,
+    dayPeriodTextColor: AppColor.primaryButton,
+    dayPeriodShape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8)),
+    ),
+    helpTextStyle: TextStyle(
+      color: AppColor.primaryButton,
+      fontWeight: FontWeight.bold,
+    ),
+    entryModeIconColor: AppColor.primaryButton,
+    cancelButtonStyle: ButtonStyle(
+      foregroundColor: WidgetStatePropertyAll(AppColor.primaryButton),
+    ),
+    confirmButtonStyle: ButtonStyle(
+      foregroundColor: WidgetStatePropertyAll(AppColor.primaryButton),
+    ),
   ),
   scaffoldBackgroundColor: const Color(
     0xFFEFEFF0,

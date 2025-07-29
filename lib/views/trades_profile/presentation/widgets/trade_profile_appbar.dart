@@ -81,7 +81,7 @@ class TradeProfileAppbar extends StatelessWidget
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                        AppColor.orangecustomColor,
+                                        AppColor.orangeCustomColor,
                                       ),
                                     ),
                                   )
@@ -99,7 +99,7 @@ class TradeProfileAppbar extends StatelessWidget
                 // Circular avatar
                 CustomCircleAvatar(
                   radius: avatarRadius,
-                  circleColor: AppColor.orangecustomColor,
+                  circleColor: AppColor.orangeCustomColor,
                   child: Image(
                     image: AssetImage(Assets.imagesTradeProfile),
                     width: avatarImageSize,

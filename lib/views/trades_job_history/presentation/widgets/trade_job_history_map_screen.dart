@@ -268,6 +268,9 @@ class _TradeJobHistoryMapScreenState
         address: "${index + 3} miles away",
         status: isCompleted ? "Completed" : "New",
         tradesPerson: TradesPerson(
+          id: "technician_${index + 1}",
+          bio:
+              "Experienced electrician specializing in residential and commercial work.",
           name: "Technician ${index + 1}",
           expertise: "Electrician",
           description:

@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:traderwho/controller/chat_controller.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/shared_widgets/search_bar_tile.dart';
 import 'package:traderwho/core/theme/assets.dart';

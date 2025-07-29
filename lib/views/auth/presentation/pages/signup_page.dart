@@ -231,12 +231,7 @@ class _SignupPageState extends State<SignupPage> {
                         if (value.length < 8) {
                           return 'Password must be at least 8 characters';
                         }
-                        if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                          return 'Password must contain at least one uppercase letter';
-                        }
-                        if (!RegExp(r'[0-9]').hasMatch(value)) {
-                          return 'Password must contain at least one number';
-                        }
+
                         return null;
                       },
                     ),
@@ -303,7 +298,7 @@ class _SignupPageState extends State<SignupPage> {
                           }
                         },
                         width: double.infinity,
-                        color: AppColor.orangecustomColor,
+                        color: AppColor.orangeCustomColor,
                         textColor: Colors.white,
                         fontSize: screenWidth > 600 ? 18 : 16,
                         fontWeight: FontWeight.normal,
@@ -353,7 +348,7 @@ class _SignupPageState extends State<SignupPage> {
                             enableIcon: true,
                             color: Colors.white,
                             textColor: Colors.black,
-                            onTap:()=>controller.signUpWithApple(),
+                            onTap: () => controller.signUpWithApple(),
                             radius: 18,
                             height: 50,
                           ),
@@ -370,7 +365,7 @@ class _SignupPageState extends State<SignupPage> {
                             enableIcon: true,
                             color: Colors.white,
                             textColor: Colors.black,
-                            onTap:()=>controller.signUpWithGoogle(),
+                            onTap: () => controller.signUpWithGoogle(),
                             radius: 18,
                             height: 50,
                           ),

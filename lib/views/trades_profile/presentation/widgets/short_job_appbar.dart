@@ -104,7 +104,7 @@ class _ShortJobAppbarState extends State<ShortJobAppbar> {
                             decoration: BoxDecoration(
                               color:
                                   AppColor
-                                      .orangecustomColor, // Orange background
+                                      .orangeCustomColor, // Orange background
                               shape: BoxShape.circle,
                             ),
                             child: Center(

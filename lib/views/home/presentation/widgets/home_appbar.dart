@@ -88,7 +88,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     children: [
                       CustomCircleAvatar(
                         radius: avatarRadius,
-                        circleColor: AppColor.orangecustomColor,
+                        circleColor: AppColor.orangeCustomColor,
 
                         child: Image(
                           image: AssetImage(Assets.imagesCircularAvatar),

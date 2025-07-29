@@ -129,7 +129,7 @@ class _TradeServicesPageState extends State<TradeServicesPage> {
                     );
                   }
                 },
-                color: AppColor.orangecustomColor,
+                color: AppColor.orangeCustomColor,
                 textColor: Colors.white,
                 width: double.infinity,
                 radius: 24,

@@ -1,4 +1,12 @@
-part of 'pages.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:traderwho/core/extensions/media_query_extension.dart';
+import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
+import 'package:traderwho/core/theme/app_color.dart';
+import 'package:traderwho/core/theme/assets.dart';
+import 'package:traderwho/core/theme/constant.dart';
+import 'package:traderwho/models/models.dart';
+import 'package:traderwho/views/trades_people/presentation/widgets/widgets.dart';
 
 class TradePersonDetailsPage extends StatefulWidget {
   final TradesPerson person;
@@ -30,11 +38,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
               _buildSectionTitle("Biography"),
               const SizedBox(height: 10),
               Text(
-                "Hi, I'm ${widget.person.name}, a licensed plumbing professional"
-                "with over 10 years of experience helping homeowners and businesses keep their\n"
-                "water systems running smoothly. From leaky faucets to full-scale "
-                "pipe installations, I bring dependable, high-quality services with a\n"
-                "focus on getting the job done right the first time.",
+                widget.person.bio,
                 style: TextStyle(
                   fontSize: 12,
                   color: AppColor.secondaryText,
@@ -67,7 +71,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                           widget.person.rating.toString(),
                           style: const TextStyle(
                             fontSize: 12,
-                            color: AppColor.orangecustomColor,
+                            color: AppColor.orangeCustomColor,
                           ),
                         ),
                       ],

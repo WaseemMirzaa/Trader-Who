@@ -171,7 +171,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                                 onTap: () {},
                                 width: context.responsiveWidth(29),
                                 height: context.responsiveHeight(4.5),
-                                color: AppColor.orangecustomColor,
+                                color: AppColor.orangeCustomColor,
                                 textColor: Colors.white,
 
                                 radius: 25,
@@ -199,7 +199,15 @@ class TradePersonDetailsAppBar extends StatelessWidget
                               ),
                               const SizedBox(width: 10),
                               GestureDetector(
-                                onTap: () {}, // Add message functionality here
+                                onTap: () {
+                                  Get.to(
+                                    () => ChatDetailPage(
+                                      avatarImage: person.imageUrl,
+                                      userName: person.name,
+                                      receiverId: person.id,
+                                    ),
+                                  );
+                                }, // Add message functionality here
                                 child: Container(
                                   width: context.responsiveWidth(10),
                                   height: context.responsiveWidth(10),
