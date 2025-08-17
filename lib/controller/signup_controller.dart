@@ -19,6 +19,8 @@ class SignupController extends GetxController {
   final confirmPasswordController = TextEditingController();
   final bioController = TextEditingController();
   final titleController = TextEditingController();
+  final latitudeController = TextEditingController();
+  final longitudeController = TextEditingController();
 
   // Observables
   var isLoading = false.obs;
@@ -155,8 +157,8 @@ class SignupController extends GetxController {
         email: email.trim(),
         phone: phone.trim(),
         address: address.trim(),
-        lat: lat,
-        lon: lon,
+        lat: double.tryParse(latitudeController.text.trim()),
+        lon: double.tryParse(longitudeController.text.trim()),
         userType: isTradesperson.value ? 'tradesperson' : 'customer',
         createdAt: DateTime.now(),
         title: isTradesperson.value ? title?.trim() : null,
@@ -259,6 +261,8 @@ class SignupController extends GetxController {
         addressController.text = result['address'];
         selectedLat.value = result['lat'];
         selectedLon.value = result['lon'];
+        latitudeController.text = result['lat'].toString();
+        longitudeController.text = result['lon'].toString();
       }
     } catch (e) {
       debugPrint("Error picking location: $e");
@@ -320,6 +324,14 @@ class SignupController extends GetxController {
                 )
                 : null,
         username: !isTradesperson.value ? user.displayName : null,
+        latitude:
+            isTradesperson.value
+                ? double.tryParse(latitudeController.text.trim())
+                : null,
+        longitude:
+            isTradesperson.value
+                ? double.tryParse(longitudeController.text.trim())
+                : null,
       );
 
       await _firestore.collection('users').doc(user.uid).set(userModel.toMap());

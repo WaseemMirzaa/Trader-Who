@@ -59,9 +59,9 @@ class JobHistoryDetailAppBar extends StatelessWidget
                       Align(
                         alignment: Alignment.center,
                         child: Text(
-                          job.status == 'Accepted'
+                          job.status == 'accepted'
                               ? 'Accepted by ${job.tradesPerson.name}'
-                              : job.status == 'Waiting for porposal'
+                              : job.status == 'pending'
                               ? 'Details'
                               : job.title,
                           style: const TextStyle(

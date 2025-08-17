@@ -25,6 +25,8 @@ class UserModel {
   final bool? availability;
   final DateTime? startTime;
   final DateTime? endTime;
+  final double? latitude;
+  final double? longitude;
 
   // Customer specific fields
   final String? username;
@@ -51,6 +53,8 @@ class UserModel {
     this.availability,
     this.startTime,
     this.endTime,
+    this.latitude,
+    this.longitude,
     // Customer fields
     this.username,
   });

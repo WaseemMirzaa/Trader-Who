@@ -12,7 +12,7 @@ class JobHistoryDetailPage extends StatefulWidget {
 class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
   @override
   Widget build(BuildContext context) {
-    final isWaitingForProposal = widget.job.status == 'Waiting for porposal';
+    final isWaitingForProposal = widget.job.status == 'pending';
 
     return TraderWhoScaffold(
       appBar: JobHistoryDetailAppBar(
@@ -72,7 +72,8 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                                     text: TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: 'Small Job - Fixed Price: ',
+                                          text:
+                                              '${widget.job.jobType} - Fixed Price: ',
                                           style: TextStyle(
                                             fontFamily: 'openSans',
                                             fontSize: 14,
@@ -110,7 +111,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           border: Border.all(color: AppColor.midGray, width: 1),
                         ),
                         child: Text(
-                          widget.job.status,
+                          HelperService.formatStatus(widget.job.status),
                           style: const TextStyle(
                             fontFamily: 'openSans',
                             fontSize: 12,
@@ -155,7 +156,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                   const SizedBox(height: 16),
                   // Description Section
                   Text(
-                    'Description',
+                    'Notes:',
                     style: TextStyle(
                       fontFamily: 'openSans',
                       fontSize: 16,
@@ -165,8 +166,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    widget.job.tradesPerson.description ??
-                        'No description available',
+                    widget.job.notes ?? 'No description available',
                     style: TextStyle(
                       fontSize: 13,
                       color: AppColor.secondaryText,
@@ -175,36 +175,18 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                   ),
                   const SizedBox(height: 20),
                   Row(
+                    spacing: 8.0,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          Assets.imagesPipe,
-                          width: 70,
-                          height: 60,
-                          fit: BoxFit.cover,
+                      for (var imageUrl in widget.job.images)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            width: 70,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      kGap10,
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          Assets.imagesPipe,
-                          width: 70,
-                          height: 60,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      kGap10,
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          Assets.imagesPipe,
-                          width: 70,
-                          height: 60,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
                     ],
                   ),
                   kGap10,
@@ -213,7 +195,10 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                     // Tradesperson Section
                     ...[
                       const SizedBox(height: 12),
-                      TradesPeopleCard(person: widget.job.tradesPerson),
+                      TradesPeopleCard(
+                        person: widget.job.tradesPerson,
+                        price: widget.job.price,
+                      ),
                       const SizedBox(height: 20),
                     ],
                     CustomText(
@@ -283,7 +268,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           markers: {
                             Marker(
                               markerId: const MarkerId('job_location'),
-                              position: LatLng(33.6844, 73.0479),
+                              position: widget.job.location,
                               infoWindow: InfoWindow(title: widget.job.address),
                             ),
                           },

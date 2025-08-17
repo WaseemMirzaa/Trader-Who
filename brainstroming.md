@@ -1,0 +1,2 @@
+- for max and min fetch one document from services pricing with sorting order descending and ascending 
+- 

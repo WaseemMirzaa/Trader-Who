@@ -12,7 +12,8 @@ class TradeRateLargeJobController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String userId = FirebaseAuth.instance.currentUser!.uid;
   final RxBool fromProfile = false.obs;
-  final RxMap<String, List<ServiceItem>> categories = <String, List<ServiceItem>>{}.obs;
+  final RxMap<String, List<ServiceItem>> categories =
+      <String, List<ServiceItem>>{}.obs;
   final RxString selectedCategory = RxString('');
   final RxBool isLoading = true.obs;
 
@@ -29,7 +30,8 @@ class TradeRateLargeJobController extends GetxController {
       isLoading(true);
       print('🔍 Checking for existing largejoblist...');
 
-      final existingData = await _firestore.collection('Services').doc('largejoblist').get();
+      final existingData =
+          await _firestore.collection('Services').doc('largejoblist').get();
 
       if (!existingData.exists) {
         print('📦 No predefined services found. Initializing...');
@@ -59,8 +61,15 @@ class TradeRateLargeJobController extends GetxController {
       categories['Custom Services'] = [];
       print('📂 Initialized "Custom Services"');
 
-      final userDoc = await _firestore.collection('users').doc(userId).get();
-      final snapshot = await _firestore.collection('Services').doc('largejoblist').get();
+      // final userDoc = await _firestore.collection('users').doc(userId).get();
+      final servicesPricesSnap =
+          await _firestore
+              .collection('services_prices')
+              .where('jobType', isEqualTo: 'largeJob')
+              .where('trader_id', isEqualTo: userId)
+              .get();
+      final snapshot =
+          await _firestore.collection('Services').doc('largejoblist').get();
 
       if (!snapshot.exists || snapshot.data() == null) {
         print('⚠️ No predefined large job services found.');
@@ -70,43 +79,102 @@ class TradeRateLargeJobController extends GetxController {
         );
       } else {
         final data = snapshot.data()!;
-        final predefinedServices = data['predefinedServices'] as Map<String, dynamic>? ?? {};
-        print('✅ Loaded \${predefinedServices.keys.length} predefined categories');
+        final predefinedServices =
+            data['predefinedServices'] as Map<String, dynamic>? ?? {};
+        print(
+          '✅ Loaded \${predefinedServices.keys.length} predefined categories',
+        );
 
         for (String category in predefinedServices.keys) {
-          final services = (predefinedServices[category] as List? ?? [])
-              .map((item) => ServiceItem.fromMap(item as Map<String, dynamic>))
-              .toList();
+          final servicesList = predefinedServices[category] as List? ?? [];
+          final services =
+              servicesList
+                  .map((item) {
+                    if (item is Map<String, dynamic>) {
+                      return ServiceItem.fromMap(item);
+                    }
+                    return null;
+                  })
+                  .where((item) => item != null)
+                  .cast<ServiceItem>()
+                  .toList();
 
           categories[category] = services;
           print('→ Added \${services.length} services to category: \$category');
         }
       }
 
-      if (userDoc.exists && userDoc.data()!.containsKey('largejoblist')) {
-        final userServices = userDoc['largejoblist'] as List;
-        print('🧍 Found \${userServices.length} user custom categories');
+      // if (userDoc.exists && userDoc.data()!.containsKey('largejoblist')) {
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> userServices =
+          servicesPricesSnap.docs;
+      print('🧍 Found \${userServices.length} user services');
 
-        for (var categoryData in userServices) {
-          final category = categoryData['category'] as String;
-          final userServiceList = categoryData['services'] as List? ?? [];
+      for (QueryDocumentSnapshot<Map<String, dynamic>> userService
+          in userServices) {
+        final categoryValue = userService.data()['category'];
+        if (categoryValue == null) {
+          print('⚠️ Skipping service with null category: ${userService.id}');
+          continue;
+        }
+        final category = categoryValue as String;
 
-          for (var userService in userServiceList) {
-            final index = categories[category]?.indexWhere((item) => item.title == userService['title']) ?? -1;
+        // Check if userService.id is not null and contains underscore
+        if (userService.id.isEmpty || !userService.id.contains('_')) {
+          print(
+            '⚠️ Skipping service with invalid ID format: ${userService.id}',
+          );
+          continue;
+        }
 
-            if (index != -1) {
-              categories[category]![index] = ServiceItem.fromMap(userService);
-              print('✅ Updated existing service: ${userService['title']}');
-            } else if (category == 'Custom Services') {
-              categories[category]!.add(ServiceItem.fromMap(userService));
-              print('➕ Added custom service: ${userService['title']}');
-            }
+        final serviceParts = userService.id.split("_");
+        if (serviceParts.length < 2) {
+          print(
+            '⚠️ Skipping service with invalid ID format: ${userService.id}',
+          );
+          continue;
+        }
+
+        // Ensure category exists in categories map
+        if (!categories.containsKey(category)) {
+          categories[category] = [];
+        }
+
+        final index =
+            categories[category]?.indexWhere(
+              (item) => item.id == serviceParts[1],
+            ) ??
+            -1;
+
+        if (index != -1) {
+          try {
+            categories[category]![index] = ServiceItem.fromMap(
+              userService.data(),
+            );
+            final title =
+                userService.data()['title'] ??
+                userService.data()['name'] ??
+                'Unknown Service';
+            print('✅ Updated existing service: $title in $category');
+          } catch (e) {
+            print('⚠️ Error parsing existing service ${userService.id}: $e');
+          }
+        } else {
+          try {
+            categories[category]!.add(ServiceItem.fromMap(userService.data()));
+            final title =
+                userService.data()['title'] ??
+                userService.data()['name'] ??
+                'Unknown Service';
+            print('➕ Added service: $title to category: $category');
+          } catch (e) {
+            print('⚠️ Error parsing service ${userService.id}: $e');
           }
         }
       }
+      // }
     } catch (e) {
-      print('❌ Failed to load services: \$e');
-      Get.snackbar('Error', 'Failed to load services: \${e.toString()}');
+      print('❌ Failed to load services: $e');
+      Get.snackbar('Error', 'Failed to load services: ${e.toString()}');
     } finally {
       isLoading(false);
       print('✅ Finished loading services.');
@@ -125,7 +193,11 @@ class TradeRateLargeJobController extends GetxController {
   }
 
   void addCustomService() {
-    final service = ServiceItem(title: '', isCustom: true);
+    final service = ServiceItem(
+      title: '',
+      isCustom: true,
+      id: FirebaseFirestore.instance.collection('services').doc().id,
+    );
     categories['Custom Services']!.add(service);
     selectCategory('Custom Services');
     categories.refresh();
@@ -162,25 +234,22 @@ class TradeRateLargeJobController extends GetxController {
 
   Future<void> saveUserServices() async {
     try {
-      final largeJobList = categories.entries
-          .map((entry) {
-        final category = entry.key;
-        final enabledServices = entry.value
-            .where((s) => s.isEnabled)
-            .map((s) => s.toMap())
-            .toList();
-        if (enabledServices.isNotEmpty || category == 'Custom Services') {
-          return {'category': category, 'services': enabledServices};
-        }
-        return null;
-      })
-          .where((item) => item != null)
-          .toList();
+      // Get count of enabled categories for logging
+      final enabledCategoriesCount =
+          categories.entries.where((entry) {
+            final category = entry.key;
+            final enabledServices =
+                entry.value.where((s) => s.isEnabled).toList();
+            return enabledServices.isNotEmpty || category == 'Custom Services';
+          }).length;
 
-      print('💾 Saving \${largeJobList.length} categories to Firestore');
-      await _firestore.collection('users').doc(userId).set({
-        'largejoblist': largeJobList,
-      }, SetOptions(merge: true));
+      print('💾 Saving $enabledCategoriesCount categories to Firestore');
+      // await _firestore.collection('users').doc(userId).set({
+      //   'largejoblist': largeJobList,
+      // }, SetOptions(merge: true));
+
+      // Also save individual services with userId_serviceId format
+      await saveIndividualServices();
 
       print('✅ Prices saved successfully!');
       Get.snackbar('Success', 'Prices saved successfully');
@@ -195,12 +264,98 @@ class TradeRateLargeJobController extends GetxController {
     }
   }
 
+  /// Save individual services with docId format: userId_serviceId
+  Future<void> saveIndividualServices() async {
+    try {
+      print('💾 Saving individual services with userId_serviceId format...');
+
+      for (String category in categories.keys) {
+        final servicesList = categories[category] ?? [];
+
+        for (ServiceItem service in servicesList) {
+          if (service.isEnabled &&
+              service.price != null &&
+              service.price! > 0) {
+            // Use existing service ID
+            final serviceId = service.id;
+            final docId = '${userId}_$serviceId';
+
+            final serviceData = {
+              'name': service.title,
+              'category': category,
+              'jobId': serviceId,
+              'jobType': 'largeJob',
+              'price': service.price,
+              'trader_id': userId,
+              'description': service.description ?? '',
+              'isCustom': service.isCustom,
+              'createdAt': FieldValue.serverTimestamp(),
+              'updatedAt': FieldValue.serverTimestamp(),
+              'isEnabled': true,
+            };
+
+            await _firestore
+                .collection('services_prices')
+                .doc(docId)
+                .set(serviceData, SetOptions(merge: true));
+
+            print('✅ Saved service: ${service.title} with docId: $docId');
+          }
+        }
+      }
+
+      print('✅ All individual services saved successfully!');
+    } catch (e) {
+      print('❌ Error saving individual services: $e');
+    }
+  }
+
+  /// Save a single service with userId_serviceId format
+  Future<void> saveSingleService(String category, ServiceItem service) async {
+    try {
+      if (!service.isEnabled || service.price == null || service.price! <= 0) {
+        print('⚠️ Service not enabled or price not set');
+        return;
+      }
+
+      // Use existing service ID
+      final serviceId = service.id;
+      final docId = '${userId}_$serviceId';
+
+      final serviceData = {
+        'name': service.title,
+        'category': category,
+        'jobId': serviceId,
+        'jobType': 'largeJob',
+        'price': service.price,
+        'trader_id': userId,
+        'description': service.description ?? '',
+        'isCustom': service.isCustom,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'isEnabled': true,
+      };
+
+      await _firestore
+          .collection('services_prices')
+          .doc(docId)
+          .set(serviceData, SetOptions(merge: true));
+
+      print('✅ Single service saved: ${service.title} with docId: $docId');
+      Get.snackbar('Success', 'Service "${service.title}" saved successfully');
+    } catch (e) {
+      print('❌ Error saving single service: $e');
+      Get.snackbar('Error', 'Failed to save service: ${e.toString()}');
+    }
+  }
+
   Future<void> initializePredefinedServices() async {
     try {
       isLoading(true);
       print('🚀 Initializing predefined services for largejoblist...');
 
-      final existingData = await _firestore.collection('Services').doc('largejoblist').get();
+      final existingData =
+          await _firestore.collection('Services').doc('largejoblist').get();
       if (existingData.exists) {
         print('ℹ️ Predefined services already exist.');
         await loadCategories();
@@ -296,9 +451,21 @@ class TradeRateLargeJobController extends GetxController {
 
       Map<String, List<Map<String, dynamic>>> organizedServices = {};
       for (String category in predefinedServices.keys) {
-        final services = predefinedServices[category]!
-            .map((title) => ServiceItem(title: title, isCustom: false).toMap())
-            .toList();
+        final services =
+            predefinedServices[category]!
+                .map(
+                  (title) =>
+                      ServiceItem(
+                        title: title,
+                        isCustom: false,
+                        id:
+                            FirebaseFirestore.instance
+                                .collection('services')
+                                .doc()
+                                .id,
+                      ).toMap(),
+                )
+                .toList();
         organizedServices[category] = services;
       }
 
@@ -308,7 +475,9 @@ class TradeRateLargeJobController extends GetxController {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      print('✅ Initialized \${predefinedServices.length} categories with services');
+      print(
+        '✅ Initialized \${predefinedServices.length} categories with services',
+      );
       await loadCategories();
       Get.snackbar('Success', 'Predefined services initialized successfully!');
     } catch (e) {

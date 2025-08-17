@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:traderwho/controller/booking_controller.dart';
 import 'package:traderwho/controller/trades_controller.dart';
 import 'package:traderwho/core/extensions/extensions.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';

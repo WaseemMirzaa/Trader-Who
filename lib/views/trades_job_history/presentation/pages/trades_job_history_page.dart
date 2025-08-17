@@ -9,106 +9,17 @@ class TradesJobHistoryPage extends StatefulWidget {
 
 class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
   final TextEditingController _searchController = TextEditingController();
-  final List<JobHistory> _allJobs = [
-    JobHistory(
-      title: 'Plumbing',
-      svgIcon: Assets.svgsPlumbing,
-      jobType: 'Plumbing',
-      price: 50.0,
-      preferredTime: 'Today,4:00-6:00 PM',
-      address: '123 Main St, Springfield',
-      status: 'New',
-      showQuoteButtons: false,
-      tradesPerson: TradesPerson(
-        id: 'john_smith',
-        bio:
-            "Experienced plumber with a knack for fixing leaks and installing fixtures.",
-        expertise: 'Plumber',
-        description:
-            'Leaking kitchen sink, Pipe may be cracked. Water  dripping into cabinet below. Happened after turning on garbage disposal.',
-        name: 'John Smith',
-        imageUrl: 'path_to_image',
-        price: '50',
-        rating: 4.0,
-      ),
-    ),
-    JobHistory(
-      title: 'Electrical',
-      svgIcon: Assets.svgsElectric,
-      jobType: 'Plumbing',
-      price: 65.0,
-      preferredTime: 'Today,4:00-6:00 PM',
-      address: '456 Oak Ave, Springfield',
-      status: 'New',
-      showQuoteButtons: true,
-      tradesPerson: TradesPerson(
-        id: 'david',
-        bio:
-            "Experienced electrician specializing in residential and commercial work.",
-        expertise: 'Electrical',
-        description:
-            'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after turning on garbage disposal.',
-        name: 'David',
-        imageUrl: 'path_to_image',
-        price: '',
-        rating: 0.0,
-      ),
-    ),
-    JobHistory(
-      title: 'Electrical',
-      svgIcon: Assets.svgsElectric,
-      jobType: 'Electricity',
-      price: 45.0,
-      preferredTime: 'Today,4:00-6:00 PM',
-      address: '789 Pine Rd, Springfield',
-      status: 'Completed',
-      showQuoteButtons: true,
-      tradesPerson: TradesPerson(
-        id: 'sofiya',
-        bio:
-            "Experienced electrician specializing in residential and commercial work.",
-        expertise: 'Electrical',
-        description:
-            'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after turning on garbage disposal.',
-        name: 'Sofiya',
-        imageUrl: Assets.imagesField,
-        price: '60',
-        rating: 4.5,
-      ),
-    ),
-  ];
-  List<JobHistory> _filteredJobs = [];
 
   @override
   void initState() {
     super.initState();
-    // Ensure controller is initialized
+    // Ensure controllers are initialized
     if (!Get.isRegistered<TradeJobHistoryController>()) {
       Get.put(TradeJobHistoryController());
     }
-    final controller = Get.find<TradeJobHistoryController>();
-    _filteredJobs =
-        _allJobs
-            .where(
-              (job) =>
-                  controller.selectedTab.value == 'New Jobs'
-                      ? job.status != 'Completed'
-                      : job.status == 'Completed',
-            )
-            .toList();
-    controller.selectedTab.listen((tab) {
-      setState(() {
-        _filteredJobs =
-            _allJobs
-                .where(
-                  (job) =>
-                      tab == 'New Jobs'
-                          ? job.status != 'Completed'
-                          : job.status == 'Completed',
-                )
-                .toList();
-      });
-    });
+    if (!Get.isRegistered<JobHistoryPageController>()) {
+      Get.put(JobHistoryPageController());
+    }
   }
 
   @override
@@ -119,7 +30,8 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<TradeJobHistoryController>();
+    final tradeController = Get.find<TradeJobHistoryController>();
+    final jobHistoryController = Get.find<JobHistoryPageController>();
     final screenSize = MediaQuery.of(context).size;
 
     return SafeArea(
@@ -142,120 +54,175 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        // ignore: deprecated_member_use
-                        color: AppColor.grey.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: CustomToggleButton(
-                          text: 'New Jobs',
-                          isActive: controller.selectedTab.value == 'New Jobs',
-                          onTap: () {
-                            controller.setTab('New Jobs');
-                          },
+                Obx(
+                  () => Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          // ignore: deprecated_member_use
+                          color: AppColor.grey.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
                         ),
-                      ),
-                      Expanded(
-                        child: CustomToggleButton(
-                          text: 'Completed',
-                          isActive: controller.selectedTab.value == 'Completed',
-                          onTap: () {
-                            controller.setTab('Completed');
-                          },
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: CustomToggleButton(
+                            text: 'New Jobs',
+                            isActive:
+                                tradeController.selectedTab.value == 'New Jobs',
+                            onTap: () {
+                              tradeController.setTab('New Jobs');
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: CustomToggleButton(
+                            text: 'Completed',
+                            isActive:
+                                tradeController.selectedTab.value ==
+                                'Completed',
+                            onTap: () {
+                              tradeController.setTab('Completed');
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 25),
-                _filteredJobs.isEmpty
-                    ? Center(
+                Obx(() {
+                  if (jobHistoryController.isLoading.value) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(50.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  // Filter jobs based on selected tab
+                  final allJobs = jobHistoryController.jobHistoryItems;
+                  final filteredJobs =
+                      allJobs
+                          .where(
+                            (job) =>
+                                tradeController.selectedTab.value == 'New Jobs'
+                                    ? job.status != 'completed'
+                                    : job.status == 'completed',
+                          )
+                          .toList();
+
+                  if (filteredJobs.isEmpty) {
+                    return Center(
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
-                        child: Text(
-                          'No ${controller.selectedTab.value.toLowerCase()} found',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: AppColor.secondaryText,
-                            fontFamily: 'openSans',
-                          ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.work_off_outlined,
+                              size: 64,
+                              color: AppColor.secondaryText,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No ${tradeController.selectedTab.value.toLowerCase()} found',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: AppColor.secondaryText,
+                                fontFamily: 'openSans',
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            TextButton(
+                              onPressed: () {
+                                jobHistoryController.refreshBookings();
+                              },
+                              child: Text(
+                                'Refresh',
+                                style: TextStyle(
+                                  color: AppColor.primaryButton,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    )
-                    : MediaQuery.removePadding(
-                      context: context,
-                      removeTop: true,
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _filteredJobs.length,
-                        itemBuilder: (context, index) {
-                          final job = _filteredJobs[index];
-                          return TradeHomeCard(
-                            job: job,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => TradeJobHistoryDetailPage(
-                                        job: _filteredJobs[index],
-                                      ),
-                                ),
+                    );
+                  }
+
+                  return MediaQuery.removePadding(
+                    context: context,
+                    removeTop: true,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: filteredJobs.length,
+                      itemBuilder: (context, index) {
+                        final job = filteredJobs[index];
+                        return TradeHomeCard(
+                          job: job,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => TradeJobHistoryDetailPage(
+                                      job: filteredJobs[index],
+                                    ),
+                              ),
+                            );
+                          },
+                          onReject: () async {
+                            // Update status in Firebase
+                            final newStatus =
+                                job.showQuoteButtons
+                                    ? 'Not Interested'
+                                    : 'Rejected';
+
+                            // Find the corresponding booking and update it
+                            final booking = _findBookingForJob(
+                              job,
+                              jobHistoryController,
+                            );
+                            if (booking != null) {
+                              await jobHistoryController.updateBookingStatus(
+                                booking.id ?? '',
+                                newStatus.toLowerCase(),
                               );
-                            },
-                            onReject: () {
-                              setState(() {
-                                if (job.showQuoteButtons) {
-                                  _filteredJobs[index] = _filteredJobs[index]
-                                      .copyWith(status: 'Not Interested');
-                                } else {
-                                  _filteredJobs[index] = _filteredJobs[index]
-                                      .copyWith(status: 'Rejected');
-                                }
-                                if (controller.selectedTab.value ==
-                                        'New Jobs' &&
-                                    _filteredJobs[index].status != 'New') {
-                                  _filteredJobs.removeAt(index);
-                                }
-                              });
-                            },
-                            onAccept: () {
-                              setState(() {
-                                if (job.showQuoteButtons) {
-                                  _filteredJobs[index] = _filteredJobs[index]
-                                      .copyWith(status: 'Quoted');
-                                } else {
-                                  _filteredJobs[index] = _filteredJobs[index]
-                                      .copyWith(status: 'Accepted');
-                                }
-                                if (controller.selectedTab.value ==
-                                        'New Jobs' &&
-                                    _filteredJobs[index].status != 'New') {
-                                  _filteredJobs.removeAt(index);
-                                }
-                              });
-                            },
-                          );
-                        },
-                        separatorBuilder:
-                            (context, index) => const SizedBox(
-                              height: 16,
-                            ), // Add gap between cards
-                      ),
+                            }
+                          },
+                          onAccept: () async {
+                            // Update status in Firebase
+                            final newStatus =
+                                job.showQuoteButtons ? 'Quoted' : 'Accepted';
+
+                            // Find the corresponding booking and update it
+                            final booking = _findBookingForJob(
+                              job,
+                              jobHistoryController,
+                            );
+                            if (booking != null) {
+                              await jobHistoryController.updateBookingStatus(
+                                booking.id ?? '',
+                                newStatus.toLowerCase(),
+                              );
+                            }
+                          },
+                        );
+                      },
+                      separatorBuilder:
+                          (context, index) => const SizedBox(height: 16),
                     ),
+                  );
+                }),
                 const SizedBox(height: 30),
               ],
             ),
@@ -263,5 +230,27 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
         ),
       ),
     );
+  }
+
+  /// Helper method to find the corresponding BookingModel for a JobHistory
+  BookingModel? _findBookingForJob(
+    JobHistory job,
+    JobHistoryPageController controller,
+  ) {
+    // Try to find in user bookings first
+    for (final booking in controller.userBookings) {
+      if (booking.category == job.jobType && booking.price == job.price) {
+        return booking;
+      }
+    }
+
+    // Then try trader bookings
+    for (final booking in controller.traderBookings) {
+      if (booking.category == job.jobType && booking.price == job.price) {
+        return booking;
+      }
+    }
+
+    return null;
   }
 }

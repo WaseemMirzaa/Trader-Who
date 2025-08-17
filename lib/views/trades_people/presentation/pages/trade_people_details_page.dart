@@ -48,6 +48,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
               ),
               kGap10,
               // Client Reviews/Testimonials Section
+              // Client Reviews/Testimonials Section with average rating
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,12 +68,27 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                       children: [
                         Image.asset(Assets.imagesStars, width: 16, height: 16),
                         const SizedBox(width: 4),
-                        Text(
-                          widget.person.rating.toString(),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColor.orangeCustomColor,
-                          ),
+                        Builder(
+                          builder: (context) {
+                            final reviews = widget.person.reviews;
+                            double avgRating = 0;
+                            if (reviews != null && reviews.isNotEmpty) {
+                              avgRating =
+                                  reviews
+                                      .map((r) => r.rating)
+                                      .reduce((a, b) => a + b) /
+                                  reviews.length;
+                            }
+                            return Text(
+                              avgRating > 0
+                                  ? avgRating.toStringAsFixed(1)
+                                  : "0.0",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColor.orangeCustomColor,
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -82,91 +98,102 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
 
               const SizedBox(height: 10),
 
-              // Star Rating (5 stars)
-              RatingBar.builder(
-                initialRating: widget.person.rating.toDouble(),
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                itemCount: 4,
-                itemSize: 18,
-                ignoreGestures: true, // Makes it read-only
-                itemBuilder:
-                    (context, _) =>
-                        Icon(Icons.star, color: AppColor.vibrantYellow),
-                onRatingUpdate: (rating) {},
-              ),
-              kGap10,
-
-              // Review Text
-              Text(
-                "He always gives a perfect service. Great attention to detail and awesome\n"
-                "service every time. Highly recommended!",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColor.secondaryText,
-                  fontFamily: 'openSans',
-                  height: 1.5,
+              // Reviews List
+              if (widget.person.reviews != null &&
+                  widget.person.reviews!.isNotEmpty)
+                ...widget.person.reviews!.map<Widget>((review) {
+                  final double rating = (review.rating).toDouble();
+                  final String text = review.comment;
+                  final String reviewer = review.reviewerName;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RatingBar.builder(
+                        initialRating: rating,
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemSize: 18,
+                        ignoreGestures: true,
+                        itemBuilder:
+                            (context, _) =>
+                                Icon(Icons.star, color: AppColor.vibrantYellow),
+                        onRatingUpdate: (rating) {},
+                      ),
+                      kGap10,
+                      Text(
+                        text,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        reviewer,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: AppColor.black,
+                        ),
+                      ),
+                      const SizedBox(height: 29),
+                    ],
+                  );
+                }).toList()
+              else
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Text(
+                    "No reviews",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColor.darkerGray,
+                      fontFamily: 'openSans',
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-
-              // Reviewer Name
-              Text(
-                "Jason Rao",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: AppColor.black,
-                ),
-              ),
-              const SizedBox(height: 29),
-
-              // Second Review (same pattern)
-              RatingBar.builder(
-                initialRating: widget.person.rating.toDouble(),
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                itemCount: 4,
-                itemSize: 18,
-                ignoreGestures: true,
-                itemBuilder:
-                    (context, _) =>
-                        Icon(Icons.star, color: AppColor.vibrantYellow),
-                onRatingUpdate: (rating) {},
-              ),
-              kGap10,
-              Text(
-                "Another excellent review text would go here describing the\n"
-                "great service provided by the tradesperson.",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColor.secondaryText,
-                  fontFamily: 'openSans',
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "Thomas Christopher",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: AppColor.black,
-                ),
-              ),
-              kGap10,
               _buildSectionTitle("Services"),
-              widget.person.services?.isNotEmpty ?? false
-                  ? Wrap(
+              if (widget.person.largeJobs.isEmpty &&
+                  widget.person.smallJobs.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Text(
+                    "No services",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColor.darkerGray,
+                      fontFamily: 'openSans',
+                    ),
+                  ),
+                ),
+              if (widget.person.largeJobs.isNotEmpty)
+                _buildSectionTitle("Large Jobs"),
+
+              for (ServiceModel service in widget.person.largeJobs) ...[
+                if (service.services.isNotEmpty)
+                  Text(
+                    service.category,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColor.primaryText,
+                      fontFamily: 'openSans',
+                    ),
+                  ),
+                kGap5,
+                if (service.services.isNotEmpty)
+                  Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children:
-                        widget.person.services!.map((service) {
+                        service.services.map((service) {
                           return Chip(
                             label: Text(
-                              service,
+                              service.title,
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: AppColor.white,
@@ -183,15 +210,50 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                             ),
                           );
                         }).toList(),
-                  )
-                  : Text(
-                    "No services listed",
+                  ),
+              ],
+              if ((widget.person.smallJobs).isNotEmpty)
+                _buildSectionTitle("Small Jobs"),
+
+              for (ServiceModel service in widget.person.smallJobs) ...[
+                if (service.services.isNotEmpty)
+                  Text(
+                    service.category,
                     style: TextStyle(
-                      fontSize: 12,
-                      color: AppColor.darkerGray,
-                      height: 1.5,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColor.primaryText,
+                      fontFamily: 'openSans',
                     ),
                   ),
+                kGap5,
+                if (service.services.isNotEmpty)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children:
+                        service.services.map((service) {
+                          return Chip(
+                            label: Text(
+                              service.title,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColor.white,
+                                fontFamily: 'openSans',
+                              ),
+                            ),
+                            backgroundColor: AppColor.mediumGray,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                          );
+                        }).toList(),
+                  ),
+              ],
             ],
           ),
         ),

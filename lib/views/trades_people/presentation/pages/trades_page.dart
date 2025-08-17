@@ -38,146 +38,170 @@ class _TradesPageState extends State<TradesPage> {
         child: Center(
           child: Obx(() {
             final isLoading = _controller.isLoading.value;
-            List<TradesPerson> tradesPeople = _controller.tradesPeople;
-            return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 18, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!isLoading && tradesPeople.isNotEmpty)
-                    Column(
-                      children: [
-                        SearchBarTile(
-                          controller: _searchController,
-                          onSearch: _onSearch,
-                          hintText: 'Search by names',
-                          width: double.infinity,
-                        ),
-                        const SizedBox(height: 25),
-                      ],
-                    ),
-                  if (isLoading)
-                    Center(
-                      child: CircularProgressIndicator(
-                        color: AppColor.primaryButton,
+            List<TradesPerson> tradesPeople =
+                _controller.filteredTradesPeople.isNotEmpty
+                    ? _controller.filteredTradesPeople
+                    : _controller.tradesPeople;
+            return Column(
+              children: [
+                if (!isLoading && tradesPeople.isNotEmpty)
+                  Column(
+                    children: [
+                      SearchBarTile(
+                        controller: _searchController,
+                        onSearch: _onSearch,
+                        hintText: 'Search by names',
+                        width: double.infinity,
                       ),
-                    )
-                  else if (tradesPeople.isEmpty)
-                    Column(
+                      const SizedBox(height: 25),
+                    ],
+                  ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 50),
-                        Center(
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.people_outline,
-                                size: 80,
-                                color: Colors.grey[400],
-                              ),
-                              SizedBox(height: 15),
-                              CustomText(
-                                text: 'No tradespeople available',
-                                fontSize: 18,
-                                color: AppColor.primaryText,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              SizedBox(height: 10),
-                              CustomText(
-                                text:
-                                    'We couldn\'t find any tradespeople matching your criteria',
-                                textAlign: TextAlign.center,
-                                fontSize: 14,
-                                color: AppColor.secondaryText,
-                              ),
-                              SizedBox(height: 30),
-                              CustomButton(
-                                text: 'Post a Custom Job Request',
-                                onTap: () {
-                                  Get.toNamed(AppRoutes.customJobPost);
-                                },
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                color: AppColor.primaryButton,
-                                textColor: Colors.white,
-                                radius: 25,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )
-                  else
-                    NotificationListener<ScrollNotification>(
-                      onNotification: (scrollInfo) {
-                        if (scrollInfo.metrics.pixels ==
-                                scrollInfo.metrics.maxScrollExtent &&
-                            !_controller.isLoadingMore.value) {
-                          _controller.fetchMoreTradesPeople();
-                        }
-                        return false;
-                      },
-                      child: Column(
-                        children: [
-                          MediaQuery.removePadding(
-                            context: context,
-                            removeTop: true,
-                            child: GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: tradesPeople.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: _calculateCrossAxisCount(
-                                      context,
-                                    ),
-                                    crossAxisSpacing: 15,
-                                    mainAxisSpacing: 17,
-                                    childAspectRatio: 1.8,
-                                  ),
-                              itemBuilder: (context, index) {
-                                return TradesPeopleCard(
-                                  person: tradesPeople[index],
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => TradePersonDetailsPage(
-                                              person: tradesPeople[index],
-                                            ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
+                        if (isLoading)
+                          Center(
+                            child: CircularProgressIndicator(
+                              color: AppColor.primaryButton,
                             ),
-                          ),
-                          if (_controller.isLoadingMore.value)
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColor.primaryButton,
+                          )
+                        else if (tradesPeople.isEmpty)
+                          Column(
+                            children: [
+                              SizedBox(height: 50),
+                              Center(
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.people_outline,
+                                      size: 80,
+                                      color: Colors.grey[400],
+                                    ),
+                                    SizedBox(height: 15),
+                                    CustomText(
+                                      text: 'No tradespeople available',
+                                      fontSize: 18,
+                                      color: AppColor.primaryText,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    SizedBox(height: 10),
+                                    CustomText(
+                                      text:
+                                          'We couldn\'t find any tradespeople matching your criteria',
+                                      textAlign: TextAlign.center,
+                                      fontSize: 14,
+                                      color: AppColor.secondaryText,
+                                    ),
+                                    SizedBox(height: 30),
+                                    CustomButton(
+                                      text: 'Post a Custom Job Request',
+                                      onTap: () {
+                                        Get.toNamed(AppRoutes.customJobPost);
+                                      },
+                                      width:
+                                          MediaQuery.of(context).size.width *
+                                          0.8,
+                                      color: AppColor.primaryButton,
+                                      textColor: Colors.white,
+                                      radius: 25,
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          const SizedBox(height: 30),
-                          Center(
-                            child: CustomButton(
-                              text: 'Post a Custom Job Request',
-                              onTap: () {
-                                Get.toNamed(AppRoutes.customJobPost);
-                              },
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              color: AppColor.primaryButton,
-                              textColor: Colors.white,
-                              radius: 25,
+                            ],
+                          )
+                        else
+                          NotificationListener<ScrollNotification>(
+                            onNotification: (scrollInfo) {
+                              if (scrollInfo.metrics.pixels ==
+                                      scrollInfo.metrics.maxScrollExtent &&
+                                  !_controller.isLoadingMore.value) {
+                                _controller.fetchMoreTradesPeople();
+                              }
+                              return false;
+                            },
+                            child: Column(
+                              children: [
+                                MediaQuery.removePadding(
+                                  context: context,
+                                  removeTop: true,
+                                  child: GridView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: tradesPeople.length,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount:
+                                              _calculateCrossAxisCount(context),
+                                          crossAxisSpacing: 15,
+                                          mainAxisSpacing: 17,
+                                          childAspectRatio: 1.7,
+                                        ),
+                                    itemBuilder: (context, index) {
+                                      return TradesPeopleCard(
+                                        person: tradesPeople[index],
+                                        selectedCategory:
+                                            _controller.selectedCategory.value,
+                                        selectedService:
+                                            _controller.selectedService.value,
+                                        selectedJobType:
+                                            _controller.selectedJobType.value,
+                                        price:
+                                            _controller
+                                                .selectedServicePrice
+                                                .value,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) =>
+                                                      TradePersonDetailsPage(
+                                                        person:
+                                                            tradesPeople[index],
+                                                      ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                                if (_controller.isLoadingMore.value)
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: AppColor.primaryButton,
+                                      ),
+                                    ),
+                                  ),
+                                const SizedBox(height: 30),
+                                Center(
+                                  child: CustomButton(
+                                    text: 'Post a Custom Job Request',
+                                    onTap: () {
+                                      Get.toNamed(AppRoutes.customJobPost);
+                                    },
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    color: AppColor.primaryButton,
+                                    textColor: Colors.white,
+                                    radius: 25,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                      ],
                     ),
-                ],
-              ),
+                  ),
+                ),
+              ],
             );
           }),
         ),

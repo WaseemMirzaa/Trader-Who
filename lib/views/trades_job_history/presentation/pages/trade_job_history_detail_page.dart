@@ -11,6 +11,8 @@ class TradeJobHistoryDetailPage extends StatefulWidget {
 }
 
 class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
+  JobHistoryPageController jobHistoryPageController = Get.find();
+
   void _showReassessBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -42,7 +44,23 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
               IntrinsicWidth(
                 child: CustomButton(
                   text: 'Accept',
-                  // onTap: _showReassessBottomSheet,
+                  onTap: () async {
+                    // Update status in Firebase
+                    final newStatus =
+                        widget.job.showQuoteButtons ? 'Quoted' : 'Accepted';
+
+                    // Find the corresponding booking and update it
+                    final booking = _findBookingForJob(
+                      widget.job,
+                      jobHistoryPageController,
+                    );
+                    if (booking != null) {
+                      await jobHistoryPageController.updateBookingStatus(
+                        booking.id ?? '',
+                        newStatus.toLowerCase(),
+                      );
+                    }
+                  },
                   color: AppColor.darkBlue,
                   textColor: AppColor.white,
                   height: 50,
@@ -51,20 +69,20 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              kGap10, // Your predefined spacing widget
-              Expanded(
-                child: CustomButton(
-                  text: 'Reassess Quote',
-                  onTap: _showReassessBottomSheet,
-                  color: AppColor.primaryButton,
-                  textColor: AppColor.white,
-                  enableBorder: true,
-                  height: 50,
-                  radius: 30,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              // kGap10, // Your predefined spacing widget
+              // Expanded(
+              //   child: CustomButton(
+              //     text: 'Reassess Quote',
+              //     onTap: _showReassessBottomSheet,
+              //     color: AppColor.primaryButton,
+              //     textColor: AppColor.white,
+              //     enableBorder: true,
+              //     height: 50,
+              //     radius: 30,
+              //     fontSize: 15,
+              //     fontWeight: FontWeight.w500,
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -200,7 +218,8 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                                     text: TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: 'Small Job - Fixed Price: ',
+                                          text:
+                                              '${widget.job.jobType} - Fixed Price: ',
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: AppColor.primaryText,
@@ -238,7 +257,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                           border: Border.all(color: AppColor.white, width: 0),
                         ),
                         child: Text(
-                          widget.job.status,
+                          HelperService.formatStatus(widget.job.status),
                           style: TextStyle(
                             fontSize: 12,
                             color: AppColor.green,
@@ -284,7 +303,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   const SizedBox(height: 16),
                   // Description Section
                   Text(
-                    'Description',
+                    'Notes:',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -294,46 +313,26 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    widget.job.tradesPerson.description ??
-                        'No description available',
+                    widget.job.notes == '' ? 'No notes' : widget.job.notes,
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColor.secondaryText,
                       fontFamily: 'openSans',
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  if (widget.job.images.isNotEmpty) const SizedBox(height: 20),
                   Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          Assets.imagesPipe,
-                          width: 70,
-                          height: 60,
-                          fit: BoxFit.cover,
+                      for (var image in widget.job.images)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                            imageUrl: image,
+                            width: 70,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      kGap10,
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          Assets.imagesPipe,
-                          width: 70,
-                          height: 60,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      kGap10,
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          Assets.imagesPipe,
-                          width: 70,
-                          height: 60,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
                     ],
                   ),
                   // Images Row (only show for completed jobs)
@@ -401,13 +400,13 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                       child: GoogleMap(
                         onMapCreated: (controller) {},
                         initialCameraPosition: CameraPosition(
-                          target: LatLng(33.6844, 73.0479),
+                          target: widget.job.location,
                           zoom: 15.0,
                         ),
                         markers: {
                           Marker(
                             markerId: const MarkerId('job_location'),
-                            position: LatLng(33.6844, 73.0479),
+                            position: widget.job.location,
                             infoWindow: InfoWindow(title: widget.job.address),
                           ),
                         },
@@ -433,34 +432,25 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                       ),
                     ),
                     kGap10,
-                    Row(
-                      children: List.generate(5, (index) {
-                        return Icon(
-                          Icons.star,
-                          color:
-                              index < widget.job.tradesPerson.rating.floor()
-                                  ? Colors.amber
-                                  : Colors.grey,
-                          size: 24,
-                        );
-                      }),
-                    ),
+                    if (widget.job.rating != null && widget.job.rating! > 0)
+                      Row(
+                        children: List.generate(5, (index) {
+                          return Icon(
+                            Icons.star,
+                            color:
+                                index < widget.job.rating!.floor()
+                                    ? Colors.amber
+                                    : Colors.grey,
+                            size: 24,
+                          );
+                        }),
+                      ),
                     const SizedBox(height: 12),
                     Text(
-                      'He always give me a perfect service.',
+                      widget.job.review ?? 'No feedback provided.',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColor.secondaryText,
-                        fontFamily: 'openSans',
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Jason Rao',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColor.primaryText,
-                        fontStyle: FontStyle.normal,
                         fontFamily: 'openSans',
                       ),
                     ),
@@ -471,7 +461,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
             ),
           ),
           // Bottom action bar (only for non-completed jobs)
-          if (!isCompleted)
+          if (!isCompleted && widget.job.status == 'pending')
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               decoration: const BoxDecoration(
@@ -487,8 +477,62 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
               ),
               child: _buildNewJobFooter(),
             ),
+          if (widget.job.status == 'accepted' &&
+              widget.job.status != "completed")
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(0, -5),
+                  ),
+                ],
+              ),
+              child: CustomButton(
+                text: 'Mark Complete',
+                onTap: () async {
+                  // Update job status to completed
+                  await jobHistoryPageController.updateBookingStatus(
+                    widget.job.bookingId,
+                    'completed',
+                  );
+                  Get.back();
+                },
+                color: AppColor.green,
+                textColor: AppColor.white,
+                height: 50,
+                radius: 30,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  BookingModel? _findBookingForJob(
+    JobHistory job,
+    JobHistoryPageController controller,
+  ) {
+    // Try to find in user bookings first
+    for (final booking in controller.userBookings) {
+      if (booking.category == job.jobType && booking.price == job.price) {
+        return booking;
+      }
+    }
+
+    // Then try trader bookings
+    for (final booking in controller.traderBookings) {
+      if (booking.category == job.jobType && booking.price == job.price) {
+        return booking;
+      }
+    }
+
+    return null;
   }
 }

@@ -133,6 +133,39 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     const Gap(20),
 
+                    CustomTextField(
+                      controller: controller.latitudeController,
+                      borderColor: Colors.transparent,
+                      hintText: 'Latitude',
+                      hintStyle: const TextStyle(color: AppColor.midGray),
+                      keyboardType: TextInputType.number,
+                      textColor: AppColor.midGray,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your latitude';
+                        }
+                        return null;
+                      },
+                    ),
+                    const Gap(20),
+
+                    CustomTextField(
+                      controller: controller.longitudeController,
+                      borderColor: Colors.transparent,
+                      hintText: 'Longitude',
+                      hintStyle: const TextStyle(color: AppColor.midGray),
+                      keyboardType: TextInputType.number,
+                      textColor: AppColor.midGray,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your longitude';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const Gap(20),
+
                     // Tradesperson-specific fields
                     if (widget.isTradesperson) ...[
                       // Title Field

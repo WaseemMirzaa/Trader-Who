@@ -8,6 +8,8 @@ class UserController extends GetxController {
   final RxString email = ''.obs;
   final RxBool isLoading = true.obs;
   final RxString error = ''.obs;
+  final RxDouble latitude = 0.0.obs;
+  final RxDouble longitude = 0.0.obs;
 
   @override
   void onInit() {
@@ -39,6 +41,8 @@ class UserController extends GetxController {
         final data = userDoc.data();
         fullName.value = data?['name'] ?? authUser.displayName ?? 'User';
         email.value = data?['email'] ?? authUser.email ?? 'No email';
+        latitude.value = data?['lat'] ?? 0.0;
+        longitude.value = data?['lon'] ?? 0.0;
       } else {
         // Document doesn't exist, use auth data
         fullName.value = authUser.displayName ?? 'User';

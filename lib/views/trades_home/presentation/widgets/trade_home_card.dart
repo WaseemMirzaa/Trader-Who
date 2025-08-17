@@ -83,7 +83,7 @@ class TradeHomeCard extends StatelessWidget {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: 'Small Job - Fixed Price: ',
+                                    text: '${job.jobType} - Fixed Price: ',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'openSans',
@@ -125,19 +125,23 @@ class TradeHomeCard extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (isCompleted) const SizedBox(width: 4),
-                      Text(
-                        job.status,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: AppColor.green,
-                          fontFamily: 'openSans',
+                      Expanded(
+                        child: Text(
+                          HelperService.formatStatus(job.status),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: AppColor.green,
+                            fontFamily: 'openSans',
 
-                          fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
                       ),
                       if (isCompleted)
                         Icon(
@@ -217,31 +221,26 @@ class TradeHomeCard extends StatelessWidget {
             if (isCompleted) ...[
               const SizedBox(height: 12),
               // Rating stars
-              Row(
-                children: [
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                ],
-              ),
-              const SizedBox(height: 8),
-              // Description
+              if (job.rating != null && job.rating! > 0)
+                Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      Icons.star,
+                      color:
+                          index < job.rating!.floor()
+                              ? Colors.amber
+                              : Colors.grey,
+                      size: 24,
+                    );
+                  }),
+                ),
+              const SizedBox(height: 12),
               Text(
-                job.tradesPerson.description ?? 'No description provided',
-                style: TextStyle(fontSize: 14, color: AppColor.darkGray),
-              ),
-              const SizedBox(height: 8),
-              // Bold black text
-              Text(
-                'Jason Rao',
+                job.review ?? 'No feedback provided.',
                 style: TextStyle(
-                  fontFamily: 'openSans',
-
                   fontSize: 14,
-                  color: AppColor.primaryText,
-                  fontWeight: FontWeight.w600,
+                  color: AppColor.secondaryText,
+                  fontFamily: 'openSans',
                 ),
               ),
             ],
@@ -267,20 +266,22 @@ class TradeHomeCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: IntrinsicWidth(
-                      child: CustomButton(
-                        text: acceptText,
-                        onTap: onAccept,
-                        color: AppColor.darkBlue,
-                        textColor: AppColor.white,
-                        height: 32,
-                        radius: 30,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
+                  (job.status != 'accepted')
+                      ? Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: IntrinsicWidth(
+                          child: CustomButton(
+                            text: acceptText,
+                            onTap: onAccept,
+                            color: AppColor.darkBlue,
+                            textColor: AppColor.white,
+                            height: 32,
+                            radius: 30,
+                            fontSize: 10,
+                          ),
+                        ),
+                      )
+                      : SizedBox(),
                 ],
               ),
             ],

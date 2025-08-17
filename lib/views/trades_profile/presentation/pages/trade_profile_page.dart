@@ -50,7 +50,7 @@ class _TradeProfilePageState extends State<TradeProfilePage> {
   void initState() {
     super.initState();
     // Call refreshProfile when the page initializes
-    final profileController = Get.find<TradeProfileController>();
+    final profileController = Get.put(TradeProfileController());
     profileController.refreshProfile();
   }
 
@@ -111,6 +111,41 @@ class _TradeProfilePageState extends State<TradeProfilePage> {
             child: CustomButton(
               text: 'Log Out',
               onTap: () async {
+                // try {
+                //   QuerySnapshot<Map<String, dynamic>> result =
+                //       await FirebaseFirestore.instance
+                //           .collection("Services")
+                //           .get();
+                //   for (QueryDocumentSnapshot doc in result.docs) {
+                //     Map<String, dynamic> services = doc["predefinedServices"];
+                //     services.forEach((key, value) {
+                //       List serviceList = services[key] ?? [];
+                //       List newServiceList = [];
+                //       for (var service in serviceList) {
+                //         Map<String, dynamic> newService = {};
+                //         newService['id'] =
+                //             FirebaseFirestore.instance
+                //                 .collection("Services")
+                //                 .doc()
+                //                 .id;
+                //         // Copy existing service data to newService
+                //         if (service is Map<String, dynamic>) {
+                //           newService.addAll(service);
+                //         }
+                //         newServiceList.add(newService);
+                //       }
+                //       services[key] = newServiceList;
+                //     });
+
+                //     await FirebaseFirestore.instance
+                //         .collection("Services")
+                //         .doc(doc.id)
+                //         .update({"predefinedServices": services});
+                //     print("done------------------------");
+                //   }
+                // } catch (e) {
+                //   print("Error occurred: $e");
+                // }
                 try {
                   final profileController = Get.find<TradeProfileController>();
                   await profileController.logout();

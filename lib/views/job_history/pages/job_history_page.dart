@@ -9,83 +9,14 @@ class JobHistoryPage extends StatefulWidget {
 
 class _JobHistoryPageState extends State<JobHistoryPage> {
   final TextEditingController _searchController = TextEditingController();
-  String _selectedTab = 'New Jobs';
-  final List<JobHistory> _allJobs = [
-    JobHistory(
-      title: 'Plumbing',
-      svgIcon: Assets.svgsPlumbing,
-      jobType: 'Plumbing',
-      price: 50.0,
-      preferredTime: 'Today,4:00-6:00 PM',
-      address: '123 Main St, Springfield',
-      status: 'Accepted',
-      tradesPerson: TradesPerson(
-        id: 'john_smith',
-        bio:
-            "Experienced plumber with a knack for fixing leaks and installing fixtures.",
-        expertise: 'Plumber',
-        description:
-            'Leaking kitchen sink, Pipe may be cracked. Water  dripping into cabinet below. Happened after  turning on  garbage disposal.',
-        name: 'John Smith',
-        imageUrl: 'path_to_image',
-        price: '50',
-        rating: 4.0,
-      ),
-    ),
-    JobHistory(
-      title: 'Electrical',
-      svgIcon: Assets.svgsElectric,
-      jobType: 'Plumbing',
-      price: 65.0,
-      preferredTime: 'Today,4:00-6:00 PM',
-      address: '456 Oak Ave, Springfield',
-      status: 'Waiting for porposal',
-      tradesPerson: TradesPerson(
-        id: 'david',
-        bio:
-            "Experienced electrician specializing in residential and commercial work.",
-        expertise: 'Electrical',
-        description:
-            'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after  turning on  garbage disposal.',
-        name: 'David',
-        imageUrl: 'path_to_image',
-        price: '',
-        rating: 0.0,
-      ),
-    ),
-    JobHistory(
-      title: 'Electrical',
-      svgIcon: Assets.svgsElectric,
-      jobType: 'Electricity',
-      price: 45.0,
-      preferredTime: 'Today,4:00-6:00 PM',
-      address: '789 Pine Rd, Springfield',
-      status: 'Completed', // Changed to Completed for testing
-      tradesPerson: TradesPerson(
-        id: 'sofiya',
-        bio:
-            "Experienced electrician specializing in residential and commercial work.",
-        expertise: 'Electrical',
-        description:
-            'Leaking kitchen sink, Pipe may be cracked. Water \n dripping into cabinet below. Happened after  turning on  garbage disposal.',
-        name: 'Sofiya',
-        imageUrl: Assets.imagesField,
-        price: '60',
-        rating: 4.5,
-      ),
-    ),
-  ];
-  List<JobHistory> _filteredJobs = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredJobs = _allJobs.where((job) => job.status != 'Completed').toList();
-  }
+  final JobHistoryPageController _controller = Get.put(
+    JobHistoryPageController(),
+  );
 
   @override
   void dispose() {
     _searchController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -115,116 +46,125 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
                       : screenSize.width * 0.99,
               minHeight: screenSize.height,
             ),
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: screenSize.width * 0.03,
-                vertical: 20,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColor.grey.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: CustomToggleButton(
-                            text: 'New Jobs',
-                            isActive: _selectedTab == 'New Jobs',
-                            onTap: () {
-                              setState(() {
-                                _selectedTab = 'New Jobs';
-                                _filteredJobs =
-                                    _allJobs
-                                        .where(
-                                          (job) => job.status != 'Completed',
-                                        )
-                                        .toList();
-                              });
-                            },
+            child: RefreshIndicator(
+              onRefresh: () => _controller.refreshBookings(),
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenSize.width * 0.03,
+                  vertical: 20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.grey.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
-                        ),
-                        Expanded(
-                          child: CustomToggleButton(
-                            text: 'Completed',
-                            isActive: _selectedTab == 'Completed',
-                            onTap: () {
-                              setState(() {
-                                _selectedTab = 'Completed';
-                                _filteredJobs =
-                                    _allJobs
-                                        .where(
-                                          (job) => job.status == 'Completed',
-                                        )
-                                        .toList();
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  _filteredJobs.isEmpty
-                      ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Text(
-                            'No ${_selectedTab.toLowerCase()} found',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: AppColor.darkGray,
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Obx(
+                              () => CustomToggleButton(
+                                text: 'New Jobs',
+                                isActive:
+                                    _controller.selectedTab.value == 'New Jobs',
+                                onTap: () {
+                                  _controller.setSelectedTab('New Jobs');
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                      : MediaQuery.removePadding(
-                        context: context,
-                        removeTop: true,
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _filteredJobs.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _calculateCrossAxisCount(
-                                  context,
-                                ),
-                                crossAxisSpacing: 15,
-                                mainAxisSpacing: 15,
-                                childAspectRatio: 2,
+                          Expanded(
+                            child: Obx(
+                              () => CustomToggleButton(
+                                text: 'Completed',
+                                isActive:
+                                    _controller.selectedTab.value ==
+                                    'Completed',
+                                onTap: () {
+                                  _controller.setSelectedTab('Completed');
+                                },
                               ),
-                          itemBuilder: (context, index) {
-                            return JobHistoryCard(
-                              job: _filteredJobs[index],
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => JobHistoryDetailPage(
-                                          job: _filteredJobs[index],
-                                        ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    Obx(() {
+                      if (_controller.isLoading.value) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      final filteredJobs = _controller.getFilteredJobs(
+                        _controller.selectedTab.value,
+                      );
+
+                      return filteredJobs.isEmpty
+                          ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text(
+                                'No ${_controller.selectedTab.value.toLowerCase()} found',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColor.darkGray,
+                                ),
+                              ),
+                            ),
+                          )
+                          : MediaQuery.removePadding(
+                            context: context,
+                            removeTop: true,
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: filteredJobs.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: _calculateCrossAxisCount(
+                                      context,
+                                    ),
+                                    crossAxisSpacing: 15,
+                                    mainAxisSpacing: 15,
+                                    childAspectRatio: 2,
                                   ),
+                              itemBuilder: (context, index) {
+                                return JobHistoryCard(
+                                  job: filteredJobs[index],
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => JobHistoryDetailPage(
+                                              job: filteredJobs[index],
+                                            ),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
-                            );
-                          },
-                        ),
-                      ),
-                  const SizedBox(height: 30),
-                ],
+                            ),
+                          );
+                    }),
+                    const SizedBox(height: 30),
+                  ],
+                ),
               ),
             ),
           ),

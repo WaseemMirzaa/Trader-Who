@@ -141,7 +141,8 @@ class TradePersonDetailsAppBar extends StatelessWidget
                                 ),
                               ),
                               TextSpan(
-                                text: '9:00 AM - 5:00 PM',
+                                text:
+                                    "${DateFormat('hh:mm a').format(DateTime.fromMillisecondsSinceEpoch(person.startTime!))} - ${DateFormat('hh:mm a').format(DateTime.fromMillisecondsSinceEpoch(person.endTime!))}",
                                 style: TextStyle(
                                   fontSize: context.responsiveFontSize(14),
                                   color: AppColor.secondaryText,

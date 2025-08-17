@@ -9,6 +9,12 @@ class JobHistory {
   final String address;
   final String status;
   final TradesPerson tradesPerson;
+  final String notes;
+  final List<String> images;
+  final LatLng location;
+  final String bookingId;
+  final int? rating;
+  final String? review;
   final bool showQuoteButtons; // New property
 
   const JobHistory({
@@ -20,6 +26,12 @@ class JobHistory {
     required this.address,
     required this.status,
     required this.tradesPerson,
+    required this.notes,
+    required this.images,
+    required this.location,
+    required this.bookingId,
+    this.rating,
+    this.review,
     this.showQuoteButtons = false, // Default to Reject/Accept
   });
 
@@ -33,6 +45,12 @@ class JobHistory {
     String? status,
     TradesPerson? tradesPerson,
     bool? showQuoteButtons,
+    String? notes,
+    List<String>? images,
+    LatLng? location,
+    String? bookingId,
+    int? rating,
+    String? review,
   }) {
     return JobHistory(
       title: title ?? this.title,
@@ -44,6 +62,12 @@ class JobHistory {
       status: status ?? this.status,
       tradesPerson: tradesPerson ?? this.tradesPerson,
       showQuoteButtons: showQuoteButtons ?? this.showQuoteButtons,
+      notes: notes ?? this.notes,
+      images: images ?? this.images,
+      location: location ?? this.location,
+      bookingId: bookingId ?? this.bookingId,
+      rating: rating ?? this.rating,
+      review: review ?? this.review,
     );
   }
 }

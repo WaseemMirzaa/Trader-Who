@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:traderwho/controller/job_history_page_controller.dart';
 import 'package:traderwho/controller/trade_job_history_controller.dart';
+import 'package:traderwho/core/services/services.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';

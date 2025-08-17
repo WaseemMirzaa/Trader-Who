@@ -8,7 +8,7 @@ class TradeRatePage extends StatelessWidget {
     final TradeRateController controller = Get.put(TradeRateController());
 
     return TraderWhoScaffold(
-      appBar: TradeRatesAppbar(     title: "Set Fixed Prices for Small Jobs",),
+      appBar: TradeRatesAppbar(title: "Set Fixed Prices for Small Jobs"),
       body: SafeArea(
         child: Obx(
           () =>
@@ -207,7 +207,16 @@ class TradeRatePage extends StatelessWidget {
                             color: AppColor.secondaryText,
                             fontFamily: 'openSans',
                           ),
-                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColor.orangeCustomColor,
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColor.orangeCustomColor,
+                            ),
+                          ),
                           contentPadding: EdgeInsets.all(12),
                         ),
                         autofocus: true,
@@ -222,7 +231,16 @@ class TradeRatePage extends StatelessWidget {
                             color: AppColor.secondaryText,
                             fontFamily: 'openSans',
                           ),
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColor.orangeCustomColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColor.orangeCustomColor,
+                            ),
+                          ),
                           hintText: 'Brief description of what\'s included',
                           hintStyle: TextStyle(
                             color: AppColor.secondaryText,
@@ -239,7 +257,20 @@ class TradeRatePage extends StatelessWidget {
                       controller: priceController,
                       decoration: const InputDecoration(
                         labelText: 'Fixed Price (£)',
-                        border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
+                        ),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppColor.orangeCustomColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppColor.orangeCustomColor,
+                          ),
+                        ),
                         prefixText: '£ ',
                         contentPadding: EdgeInsets.all(12),
                       ),
@@ -304,9 +335,3 @@ class TradeRatePage extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-

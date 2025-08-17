@@ -260,13 +260,17 @@ class _TradeJobHistoryMapScreenState
     return List.generate(
       1,
       (index) => JobHistory(
+        bookingId: "3",
         title: 'Electrical',
         svgIcon: Assets.svgsElectric,
         jobType: "Electrical",
         price: 120.0 + (index * 50),
         preferredTime: "ASAP",
         address: "${index + 3} miles away",
-        status: isCompleted ? "Completed" : "New",
+        status: isCompleted ? "completed" : "pending",
+        notes: "Please handle with care.",
+        images: ["https://example.com/image.jpg"],
+        location: LatLng(37.7749, -122.4194),
         tradesPerson: TradesPerson(
           id: "technician_${index + 1}",
           bio:
@@ -278,6 +282,10 @@ class _TradeJobHistoryMapScreenState
           price: "\$${50 + (index * 10)}/hr",
           imageUrl: "",
           rating: 4.5 - (index * 0.1),
+          largeJobs: [],
+          smallJobs: [],
+          latitude: 37.7749,
+          longitude: -122.4194,
         ),
         showQuoteButtons: !isCompleted,
       ),

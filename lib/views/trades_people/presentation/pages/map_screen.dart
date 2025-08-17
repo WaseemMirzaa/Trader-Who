@@ -20,27 +20,81 @@ class _MapScreenState extends State<_MapScreenView> {
   late GoogleMapController mapController;
   final LatLng _center = const LatLng(33.6844, 73.0479);
   Set<Marker> _markers = {};
-  bool _isLoading = true;
+  late TradesPeopleController _controller;
 
   @override
   void initState() {
     super.initState();
-    _loadMarkers();
+    _controller = Get.put(TradesPeopleController());
+    // Use ever() to listen to changes in the tradesPeople list
+    ever(_controller.tradesPeople, (_) => _loadMarkersFromController());
+    ever(_controller.isLoading, (_) {
+      if (!_controller.isLoading.value) {
+        _loadMarkersFromController();
+      }
+    });
+    _loadMarkersFromController();
   }
 
-  void _showCustomBottomSheet(BuildContext context) {
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> _loadMarkersFromController() async {
+    final tradesPeople = _controller.tradesPeople;
+    print(
+      'Map Screen: Loading markers, tradesPeople count: ${tradesPeople.length}',
+    );
+
+    if (tradesPeople.isEmpty) {
+      setState(() {
+        _markers = {};
+      });
+      return;
+    }
+
+    final List<Marker> markers = [];
+    for (int i = 0; i < tradesPeople.length; i++) {
+      TradesPerson person = tradesPeople[i];
+      print(
+        'Person ${i}: ${person.name}, lat: ${person.latitude}, lng: ${person.longitude}',
+      );
+
+      // Check if coordinates are valid (not 0.0 or default values)
+      if (person.latitude != 0.0 && person.longitude != 0.0) {
+        markers.add(
+          Marker(
+            markerId: MarkerId('tradesperson_${person.id}'),
+            position: LatLng(person.latitude, person.longitude),
+            infoWindow: InfoWindow(
+              title: person.name,
+              snippet: person.title ?? '',
+              onTap: () => _showCustomBottomSheet(context, person),
+            ),
+          ),
+        );
+      }
+    }
+
+    print('Map Screen: Created ${markers.length} markers');
+    setState(() {
+      _markers = markers.toSet();
+    });
+  }
+
+  void _showCustomBottomSheet(BuildContext context, TradesPerson person) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder:
           (context) => CustomBottomSheet(
-            professionalName: "Stephen Saville",
-            profession: "Electrician",
-            rating: 4.7,
-            description:
-                "Qualified electrician with extensive experience in both residential and commercial projects.",
-            qualifications: "NICEIC approved",
+            professionalName: person.name,
+            profession: person.title ?? '',
+            rating: person.rating,
+            description: person.bio,
+            qualifications: person.expertise,
           ),
     );
   }
@@ -138,73 +192,6 @@ class _MapScreenState extends State<_MapScreenView> {
     ))!.buffer.asUint8List();
   }
 
-  Future<void> _loadMarkers() async {
-    try {
-      final List<BitmapDescriptor> customIcons = await Future.wait([
-        _loadIcon(context, Assets.imagesTradeMapicon, isFirstIcon: true),
-        _loadIcon(context, Assets.imagesMapIcon),
-        _loadIcon(context, Assets.imagesPlaster),
-        _loadIcon(context, Assets.imagesTilers),
-        _loadIcon(context, Assets.imagesTradeHouse),
-        _loadIcon(context, Assets.imagesTradeComp),
-        _loadIcon(context, Assets.imagesTradeHome),
-      ]);
-
-      final List<LatLng> markerLocations = [
-        const LatLng(33.6844, 73.0479),
-        const LatLng(33.6900, 73.0500),
-        const LatLng(33.6800, 73.0400),
-        const LatLng(33.6860, 73.0550),
-        const LatLng(33.6780, 73.0450),
-        const LatLng(33.6920, 73.0600),
-        const LatLng(33.6750, 73.0350),
-      ];
-
-      setState(() {
-        _markers =
-            markerLocations.asMap().entries.map((entry) {
-              final index = entry.key;
-              return Marker(
-                markerId: MarkerId('marker_$index'),
-                position: entry.value,
-                icon: customIcons[index % customIcons.length],
-                infoWindow: InfoWindow(title: 'Location ${index + 1}'),
-                onTap: () => _showCustomBottomSheet(context),
-              );
-            }).toSet();
-        _isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Error loading markers: $e');
-      _setDefaultMarkers();
-    }
-  }
-
-  void _setDefaultMarkers() {
-    final List<LatLng> markerLocations = [
-      const LatLng(33.6844, 73.0479),
-      const LatLng(33.6900, 73.0500),
-      const LatLng(33.6800, 73.0400),
-      const LatLng(33.6860, 73.0550),
-      const LatLng(33.6780, 73.0450),
-      const LatLng(33.6920, 73.0600),
-      const LatLng(33.6750, 73.0350),
-    ];
-
-    setState(() {
-      _markers =
-          markerLocations.asMap().entries.map((entry) {
-            final index = entry.key;
-            return Marker(
-              markerId: MarkerId('marker_$index'),
-              position: entry.value,
-              infoWindow: InfoWindow(title: 'Location ${index + 1}'),
-            );
-          }).toSet();
-      _isLoading = false;
-    });
-  }
-
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
@@ -212,19 +199,26 @@ class _MapScreenState extends State<_MapScreenView> {
   @override
   Widget build(BuildContext context) {
     return TraderWhoScaffold(
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : GoogleMap(
-                onMapCreated: _onMapCreated,
-                initialCameraPosition: CameraPosition(
-                  target: _center,
-                  zoom: 15.0, // Increased zoom level
-                ),
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                markers: _markers,
-              ),
+      body: Obx(() {
+        if (_controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (_controller.tradesPeople.isEmpty) {
+          return Center(
+            child: Text(
+              'No tradespeople available',
+              style: TextStyle(fontSize: 18, color: AppColor.primaryText),
+            ),
+          );
+        }
+        return GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(target: _center, zoom: 15.0),
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          markers: _markers,
+        );
+      }),
     );
   }
 }

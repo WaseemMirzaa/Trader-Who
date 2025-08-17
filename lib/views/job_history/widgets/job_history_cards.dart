@@ -63,7 +63,7 @@ class JobHistoryCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              'Small Job– Fixed Price: \$${job.price}',
+                              '${job.jobType} – Fixed Price: \$${job.price}',
                               style: TextStyle(
                                 color: AppColor.primaryText,
                                 fontFamily: 'openSans',
@@ -96,7 +96,7 @@ class JobHistoryCard extends StatelessWidget {
                     border: Border.all(color: AppColor.midGray, width: 1),
                   ),
                   child: Text(
-                    job.status,
+                    HelperService.formatStatus(job.status),
                     style: const TextStyle(
                       color: AppColor.primaryText,
                       fontFamily: 'openSans',
@@ -104,7 +104,7 @@ class JobHistoryCard extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis, // Truncate long status
-                    maxLines: 1, // Limit to one line
+                    maxLines: 2, // Limit to two lines
                   ),
                 ),
               ],

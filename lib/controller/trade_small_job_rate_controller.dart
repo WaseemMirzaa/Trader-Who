@@ -28,6 +28,7 @@ class TradeRateController extends GetxController {
   Future<void> initializeAndLoadCategories() async {
     try {
       isLoading(true);
+      print('🔍 Checking for existing smalljoblist...');
 
       // Check if predefined services exist in Firebase
       final existingData =
@@ -35,13 +36,15 @@ class TradeRateController extends GetxController {
 
       if (!existingData.exists) {
         // No predefined data exists, initialize it first
+        print('📦 No predefined services found. Initializing...');
         await initializePredefinedServices();
       } else {
         // Data exists, just load categories
+        print('✅ Predefined services found. Loading...');
         await loadCategories();
       }
     } catch (e) {
-      print('Error in initializeAndLoadCategories: $e');
+      print('❌ Error in initializeAndLoadCategories: $e');
       // Fallback to just loading categories
       await loadCategories();
     }
@@ -49,8 +52,10 @@ class TradeRateController extends GetxController {
 
   Future<void> loadCategories() async {
     isLoading(true);
+    print('📤 Loading small job categories...');
     try {
       if (userId.isEmpty) {
+        print('❌ User ID is empty');
         Get.snackbar('Error', 'User not authenticated');
         isLoading(false);
         return;
@@ -58,14 +63,20 @@ class TradeRateController extends GetxController {
 
       categories.clear();
       categories['Custom Services'] = [];
+      print('📂 Initialized "Custom Services"');
 
-      final userDoc = await _firestore.collection('users').doc(userId).get();
-      // final userTitle = userDoc.exists ? userDoc['title'] as String? : null;
-
+      // final userDoc = await _firestore.collection('users').doc(userId).get();
+      final servicesPricesSnap =
+          await _firestore
+              .collection('services_prices')
+              .where('jobType', isEqualTo: 'smallJob')
+              .where('trader_id', isEqualTo: userId)
+              .get();
       final snapshot =
           await _firestore.collection('Services').doc('smalljoblist').get();
 
       if (!snapshot.exists || snapshot.data() == null) {
+        print('⚠️ No predefined small job services found.');
         Get.snackbar(
           'Warning',
           'No services found in smalljoblist. You can add custom services.',
@@ -74,73 +85,144 @@ class TradeRateController extends GetxController {
         final data = snapshot.data()!;
         final predefinedServices =
             data['predefinedServices'] as Map<String, dynamic>? ?? {};
+        print(
+          '✅ Loaded ${predefinedServices.keys.length} predefined categories',
+        );
 
         for (String category in predefinedServices.keys) {
-          // Remove the userTitle filter to include all categories
+          final servicesList = predefinedServices[category] as List? ?? [];
           final services =
-              (predefinedServices[category] as List? ?? [])
-                  .map(
-                    (item) => ServiceItem.fromMap(item as Map<String, dynamic>),
-                  )
+              servicesList
+                  .map((item) {
+                    if (item is Map<String, dynamic>) {
+                      return ServiceItem.fromMap(item);
+                    }
+                    return null;
+                  })
+                  .where((item) => item != null)
+                  .cast<ServiceItem>()
                   .toList();
           categories[category] = services;
+          print('→ Added ${services.length} services to category: $category');
         }
       }
 
-      // Pre-populate user services
-      if (userDoc.exists && userDoc['smalljoblist'] != null) {
-        final userServices = userDoc['smalljoblist'] as List;
-        for (var categoryData in userServices) {
-          final category = categoryData['category'] as String;
-          final userServiceList = categoryData['services'] as List? ?? [];
-          if (categories.containsKey(category)) {
-            for (var userService in userServiceList) {
-              final index = categories[category]!.indexWhere(
-                (item) => item.title == userService['title'],
-              );
-              if (index != -1) {
-                categories[category]![index] = ServiceItem.fromMap(userService);
-              } else if (category == 'Custom Services') {
-                categories[category]!.add(ServiceItem.fromMap(userService));
-              }
-            }
+      // if (userDoc.exists && userDoc.data()!.containsKey('smalljoblist')) {
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> userServices =
+          servicesPricesSnap.docs;
+      print('🧍 Found ${userServices.length} user services');
+
+      for (QueryDocumentSnapshot<Map<String, dynamic>> userService
+          in userServices) {
+        final categoryValue = userService.data()['category'];
+        if (categoryValue == null) {
+          print('⚠️ Skipping service with null category: ${userService.id}');
+          continue;
+        }
+        final category = categoryValue as String;
+
+        // Check if userService.id is not null and contains underscore
+        if (userService.id.isEmpty || !userService.id.contains('_')) {
+          print(
+            '⚠️ Skipping service with invalid ID format: ${userService.id}',
+          );
+          continue;
+        }
+
+        final serviceParts = userService.id.split("_");
+        if (serviceParts.length < 2) {
+          print(
+            '⚠️ Skipping service with invalid ID format: ${userService.id}',
+          );
+          continue;
+        }
+
+        // Ensure category exists in categories map
+        if (!categories.containsKey(category)) {
+          categories[category] = [];
+        }
+
+        final index =
+            categories[category]?.indexWhere(
+              (item) => item.id == serviceParts[1],
+            ) ??
+            -1;
+
+        if (index != -1) {
+          try {
+            categories[category]![index] = ServiceItem.fromMap(
+              userService.data(),
+            );
+            final title =
+                userService.data()['title'] ??
+                userService.data()['name'] ??
+                'Unknown Service';
+            print('✅ Updated existing service: $title in $category');
+          } catch (e) {
+            print('⚠️ Error parsing existing service ${userService.id}: $e');
+          }
+        } else {
+          try {
+            categories[category]!.add(ServiceItem.fromMap(userService.data()));
+            final title =
+                userService.data()['title'] ??
+                userService.data()['name'] ??
+                'Unknown Service';
+            print('➕ Added service: $title to category: $category');
+          } catch (e) {
+            print('⚠️ Error parsing service ${userService.id}: $e');
           }
         }
       }
+      // }
     } catch (e) {
+      print('❌ Failed to load services: $e');
       Get.snackbar('Error', 'Failed to load services: ${e.toString()}');
     } finally {
       isLoading(false);
+      print('✅ Finished loading services.');
     }
   }
 
   void selectCategory(String? category) {
     selectedCategory.value = category ?? '';
+    print('📌 Selected category: ${selectedCategory.value}');
   }
 
   void updateService(String category, int index, ServiceItem updatedService) {
+    print('✏️ Updating service: ${updatedService.title} in $category');
     categories[category]![index] = updatedService;
     categories.refresh();
   }
 
   void addCustomService() {
-    final service = ServiceItem(title: '', isCustom: true);
+    final service = ServiceItem(
+      title: '',
+      isCustom: true,
+      id: FirebaseFirestore.instance.collection('Services').doc().id,
+    );
     categories['Custom Services']!.add(service);
     selectCategory('Custom Services');
     categories.refresh();
+    print('➕ Custom service added and selected.');
   }
 
   void removeCustomService(String category, int index) {
+    print('🗑 Removing custom service from $category at index $index');
     categories[category]!.removeAt(index);
     categories.refresh();
   }
 
   int getEnabledServicesCount(String category) {
-    return categories[category]?.where((s) => s.isEnabled).length ?? 0;
+    final count = categories[category]?.where((s) => s.isEnabled).length ?? 0;
+    print('✔️ $count enabled services in $category');
+    return count;
   }
 
   int getTotalServicesCount(String category) {
-    return categories[category]?.length ?? 0;
+    final total = categories[category]?.length ?? 0;
+    print('📊 $total total services in $category');
+    return total;
   }
 
   IconData getCategoryIcon(String category) {
@@ -155,38 +237,120 @@ class TradeRateController extends GetxController {
 
   Future<void> saveUserServices() async {
     try {
-      final smalljobList =
-          categories.entries
-              .map((entry) {
-                final category = entry.key;
-                final enabledServices =
-                    entry.value
-                        .where((s) => s.isEnabled)
-                        .map((s) => s.toMap())
-                        .toList();
-                if (enabledServices.isNotEmpty ||
-                    category == 'Custom Services') {
-                  return {'category': category, 'services': enabledServices};
-                }
-                return null;
-              })
-              .where((item) => item != null)
-              .toList();
+      // Get count of enabled categories for logging
+      final enabledCategoriesCount =
+          categories.entries.where((entry) {
+            final category = entry.key;
+            final enabledServices =
+                entry.value.where((s) => s.isEnabled).toList();
+            return enabledServices.isNotEmpty || category == 'Custom Services';
+          }).length;
 
-      await _firestore.collection('users').doc(userId).set({
-        'smalljoblist': smalljobList,
-      }, SetOptions(merge: true));
+      print('💾 Saving $enabledCategoriesCount categories to Firestore');
+      // await _firestore.collection('users').doc(userId).set({
+      //   'smalljoblist': smalljobList,
+      // }, SetOptions(merge: true));
 
+      // Also save individual services with userId_serviceId format
+      await saveIndividualServices();
+
+      print('✅ Prices saved successfully!');
       Get.snackbar('Success', 'Prices saved successfully');
       if (fromProfile.value) {
         // If came from profile, just go back
         Get.back();
       } else {
         // If came from signup flow, proceed to onboarding
-        Get.off(() => const TradeLargerRatePage());
+        Get.off(() => const TradeRatePage());
       }
     } catch (e) {
+      print('❌ Error saving services: $e');
       Get.snackbar('Error', 'Failed to save services: ${e.toString()}');
+    }
+  }
+
+  /// Save individual services with docId format: userId_serviceId
+  Future<void> saveIndividualServices() async {
+    try {
+      print('💾 Saving individual services with userId_serviceId format...');
+
+      for (String category in categories.keys) {
+        final servicesList = categories[category] ?? [];
+
+        for (ServiceItem service in servicesList) {
+          if (service.isEnabled &&
+              service.price != null &&
+              service.price! > 0) {
+            // Use existing service ID
+            final serviceId = service.id;
+            final docId = '${userId}_$serviceId';
+
+            final serviceData = {
+              'name': service.title,
+              'category': category,
+              'jobId': serviceId,
+              'jobType': 'smallJob',
+              'price': service.price,
+              'trader_id': userId,
+              'description': service.description ?? '',
+              'isCustom': service.isCustom,
+              'createdAt': FieldValue.serverTimestamp(),
+              'updatedAt': FieldValue.serverTimestamp(),
+              'isEnabled': true,
+            };
+
+            await _firestore
+                .collection('services_prices')
+                .doc(docId)
+                .set(serviceData, SetOptions(merge: true));
+
+            print('✅ Saved service: ${service.title} with docId: $docId');
+          }
+        }
+      }
+
+      print('✅ All individual services saved successfully!');
+    } catch (e) {
+      print('❌ Error saving individual services: $e');
+    }
+  }
+
+  /// Save a single service with userId_serviceId format
+  Future<void> saveSingleService(String category, ServiceItem service) async {
+    try {
+      if (!service.isEnabled || service.price == null || service.price! <= 0) {
+        print('⚠️ Service not enabled or price not set');
+        return;
+      }
+
+      // Use existing service ID
+      final serviceId = service.id;
+      final docId = '${userId}_$serviceId';
+
+      final serviceData = {
+        'name': service.title,
+        'category': category,
+        'jobId': serviceId,
+        'jobType': 'smallJob',
+        'price': service.price,
+        'trader_id': userId,
+        'description': service.description ?? '',
+        'isCustom': service.isCustom,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'isEnabled': true,
+      };
+
+      await _firestore
+          .collection('services_prices')
+          .doc(docId)
+          .set(serviceData, SetOptions(merge: true));
+
+      print('✅ Single service saved: ${service.title} with docId: $docId');
+      Get.snackbar('Success', 'Service "${service.title}" saved successfully');
+    } catch (e) {
+      print('❌ Error saving single service: $e');
+      Get.snackbar('Error', 'Failed to save service: ${e.toString()}');
     }
   }
 
@@ -364,7 +528,16 @@ class TradeRateController extends GetxController {
         final services =
             predefinedServices[category]!
                 .map(
-                  (title) => ServiceItem(title: title, isCustom: false).toMap(),
+                  (title) =>
+                      ServiceItem(
+                        title: title,
+                        isCustom: false,
+                        id:
+                            FirebaseFirestore.instance
+                                .collection('Services')
+                                .doc()
+                                .id,
+                      ).toMap(),
                 )
                 .toList();
         organizedServices[category] = services;

@@ -10,8 +10,16 @@ class TradesPerson {
   final List<String>? services;
   final String id;
   final String bio;
+  final List<ServiceModel> largeJobs;
+  final List<ServiceModel> smallJobs;
+  List<ReviewModel>? reviews;
+  int? startTime;
+  int? endTime;
+  double latitude;
+  double longitude;
+  String? title;
 
-  const TradesPerson({
+  TradesPerson({
     required this.name,
     required this.expertise,
     required this.description,
@@ -21,6 +29,14 @@ class TradesPerson {
     this.services,
     required this.id,
     required this.bio,
+    required this.largeJobs,
+    required this.smallJobs,
+    this.reviews,
+    this.startTime,
+    this.endTime,
+    required this.latitude,
+    required this.longitude,
+    this.title,
   });
 
   factory TradesPerson.fromDocumentSnapshot(DocumentSnapshot doc) {
@@ -42,10 +58,23 @@ class TradesPerson {
           (map['rating'] is int)
               ? (map['rating'] as int).toDouble()
               : (map['rating'] ?? 0.0).toDouble(),
-      services:
-          map['services'] != null ? List<String>.from(map['services']) : null,
+      // services:
+      //     map['services'] != null ? List<String>.from(map['services']) : null,
       id: map['id'] ?? '',
       bio: map['bio'] ?? '',
+      largeJobs:
+          (map['largejoblist'] ?? [])
+              .map<ServiceModel>((item) => ServiceModel.fromMap(item))
+              .toList(),
+      smallJobs:
+          (map['smalljoblist'] ?? [])
+              .map<ServiceModel>((item) => ServiceModel.fromMap(item))
+              .toList(),
+      startTime: map['start_time'],
+      endTime: map['end_time'],
+      latitude: double.tryParse(map['latitude'] ?? "0.0") ?? 0.0,
+      longitude: double.tryParse(map['longitude'] ?? "0.0") ?? 0.0,
+      title: map['title'] ?? '',
     );
   }
 
