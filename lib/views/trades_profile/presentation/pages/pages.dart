@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
+import 'package:traderwho/controller/service_controller.dart';
 import 'package:traderwho/controller/trade_myaccount_controller.dart';
 import 'package:traderwho/controller/trade_profile_controller.dart';
 import 'package:traderwho/controller/trade_small_job_rate_controller.dart';

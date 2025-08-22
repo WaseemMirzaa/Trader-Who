@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:traderwho/models/main_service_model.dart';
 import 'package:traderwho/models/models.dart';
 
 class JobPostController extends GetxController {
@@ -10,11 +11,58 @@ class JobPostController extends GetxController {
       <String, List<ServiceItem>>{}.obs;
   final RxMap<String, Map<String, double>> categoryPriceRanges =
       <String, Map<String, double>>{}.obs;
+  MainServiceModel? predefinedSmallJobs;
+  Map<String, List<ServiceItem>> get smallCategories =>
+      predefinedSmallJobs?.predefinedServices ?? {};
 
   @override
   void onInit() {
     super.onInit();
+    getPredefinedServices();
+
     loadAvailableServices();
+  }
+
+  getPredefinedServices() async {
+    isLoading(true);
+    try {
+      var data =
+          await FirebaseFirestore.instance
+              .collection('Services')
+              .doc('smalljoblist')
+              .get();
+      final dataModel = MainServiceModel.fromMap(data.data()!);
+
+      // Sort the categories by name
+      final sortedServices = sortCategoriesByName(dataModel.predefinedServices);
+
+      predefinedSmallJobs = MainServiceModel(
+        createdAt: dataModel.createdAt,
+        updatedAt: dataModel.updatedAt,
+        predefinedServices: sortedServices,
+      );
+    } catch (e) {
+      print('Error fetching predefined services: $e');
+      Get.snackbar('Error', 'Failed to fetch services: ${e.toString()}');
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  /// Helper method to sort categories by name alphabetically
+  Map<String, List<ServiceItem>> sortCategoriesByName(
+    Map<String, List<ServiceItem>> categoriesMap,
+  ) {
+    final sortedCategories = <String, List<ServiceItem>>{};
+    final sortedCategoryNames =
+        categoriesMap.keys.toList()
+          ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+
+    for (final categoryName in sortedCategoryNames) {
+      sortedCategories[categoryName] = categoriesMap[categoryName]!;
+    }
+
+    return sortedCategories;
   }
 
   /// Load all available services from services_prices collection
@@ -70,7 +118,7 @@ class JobPostController extends GetxController {
         }
       }
 
-      // Calculate price ranges for each category
+      // Calculate price ranges for each category and sort services
       for (String category in categoryPrices.keys) {
         final prices = categoryPrices[category]!;
         if (prices.isNotEmpty) {
@@ -80,16 +128,20 @@ class JobPostController extends GetxController {
 
           categoryPriceRanges[category] = {'min': minPrice, 'max': maxPrice};
 
+          // Sort services in this category by name
+          categorizedServices[category]!.sort(
+            (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+          );
+
           print('💰 $category price range: £$minPrice - £$maxPrice');
         }
       }
 
-      // Update available services
-      availableServices.addAll(categorizedServices);
+      // Sort categories by name and update available services
+      final sortedServices = sortCategoriesByName(categorizedServices);
+      availableServices.addAll(sortedServices);
 
-      print(
-        '✅ Loaded ${categorizedServices.keys.length} categories with services',
-      );
+      print('✅ Loaded ${sortedServices.keys.length} categories with services');
     } catch (e) {
       print('❌ Error loading available services: $e');
       Get.snackbar('Error', 'Failed to load services: ${e.toString()}');

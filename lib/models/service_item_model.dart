@@ -29,16 +29,24 @@ class ServiceItem {
   String title;
   String? description;
   double? price;
+  double? lowestPrice;
+  double? highestPrice;
   bool isEnabled;
   bool isCustom;
   String id;
+  String? traderId;
+  TradesPerson? tradesPerson;
 
   ServiceItem({
     required this.title,
     this.description,
     this.price,
+    this.lowestPrice,
+    this.highestPrice,
     this.isEnabled = false,
     this.isCustom = false,
+    this.tradesPerson,
+    this.traderId,
     required this.id,
   });
 
@@ -46,17 +54,25 @@ class ServiceItem {
     String? title,
     String? description,
     double? price,
+    double? lowestPrice,
+    double? highestPrice,
     bool? isEnabled,
     bool? isCustom,
     String? id,
+    String? traderId,
+    TradesPerson? tradesPerson,
   }) {
     return ServiceItem(
       title: title ?? this.title,
       description: description ?? this.description,
       price: price ?? this.price,
+      lowestPrice: lowestPrice ?? this.lowestPrice,
+      highestPrice: highestPrice ?? this.highestPrice,
       isEnabled: isEnabled ?? this.isEnabled,
       isCustom: isCustom ?? this.isCustom,
       id: id ?? this.id,
+      traderId: traderId ?? this.traderId,
+      tradesPerson: tradesPerson ?? this.tradesPerson,
     );
   }
 
@@ -79,6 +95,7 @@ class ServiceItem {
       isEnabled: map['isEnabled'] ?? false,
       isCustom: map['isCustom'] ?? false,
       id: map['jobId'] ?? map['id'] ?? '',
+      traderId: map['trader_id'] ?? '',
     );
   }
 }

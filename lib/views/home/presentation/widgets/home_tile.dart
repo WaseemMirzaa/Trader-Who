@@ -40,6 +40,8 @@ class HomeTiles extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,

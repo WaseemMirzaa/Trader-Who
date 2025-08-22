@@ -5,7 +5,7 @@ class TradeRatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TradeRateController controller = Get.put(TradeRateController());
+    final ServiceController controller = Get.put(ServiceController());
 
     return TraderWhoScaffold(
       appBar: TradeRatesAppbar(title: "Set Fixed Prices for Small Jobs"),
@@ -34,7 +34,7 @@ class TradeRatePage extends StatelessWidget {
                           color: AppColor.secondaryText,
                         ),
                         const SizedBox(height: 18),
-                        if (controller.selectedCategory.value.isEmpty) ...[
+                        if (controller.selectedCategory.isEmpty) ...[
                           const CustomText(
                             text: 'Select your trade category:',
                             fontSize: 18,
@@ -52,7 +52,7 @@ class TradeRatePage extends StatelessWidget {
                               icon: controller.getCategoryIcon(category),
                               enabledServices: enabledServices,
                               totalServices: totalServices,
-                              onTap: () => controller.selectCategory(category),
+                              onTap: () => controller.selectService(category),
                             );
                           }),
                           const SizedBox(height: 20),
@@ -72,7 +72,9 @@ class TradeRatePage extends StatelessWidget {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () => controller.selectCategory(null),
+                                onTap: () {
+                                  controller.selectedCategory(null);
+                                },
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
@@ -171,7 +173,7 @@ class TradeRatePage extends StatelessWidget {
 
   void _showPriceDialog(
     BuildContext context,
-    TradeRateController controller,
+    ServiceController controller,
     ServiceItem service,
     int index,
     String category,
@@ -201,21 +203,21 @@ class TradeRatePage extends StatelessWidget {
                       TextField(
                         style: TextStyle(color: AppColor.secondaryText),
                         controller: titleController,
+                        cursorColor: AppColor.primaryText,
                         decoration: const InputDecoration(
                           labelText: 'Service Title',
-                          labelStyle: TextStyle(
-                            color: AppColor.secondaryText,
-                            fontFamily: 'openSans',
+                          labelStyle: TextStyle(color: AppColor.primaryText),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColor.orangeCustomColor,
-                            ),
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColor.orangeCustomColor,
-                            ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
                           contentPadding: EdgeInsets.all(12),
                         ),
@@ -225,21 +227,21 @@ class TradeRatePage extends StatelessWidget {
                       TextField(
                         style: TextStyle(color: AppColor.secondaryText),
                         controller: descController,
+                        cursorColor: AppColor.primaryText,
                         decoration: const InputDecoration(
                           labelText: 'Description (Optional)',
-                          labelStyle: TextStyle(
-                            color: AppColor.secondaryText,
-                            fontFamily: 'openSans',
-                          ),
+                          labelStyle: TextStyle(color: AppColor.primaryText),
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColor.orangeCustomColor,
-                            ),
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColor.orangeCustomColor,
-                            ),
+                            borderSide: BorderSide(color: AppColor.primaryText),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
                           hintText: 'Brief description of what\'s included',
                           hintStyle: TextStyle(
@@ -255,21 +257,21 @@ class TradeRatePage extends StatelessWidget {
                     TextField(
                       style: TextStyle(color: AppColor.secondaryText),
                       controller: priceController,
+                      cursorColor: AppColor.primaryText,
                       decoration: const InputDecoration(
                         labelText: 'Fixed Price (£)',
-                        labelStyle: TextStyle(
-                          color: AppColor.secondaryText,
-                          fontFamily: 'openSans',
-                        ),
+                        labelStyle: TextStyle(color: AppColor.primaryText),
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColor.orangeCustomColor,
-                          ),
+                          borderSide: BorderSide(color: AppColor.primaryText),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColor.orangeCustomColor,
-                          ),
+                          borderSide: BorderSide(color: AppColor.primaryText),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColor.primaryText),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColor.primaryText),
                         ),
                         prefixText: '£ ',
                         contentPadding: EdgeInsets.all(12),

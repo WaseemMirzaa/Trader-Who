@@ -86,7 +86,7 @@ class TradesPeopleCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '£${person.price}',
+                              '£$price',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -145,7 +145,7 @@ class TradesPeopleCard extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: person.bio,
+                    text: person.expertise,
                     style: TextStyle(
                       fontSize: 18,
                       color: AppColor.secondaryText,
@@ -157,14 +157,14 @@ class TradesPeopleCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              person.description,
+              person.bio,
               style: TextStyle(
                 fontSize: 12,
                 color: AppColor.secondaryText,
                 fontWeight: FontWeight.w500,
                 fontFamily: 'openSans',
               ),
-              maxLines: 3,
+              maxLines: 300,
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 16),

@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: controller.emailController,
                         borderRadius: 11,
                         hintText: 'Email/Phone',
-
+                        textColor: Colors.white,
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -78,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
 
                         controller: controller.passwordController,
                         hintText: 'Password',
+                        textColor: Colors.white,
                         obscureText: true,
                         showPasswordToggle: true,
                         borderRadius: 11,

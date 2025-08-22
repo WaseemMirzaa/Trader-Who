@@ -113,60 +113,79 @@ class _HomePageState extends State<HomePage> {
       'category': 'CCTV Installer',
     },
   ];
+  String getImagePathByCategory(String category) {
+    return services.firstWhere(
+      (service) => service['category'] == category,
+    )['image']!;
+  }
 
+  ServiceController controller = Get.put(ServiceController());
   @override
   Widget build(BuildContext context) {
     return TraderWhoScaffold(
       appBar: const HomeAppBar(),
       body: Stack(
         children: [
-          SizedBox(
-            height: context.screenHeight,
-            width: context.screenWidth,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 15,
-                  children: [
-                    CustomText(
-                      text: 'Select Category',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                    GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap:
-                          true, // Make GridView take only the space it needs
+          Obx(
+            () =>
+                controller.isLoading.value
+                    ? CircularProgressIndicator()
+                    : SizedBox(
+                      height: context.screenHeight,
+                      width: context.screenWidth,
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 15,
+                            children: [
+                              CustomText(
+                                text: 'Select Category',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                              GridView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap:
+                                    true, // Make GridView take only the space it needs
 
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      crossAxisSpacing: 12,
+                                      mainAxisSpacing: 12,
+                                      childAspectRatio: 1,
+                                    ),
+                                itemCount: controller.smallCategories.length,
+                                itemBuilder: (context, index) {
+                                  String categoryKey = controller
+                                      .smallCategories
+                                      .keys
+                                      .elementAt(index);
+
+                                  // Debug
+                                  return HomeTiles(
+                                    imagePath: getImagePathByCategory(
+                                      categoryKey,
+                                    ),
+                                    title: categoryKey,
+                                    onTap: () {
+                                      controller.selectService(categoryKey);
+                                      Get.toNamed(
+                                        AppRoutes.jobPage,
+                                        arguments: categoryKey,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                      itemCount: services.length,
-                      itemBuilder: (context, index) {
-                        // Debug
-                        return HomeTiles(
-                          imagePath: services[index]['image']!,
-                          title: services[index]['title']!,
-                          onTap: () {
-                            Get.toNamed(
-                              AppRoutes.jobPage,
-                              arguments: services[index]['title']!,
-                            );
-                          },
-                        );
-                      },
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
           ),
         ],
       ),

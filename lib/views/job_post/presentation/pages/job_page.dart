@@ -16,6 +16,7 @@ class _JobPageState extends State<JobPage> {
   final TextEditingController _budgetController = TextEditingController();
 
   late final JobPostController _jobController;
+  final ServiceController _serviceController = Get.find();
 
   String? _selectedJobType;
   ServiceItem? _selectedService;
@@ -219,6 +220,7 @@ class _JobPageState extends State<JobPage> {
                             'selectedService': _selectedService?.title,
                             'jobType': _selectedJobType,
                             'servicePrice': _selectedService?.price,
+                            'service_id': _selectedService?.id,
                           },
                         );
                       },
@@ -263,21 +265,11 @@ class _JobPageState extends State<JobPage> {
           'Select from common jobs with fixed prices (optional)',
           style: TextStyle(fontSize: 14, color: AppColor.secondaryText),
         ),
-        if (priceRange != 'Price on request') ...[
-          const Gap(8),
-          Text(
-            'Price range: $priceRange',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColor.primaryButton,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+
         const Gap(15),
 
         // Services List
-        if (categoryServices.isEmpty) ...[
+        if (_serviceController.selectedCategoryServices.isEmpty) ...[
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -291,11 +283,15 @@ class _JobPageState extends State<JobPage> {
             ),
           ),
         ] else ...[
-          ...categoryServices.map((service) {
+          ..._serviceController.selectedCategoryServices.map((
+            ServiceItem service,
+          ) {
             final isSelected = _selectedService?.id == service.id;
             final displayPrice =
-                service.price != null
-                    ? '£${service.price!.toInt()}'
+                service.lowestPrice != null
+                    ? (service.lowestPrice == service.highestPrice
+                        ? '£${service.lowestPrice!.toInt()}'
+                        : '£${service.lowestPrice!.toInt()}-${service.highestPrice!.toInt()}')
                     : 'Price on request';
 
             return Padding(

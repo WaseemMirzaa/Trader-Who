@@ -247,10 +247,10 @@ class BookingController extends GetxController {
                   labelText: 'Additional Notes (Optional)',
                   labelStyle: TextStyle(color: AppColor.primaryText),
                   border: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColor.orangeCustomColor),
+                    borderSide: BorderSide(color: AppColor.primaryText),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColor.orangeCustomColor),
+                    borderSide: BorderSide(color: AppColor.primaryText),
                   ),
                   disabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: AppColor.primaryText),

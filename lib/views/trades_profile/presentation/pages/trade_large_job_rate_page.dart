@@ -215,17 +215,21 @@ class TradeLargerRatePage extends StatelessWidget {
                       TextField(
                         style: TextStyle(color: AppColor.secondaryText),
                         controller: titleController,
+                        cursorColor: AppColor.primaryText,
                         decoration: const InputDecoration(
                           labelText: 'Service Title',
-                          labelStyle: TextStyle(
-                            color: AppColor.secondaryText,
-                            fontFamily: 'openSans',
+                          labelStyle: TextStyle(color: AppColor.primaryText),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.buttonHover),
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.buttonHover),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
                           contentPadding: EdgeInsets.all(12),
                         ),
@@ -235,21 +239,21 @@ class TradeLargerRatePage extends StatelessWidget {
                       TextField(
                         style: TextStyle(color: AppColor.secondaryText),
                         controller: descController,
+                        cursorColor: AppColor.primaryText,
                         decoration: const InputDecoration(
                           labelText: 'Description (Optional)',
-                          labelStyle: TextStyle(
-                            color: AppColor.secondaryText,
-                            fontFamily: 'openSans',
-                          ),
+                          labelStyle: TextStyle(color: AppColor.primaryText),
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColor.orangeCustomColor,
-                            ),
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColor.orangeCustomColor,
-                            ),
+                            borderSide: BorderSide(color: AppColor.primaryText),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColor.primaryText),
                           ),
                           hintText: 'Brief description of what\'s included',
                           hintStyle: TextStyle(
@@ -265,21 +269,21 @@ class TradeLargerRatePage extends StatelessWidget {
                     TextField(
                       style: TextStyle(color: AppColor.secondaryText),
                       controller: priceController,
+                      cursorColor: AppColor.primaryText,
                       decoration: const InputDecoration(
                         labelText: 'Fixed Price (£)',
-                        labelStyle: TextStyle(
-                          color: AppColor.secondaryText,
-                          fontFamily: 'openSans',
-                        ),
+                        labelStyle: TextStyle(color: AppColor.primaryText),
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColor.orangeCustomColor,
-                          ),
+                          borderSide: BorderSide(color: AppColor.primaryText),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColor.orangeCustomColor,
-                          ),
+                          borderSide: BorderSide(color: AppColor.primaryText),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColor.primaryText),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColor.primaryText),
                         ),
                         prefixText: '£ ',
                         contentPadding: EdgeInsets.all(12),

@@ -166,7 +166,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    widget.job.notes ?? 'No description available',
+                    widget.job.notes,
                     style: TextStyle(
                       fontSize: 13,
                       color: AppColor.secondaryText,

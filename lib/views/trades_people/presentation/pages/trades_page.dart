@@ -38,13 +38,13 @@ class _TradesPageState extends State<TradesPage> {
         child: Center(
           child: Obx(() {
             final isLoading = _controller.isLoading.value;
-            List<TradesPerson> tradesPeople =
-                _controller.filteredTradesPeople.isNotEmpty
-                    ? _controller.filteredTradesPeople
-                    : _controller.tradesPeople;
+            List<ServiceItem> serviceTrader =
+                _controller.filteredServices.isNotEmpty
+                    ? _controller.filteredServices
+                    : _controller.filteredServices;
             return Column(
               children: [
-                if (!isLoading && tradesPeople.isNotEmpty)
+                if (!isLoading && serviceTrader.isNotEmpty)
                   Column(
                     children: [
                       SearchBarTile(
@@ -68,7 +68,7 @@ class _TradesPageState extends State<TradesPage> {
                               color: AppColor.primaryButton,
                             ),
                           )
-                        else if (tradesPeople.isEmpty)
+                        else if (serviceTrader.isEmpty)
                           Column(
                             children: [
                               SizedBox(height: 50),
@@ -119,7 +119,9 @@ class _TradesPageState extends State<TradesPage> {
                               if (scrollInfo.metrics.pixels ==
                                       scrollInfo.metrics.maxScrollExtent &&
                                   !_controller.isLoadingMore.value) {
-                                _controller.fetchMoreTradesPeople();
+                                _controller.fetchServices(
+                                  _controller.selectedCategory.value,
+                                );
                               }
                               return false;
                             },
@@ -128,32 +130,36 @@ class _TradesPageState extends State<TradesPage> {
                                 MediaQuery.removePadding(
                                   context: context,
                                   removeTop: true,
-                                  child: GridView.builder(
+                                  child: ListView.builder(
                                     shrinkWrap: true,
                                     physics:
                                         const NeverScrollableScrollPhysics(),
-                                    itemCount: tradesPeople.length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount:
-                                              _calculateCrossAxisCount(context),
-                                          crossAxisSpacing: 15,
-                                          mainAxisSpacing: 17,
-                                          childAspectRatio: 1.7,
-                                        ),
+                                    itemCount: serviceTrader.length,
+                                    // gridDelegate:
+                                    //     SliverGridDelegateWithFixedCrossAxisCount(
+                                    //       crossAxisCount:
+                                    //           _calculateCrossAxisCount(context),
+                                    //       crossAxisSpacing: 15,
+                                    //       mainAxisSpacing: 17,
+                                    //       childAspectRatio: 1.7,
+                                    //     ),
                                     itemBuilder: (context, index) {
+                                      if (serviceTrader[index].tradesPerson ==
+                                          null) {
+                                        return Text(
+                                          'No trades person available',
+                                        );
+                                      }
                                       return TradesPeopleCard(
-                                        person: tradesPeople[index],
+                                        person:
+                                            serviceTrader[index].tradesPerson!,
                                         selectedCategory:
                                             _controller.selectedCategory.value,
                                         selectedService:
                                             _controller.selectedService.value,
                                         selectedJobType:
                                             _controller.selectedJobType.value,
-                                        price:
-                                            _controller
-                                                .selectedServicePrice
-                                                .value,
+                                        price: serviceTrader[index].price ?? 0,
                                         onTap: () {
                                           Navigator.push(
                                             context,
@@ -162,7 +168,8 @@ class _TradesPageState extends State<TradesPage> {
                                                   (context) =>
                                                       TradePersonDetailsPage(
                                                         person:
-                                                            tradesPeople[index],
+                                                            serviceTrader[index]
+                                                                .tradesPerson!,
                                                       ),
                                             ),
                                           );

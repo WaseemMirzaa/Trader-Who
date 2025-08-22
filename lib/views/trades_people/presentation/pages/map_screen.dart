@@ -18,7 +18,12 @@ class _MapScreenView extends StatefulWidget {
 
 class _MapScreenState extends State<_MapScreenView> {
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(33.6844, 73.0479);
+  // double userLat = Get.find<UserController>().latitude.value;
+  // double userLng = Get.find<UserController>().longitude.value;
+  final LatLng _center = LatLng(
+    Get.find<UserController>().latitude.value,
+    Get.find<UserController>().longitude.value,
+  );
   Set<Marker> _markers = {};
   late TradesPeopleController _controller;
 
@@ -27,7 +32,7 @@ class _MapScreenState extends State<_MapScreenView> {
     super.initState();
     _controller = Get.put(TradesPeopleController());
     // Use ever() to listen to changes in the tradesPeople list
-    ever(_controller.tradesPeople, (_) => _loadMarkersFromController());
+    ever(_controller.filteredServices, (_) => _loadMarkersFromController());
     ever(_controller.isLoading, (_) {
       if (!_controller.isLoading.value) {
         _loadMarkersFromController();
@@ -42,12 +47,12 @@ class _MapScreenState extends State<_MapScreenView> {
   }
 
   Future<void> _loadMarkersFromController() async {
-    final tradesPeople = _controller.tradesPeople;
+    final tradesServices = _controller.filteredServices;
     print(
-      'Map Screen: Loading markers, tradesPeople count: ${tradesPeople.length}',
+      'Map Screen: Loading markers, tradesServices count: ${tradesServices.length}',
     );
 
-    if (tradesPeople.isEmpty) {
+    if (tradesServices.isEmpty) {
       setState(() {
         _markers = {};
       });
@@ -55,22 +60,27 @@ class _MapScreenState extends State<_MapScreenView> {
     }
 
     final List<Marker> markers = [];
-    for (int i = 0; i < tradesPeople.length; i++) {
-      TradesPerson person = tradesPeople[i];
+    for (int i = 0; i < tradesServices.length; i++) {
+      ServiceItem service = tradesServices[i];
       print(
-        'Person ${i}: ${person.name}, lat: ${person.latitude}, lng: ${person.longitude}',
+        'Service ${i}: ${service.title}, lat: ${service.tradesPerson?.latitude}, lng: ${service.tradesPerson?.longitude}',
       );
 
       // Check if coordinates are valid (not 0.0 or default values)
-      if (person.latitude != 0.0 && person.longitude != 0.0) {
+      if (service.tradesPerson?.latitude != 0.0 &&
+          service.tradesPerson?.longitude != 0.0) {
         markers.add(
           Marker(
-            markerId: MarkerId('tradesperson_${person.id}'),
-            position: LatLng(person.latitude, person.longitude),
+            markerId: MarkerId('tradesperson_${service.tradesPerson?.id}'),
+            position: LatLng(
+              service.tradesPerson?.latitude ?? 0.0,
+              service.tradesPerson?.longitude ?? 0.0,
+            ),
             infoWindow: InfoWindow(
-              title: person.name,
-              snippet: person.title ?? '',
-              onTap: () => _showCustomBottomSheet(context, person),
+              title: service.tradesPerson?.name ?? '',
+              snippet: service.tradesPerson?.bio ?? '',
+              onTap:
+                  () => _showCustomBottomSheet(context, service.tradesPerson!),
             ),
           ),
         );
@@ -203,7 +213,7 @@ class _MapScreenState extends State<_MapScreenView> {
         if (_controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (_controller.tradesPeople.isEmpty) {
+        if (_controller.filteredServices.isEmpty) {
           return Center(
             child: Text(
               'No tradespeople available',

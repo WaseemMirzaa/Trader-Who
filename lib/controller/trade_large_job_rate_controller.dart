@@ -99,6 +99,9 @@ class TradeRateLargeJobController extends GetxController {
                   .cast<ServiceItem>()
                   .toList();
 
+          // Sort services by name alphabetically
+          sortServicesByName(services);
+
           categories[category] = services;
           print('→ Added \${services.length} services to category: \$category');
         }
@@ -171,6 +174,19 @@ class TradeRateLargeJobController extends GetxController {
           }
         }
       }
+
+      // Sort all services within each category
+      for (String category in categories.keys) {
+        if (categories[category]!.isNotEmpty) {
+          sortServicesByName(categories[category]!);
+        }
+      }
+
+      // Sort categories by name to ensure consistent ordering
+      final sortedCategories = sortCategoriesByName(categories);
+      categories.clear();
+      categories.addAll(sortedCategories);
+
       // }
     } catch (e) {
       print('❌ Failed to load services: $e');
@@ -186,9 +202,36 @@ class TradeRateLargeJobController extends GetxController {
     print('📌 Selected category: \${selectedCategory.value}');
   }
 
+  /// Helper method to sort services by name alphabetically
+  void sortServicesByName(List<ServiceItem> services) {
+    services.sort(
+      (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+    );
+  }
+
+  /// Helper method to sort categories by name alphabetically
+  Map<String, List<ServiceItem>> sortCategoriesByName(
+    Map<String, List<ServiceItem>> categoriesMap,
+  ) {
+    final sortedCategories = <String, List<ServiceItem>>{};
+    final sortedCategoryNames =
+        categoriesMap.keys.toList()
+          ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+
+    for (final categoryName in sortedCategoryNames) {
+      sortedCategories[categoryName] = categoriesMap[categoryName]!;
+    }
+
+    return sortedCategories;
+  }
+
   void updateService(String category, int index, ServiceItem updatedService) {
     print('✏️ Updating service: \${updatedService.title} in \$category');
     categories[category]![index] = updatedService;
+
+    // Re-sort the category to maintain alphabetical order
+    sortServicesByName(categories[category]!);
+
     categories.refresh();
   }
 

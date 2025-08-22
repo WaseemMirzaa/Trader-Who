@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/models/models.dart';
 import 'package:traderwho/models/review_model.dart';
+import 'package:traderwho/models/trades_people_model.dart';
 
 class TradesPeopleController extends GetxController {
   static const int pageSize = 20;
   RxList<TradesPerson> tradesPeople = <TradesPerson>[].obs;
   RxList<TradesPerson> filteredTradesPeople = <TradesPerson>[].obs;
+  RxList<ServiceItem> filteredServices = <ServiceItem>[].obs;
   RxBool isLoading = true.obs;
   RxBool isLoadingMore = false.obs;
   DocumentSnapshot? lastDoc;
@@ -14,6 +16,7 @@ class TradesPeopleController extends GetxController {
 
   // Filter properties
   RxString selectedCategory = ''.obs;
+  RxString selectedServiceId = ''.obs;
   RxString selectedService = ''.obs;
   RxString selectedJobType = ''.obs;
   RxDouble selectedServicePrice = 0.0.obs;
@@ -25,11 +28,40 @@ class TradesPeopleController extends GetxController {
     final arguments = Get.arguments as Map<String, dynamic>?;
     if (arguments != null) {
       selectedCategory.value = arguments['selectedCategory'] ?? '';
+      selectedServiceId.value = arguments['service_id'] ?? '';
       selectedService.value = arguments['selectedService'] ?? '';
       selectedJobType.value = arguments['jobType'] ?? '';
       selectedServicePrice.value = arguments['servicePrice'] ?? 0.0;
     }
-    fetchTradesPeople();
+    fetchServices(selectedServiceId.value);
+    // fetchTradesPeople();
+  }
+
+  void fetchServices(String serviceId) async {
+    isLoading.value = true;
+    try {
+      final query =
+          await FirebaseFirestore.instance
+              .collection('services_prices')
+              .where('jobId', isEqualTo: serviceId)
+              .get();
+      List<ServiceItem> services =
+          query.docs.map((doc) => ServiceItem.fromMap(doc.data())).toList();
+
+      // Process all services in parallel
+      await Future.wait(
+        services.map((service) async {
+          TradesPerson trader = await getTrader(service.traderId ?? '-');
+          service.tradesPerson = trader;
+        }),
+      );
+
+      filteredServices.value = services;
+    } catch (e) {
+      print('Error fetching services: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   /// Set filter criteria and refresh the list
@@ -119,6 +151,26 @@ class TradesPeopleController extends GetxController {
     );
   }
 
+  Future<TradesPerson> getTrader(String traderId) async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(traderId)
+              .get();
+      if (doc.exists) {
+        return await _fetchTraderServices(
+          TradesPerson.fromDocumentSnapshot(doc),
+        );
+      } else {
+        throw Exception('Trader not found');
+      }
+    } catch (e) {
+      print('Error fetching trader: $e');
+      rethrow;
+    }
+  }
+
   Future<void> fetchTradesPeople() async {
     isLoading.value = true;
     try {
@@ -130,15 +182,14 @@ class TradesPeopleController extends GetxController {
               .limit(pageSize)
               .get();
 
-      final List<TradesPerson> loaded = [];
-      for (final doc in query.docs) {
-        TradesPerson tradesPerson = TradesPerson.fromDocumentSnapshot(doc);
-
-        // Fetch services from services_prices collection
-        tradesPerson = await _fetchTraderServices(tradesPerson);
-
-        loaded.add(tradesPerson);
-      }
+      // Process all traders in parallel
+      final List<TradesPerson> loaded = await Future.wait(
+        query.docs.map((doc) async {
+          TradesPerson tradesPerson = TradesPerson.fromDocumentSnapshot(doc);
+          // Fetch services from services_prices collection
+          return await _fetchTraderServices(tradesPerson);
+        }),
+      );
 
       tradesPeople.value = loaded;
 
@@ -174,25 +225,27 @@ class TradesPeopleController extends GetxController {
         queryRef = queryRef.startAfterDocument(lastDoc!);
       }
       final query = await queryRef.get();
-      final List<TradesPerson> loaded = [];
-      for (final doc in query.docs) {
-        TradesPerson tradesPerson = TradesPerson.fromDocumentSnapshot(doc);
 
-        // Fetch reviews from subCollection
-        QuerySnapshot<Map<String, dynamic>> reviewsSnapshot =
-            await doc.reference.collection('reviews').get();
-        final reviews =
-            reviewsSnapshot.docs.map((reviewDoc) {
-              return ReviewModel.fromDoc(reviewDoc);
-            }).toList();
-        // Attach reviews to tradesPerson if the model supports it
-        tradesPerson.reviews = reviews;
+      // Process all traders in parallel
+      final List<TradesPerson> loaded = await Future.wait(
+        query.docs.map((doc) async {
+          TradesPerson tradesPerson = TradesPerson.fromDocumentSnapshot(doc);
 
-        // Fetch services from services_prices collection
-        tradesPerson = await _fetchTraderServices(tradesPerson);
+          // Fetch reviews from subCollection
+          QuerySnapshot<Map<String, dynamic>> reviewsSnapshot =
+              await doc.reference.collection('reviews').get();
+          final reviews =
+              reviewsSnapshot.docs.map((reviewDoc) {
+                return ReviewModel.fromDoc(reviewDoc);
+              }).toList();
+          // Attach reviews to tradesPerson if the model supports it
+          tradesPerson.reviews = reviews;
 
-        loaded.add(tradesPerson);
-      }
+          // Fetch services from services_prices collection
+          return await _fetchTraderServices(tradesPerson);
+        }),
+      );
+
       if (query.docs.isNotEmpty) {
         lastDoc = query.docs.last;
         tradesPeople.addAll(loaded);
@@ -222,19 +275,34 @@ class TradesPeopleController extends GetxController {
       Map<String, List<ServiceItem>> largeJobsMap = {};
       Map<String, List<ServiceItem>> smallJobsMap = {};
 
-      for (final serviceDoc in servicesQuery.docs) {
-        final serviceData = serviceDoc.data();
-        final category = serviceData['category'] as String? ?? 'Other';
-        final jobType = serviceData['jobType'] as String? ?? 'smallJob';
+      // Process all service documents in parallel (though this is mainly data transformation)
+      final serviceItems =
+          servicesQuery.docs.map((serviceDoc) {
+            final serviceData = serviceDoc.data();
+            final category = serviceData['category'] as String? ?? 'Other';
+            final jobType = serviceData['jobType'] as String? ?? 'smallJob';
 
-        final serviceItem = ServiceItem(
-          id: serviceData['jobId'] ?? serviceDoc.id,
-          title: serviceData['name'] ?? '',
-          description: serviceData['description'] ?? '',
-          price: (serviceData['price'] as num?)?.toDouble(),
-          isEnabled: serviceData['isEnabled'] ?? false,
-          isCustom: serviceData['isCustom'] ?? false,
-        );
+            final serviceItem = ServiceItem(
+              id: serviceData['jobId'] ?? serviceDoc.id,
+              title: serviceData['name'] ?? '',
+              description: serviceData['description'] ?? '',
+              price: (serviceData['price'] as num?)?.toDouble(),
+              isEnabled: serviceData['isEnabled'] ?? false,
+              isCustom: serviceData['isCustom'] ?? false,
+            );
+
+            return {
+              'serviceItem': serviceItem,
+              'category': category,
+              'jobType': jobType,
+            };
+          }).toList();
+
+      // Group services by category and job type
+      for (final item in serviceItems) {
+        final serviceItem = item['serviceItem'] as ServiceItem;
+        final category = item['category'] as String;
+        final jobType = item['jobType'] as String;
 
         if (jobType == 'largeJob') {
           if (!largeJobsMap.containsKey(category)) {
@@ -279,6 +347,7 @@ class TradesPeopleController extends GetxController {
         bio: tradesPerson.bio,
         largeJobs: largeJobs,
         smallJobs: smallJobs,
+
         reviews: tradesPerson.reviews,
         startTime: tradesPerson.startTime,
         endTime: tradesPerson.endTime,

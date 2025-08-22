@@ -72,9 +72,9 @@ class CustomTextField extends StatefulWidget {
     this.obscureText = false,
     this.showPasswordToggle = false,
     this.textAlign = TextAlign.start,
-    this.textColor = AppColor.lightGrayText,
+    this.textColor = AppColor.primaryText,
     this.textInputAction = TextInputAction.go,
-    this.borderColor = Colors.grey,
+    this.borderColor = AppColor.primaryText,
     this.fillColor = Colors.white,
     this.fieldHeading,
     this.headingStyle, // Added headingStyle parameter

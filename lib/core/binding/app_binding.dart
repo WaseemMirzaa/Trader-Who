@@ -60,21 +60,23 @@ class HomePageBinding extends Bindings {
 class JobPageBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<JobController>(() => JobController());
+    Get.lazyPut<ServiceController>(() => ServiceController());
   }
 }
 
 class TradesPageBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<TradeRateController>(() => TradeRateController());
+    Get.lazyPut<ServiceController>(() => ServiceController());
   }
 }
 
 class TradesLargerJoBPageBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<TradeRateLargeJobController>(() => TradeRateLargeJobController());
+    Get.lazyPut<TradeRateLargeJobController>(
+      () => TradeRateLargeJobController(),
+    );
   }
 }
 
@@ -198,7 +200,7 @@ class TradeCustomerFeedbackBinding extends Bindings {
 class TradeRateBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<TradeRateController>(() => TradeRateController());
+    Get.lazyPut<ServiceController>(() => ServiceController());
   }
 }
 

@@ -72,8 +72,8 @@ class TradesPerson {
               .toList(),
       startTime: map['start_time'],
       endTime: map['end_time'],
-      latitude: double.tryParse(map['latitude'] ?? "0.0") ?? 0.0,
-      longitude: double.tryParse(map['longitude'] ?? "0.0") ?? 0.0,
+      latitude: map['lat'] ?? 0,
+      longitude: map['lon'] ?? 0,
       title: map['title'] ?? '',
     );
   }
