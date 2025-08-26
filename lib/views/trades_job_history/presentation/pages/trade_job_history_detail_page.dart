@@ -12,24 +12,120 @@ class TradeJobHistoryDetailPage extends StatefulWidget {
 
 class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
   JobHistoryPageController jobHistoryPageController = Get.find();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _detailsController = TextEditingController();
+
+  @override
+  void dispose() {
+    _priceController.dispose();
+    _detailsController.dispose();
+    super.dispose();
+  }
 
   void _showReassessBottomSheet() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      enableDrag: true,
       showDragHandle: false,
       backgroundColor: Colors.transparent,
+      useSafeArea: true,
       builder:
           (context) => TradeJobHistoryBottomSheet(
             title: 'Job Reassessment Submitted',
             description: 'Please provide updated price and reason',
-            priceController: TextEditingController(),
-            reasonController: TextEditingController(),
-            onSubmit: () {
-              Navigator.pop(context);
+            priceController: _priceController,
+            reasonController: _detailsController,
+            onSubmit: () async {
+              await _submitQuote();
             },
           ),
     );
+  }
+
+  void _showQuoteBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      enableDrag: true,
+      showDragHandle: false,
+      backgroundColor: Colors.transparent,
+      useSafeArea: true,
+      builder:
+          (context) => TradeJobQuoteBottomSheet(
+            title: 'Job Quote',
+            description: 'Please provide your quote price and details.',
+            priceController: _priceController,
+            detailsController: _detailsController,
+            onSubmit: () async {
+              await _submitQuote();
+            },
+          ),
+    );
+  }
+
+  /// Submit quote functionality
+  Future<void> _submitQuote() async {
+    final price = double.tryParse(_priceController.text.trim());
+    final details = _detailsController.text.trim();
+
+    // Validate inputs
+    if (price == null || price <= 0) {
+      Get.snackbar(
+        'Invalid Price',
+        'Please enter a valid price greater than 0',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    if (details.isEmpty) {
+      Get.snackbar(
+        'Missing Details',
+        'Please provide quote details',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    // Find the booking for this job
+    final booking = _findBookingForJob(widget.job, jobHistoryPageController);
+    if (booking == null) {
+      Get.snackbar(
+        'Error',
+        'Could not find booking information',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    // Submit the quote
+    final success = await jobHistoryPageController.submitQuote(
+      bookingId: booking.id ?? '',
+      customerId: booking.userId,
+      quotedPrice: price,
+      details: details,
+    );
+
+    if (success) {
+      // Clear the form
+      _priceController.clear();
+      _detailsController.clear();
+
+      // Close the bottom sheet
+      Navigator.pop(context);
+
+      // Show success message
+      Get.snackbar(
+        'Quote Submitted',
+        'Your quote has been sent to the customer',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    }
   }
 
   Widget _buildNewJobFooter() {
@@ -43,22 +139,28 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
             children: [
               IntrinsicWidth(
                 child: CustomButton(
-                  text: 'Accept',
+                  text: widget.job.jobType == "largeJob" ? "Quote" : 'Accept',
                   onTap: () async {
-                    // Update status in Firebase
-                    final newStatus =
-                        widget.job.showQuoteButtons ? 'Quoted' : 'Accepted';
+                    if (widget.job.jobType == "largeJob") {
+                      _showQuoteBottomSheet();
+                    }
 
-                    // Find the corresponding booking and update it
-                    final booking = _findBookingForJob(
-                      widget.job,
-                      jobHistoryPageController,
-                    );
-                    if (booking != null) {
-                      await jobHistoryPageController.updateBookingStatus(
-                        booking.id ?? '',
-                        newStatus.toLowerCase(),
+                    if (widget.job.jobType == "smallJob") {
+                      // Update status in Firebase
+                      final newStatus =
+                          widget.job.showQuoteButtons ? 'Quoted' : 'Accepted';
+
+                      // Find the corresponding booking and update it
+                      final booking = _findBookingForJob(
+                        widget.job,
+                        jobHistoryPageController,
                       );
+                      if (booking != null) {
+                        await jobHistoryPageController.updateBookingStatus(
+                          booking.id ?? '',
+                          newStatus.toLowerCase(),
+                        );
+                      }
                     }
                   },
                   color: AppColor.darkBlue,
@@ -69,37 +171,51 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              // kGap10, // Your predefined spacing widget
-              // Expanded(
-              //   child: CustomButton(
-              //     text: 'Reassess Quote',
-              //     onTap: _showReassessBottomSheet,
-              //     color: AppColor.primaryButton,
-              //     textColor: AppColor.white,
-              //     enableBorder: true,
-              //     height: 50,
-              //     radius: 30,
-              //     fontSize: 15,
-              //     fontWeight: FontWeight.w500,
-              //   ),
-              // ),
+              kGap10, // Your predefined spacing widget
+              Expanded(
+                child: CustomButton(
+                  text: 'Reassess Quote',
+                  onTap: _showReassessBottomSheet,
+                  color: AppColor.primaryButton,
+                  textColor: AppColor.white,
+                  enableBorder: true,
+                  height: 50,
+                  radius: 30,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
         ),
         const SizedBox(width: 10),
-        Container(
-          height: 50,
-          width: 50,
-          decoration: BoxDecoration(
-            color: AppColor.darkBlue, // #121F30
-            borderRadius: BorderRadius.circular(30), // Creates circular shape
-          ),
-          child: Center(
-            child: SvgPicture.asset(
-              Assets.svgsCross, // Path to your SVG file
+        InkWell(
+          onTap: () async {
+            final booking = _findBookingForJob(
+              widget.job,
+              jobHistoryPageController,
+            );
+            if (booking != null) {
+              await jobHistoryPageController.updateBookingStatus(
+                booking.id ?? '',
+                widget.job.jobType == "largeJob" ? "notInterested" : 'rejected',
+              );
+            }
+          },
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              color: AppColor.darkBlue, // #121F30
+              borderRadius: BorderRadius.circular(30), // Creates circular shape
+            ),
+            child: Center(
+              child: SvgPicture.asset(
+                Assets.svgsCross, // Path to your SVG file
 
-              width: 17, // Adjust size as needed
-              height: 17,
+                width: 17, // Adjust size as needed
+                height: 17,
+              ),
             ),
           ),
         ),
@@ -204,7 +320,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                                 fontFamily: 'openSans',
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4),
                             Row(
                               children: [
                                 SvgPicture.asset(
@@ -213,33 +329,31 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                                   height: 16,
                                 ),
                                 const SizedBox(width: 4),
-                                Flexible(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text:
-                                              '${widget.job.jobType} - Fixed Price: ',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: AppColor.primaryText,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'openSans',
-                                          ),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            '${HelperService.formattedJobType(widget.job.jobType)}\nFixed Price: ',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColor.primaryText,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'openSans',
                                         ),
-                                        TextSpan(
-                                          text: '£${widget.job.price}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: AppColor.secondaryText,
-                                            fontFamily: 'openSans',
-                                          ),
+                                      ),
+                                      TextSpan(
+                                        text: '£${widget.job.price}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColor.secondaryText,
+                                          fontFamily: 'openSans',
                                         ),
-                                      ],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                                      ),
+                                    ],
                                   ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                 ),
                               ],
                             ),
@@ -247,6 +361,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                         ),
                       ),
                       Container(
+                        width: 80,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 4,
@@ -337,6 +452,28 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   ),
                   // Images Row (only show for completed jobs)
                   if (isCompleted) ...[kGap10],
+
+                  // Customer Details Section
+                  if (widget.job.customer != null) ...[
+                    const SizedBox(height: 20),
+                    Text(
+                      'Customer Details',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.primaryText,
+                        fontFamily: 'openSans',
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    CustomerCard(
+                      customer: widget.job.customer!,
+                      onTap: () {
+                        // Optional: Navigate to customer profile or show more details
+                      },
+                    ),
+                  ],
+
                   // Location and Map
                   const SizedBox(height: 20),
                   CustomText(
@@ -356,27 +493,47 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                         height: 16,
                       ),
                       const SizedBox(width: 4),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Address: ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColor.primaryText,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'openSans',
+                      Expanded(
+                        child: FutureBuilder<String>(
+                          future: LocationUtils.getAddressFromLatLng(
+                            widget.job.location,
+                          ),
+                          builder: (context, snapshot) {
+                            String addressText;
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              addressText = 'Loading...';
+                            } else if (snapshot.hasError) {
+                              addressText = 'Error loading address';
+                            } else {
+                              addressText =
+                                  snapshot.data ?? 'Address not available';
+                            }
+
+                            return RichText(
+                              text: TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: 'Address: ',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppColor.primaryText,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'openSans',
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: addressText,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppColor.secondaryText,
+                                      fontFamily: 'openSans',
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            TextSpan(
-                              text: widget.job.address,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColor.secondaryText,
-                                fontFamily: 'openSans',
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -493,6 +650,39 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                 ],
               ),
               child: CustomButton(
+                text: 'Start Working',
+                onTap: () async {
+                  // Update job status to inProgress
+                  await jobHistoryPageController.updateBookingStatus(
+                    widget.job.bookingId,
+                    'inProgress',
+                  );
+                  Get.back();
+                },
+                color: AppColor.green,
+                textColor: AppColor.white,
+                height: 50,
+                radius: 30,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          if (widget.job.status == 'inProgress' &&
+              widget.job.status != "completed")
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(0, -5),
+                  ),
+                ],
+              ),
+              child: CustomButton(
                 text: 'Mark Complete',
                 onTap: () async {
                   // Update job status to completed
@@ -521,14 +711,14 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
   ) {
     // Try to find in user bookings first
     for (final booking in controller.userBookings) {
-      if (booking.category == job.jobType && booking.price == job.price) {
+      if (booking.category == job.category && booking.price == job.price) {
         return booking;
       }
     }
 
     // Then try trader bookings
     for (final booking in controller.traderBookings) {
-      if (booking.category == job.jobType && booking.price == job.price) {
+      if (booking.category == job.category && booking.price == job.price) {
         return booking;
       }
     }

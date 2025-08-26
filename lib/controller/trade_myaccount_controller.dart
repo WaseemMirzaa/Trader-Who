@@ -253,7 +253,7 @@ class TradeMyaccountController extends GetxController {
         'address': addressController.text.trim(),
         'title': titleController.text.trim(),
         'bio': bioController.text.trim(),
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
         if (imageUrl != null) 'image': imageUrl,
       };
 

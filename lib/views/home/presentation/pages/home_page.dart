@@ -129,7 +129,11 @@ class _HomePageState extends State<HomePage> {
           Obx(
             () =>
                 controller.isLoading.value
-                    ? CircularProgressIndicator()
+                    ? Center(
+                      child: CircularProgressIndicator(
+                        color: AppColor.orangeCustomColor,
+                      ),
+                    )
                     : SizedBox(
                       height: context.screenHeight,
                       width: context.screenWidth,

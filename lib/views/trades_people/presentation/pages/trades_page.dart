@@ -170,6 +170,14 @@ class _TradesPageState extends State<TradesPage> {
                                                         person:
                                                             serviceTrader[index]
                                                                 .tradesPerson!,
+                                                        price:
+                                                            serviceTrader[index]
+                                                                .price ??
+                                                            0,
+                                                        selectedJobType:
+                                                            _controller
+                                                                .selectedJobType
+                                                                .value,
                                                       ),
                                             ),
                                           );

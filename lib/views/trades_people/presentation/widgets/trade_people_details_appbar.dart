@@ -3,14 +3,18 @@ part of 'widgets.dart';
 class TradePersonDetailsAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final TradesPerson person;
+  final double price;
   final VoidCallback? onBackPressed;
   final double screenHeight;
+  final Function() onBookNow;
 
   const TradePersonDetailsAppBar({
     super.key,
     required this.person,
     this.onBackPressed,
     required this.screenHeight,
+    required this.onBookNow,
+    required this.price,
   });
 
   @override
@@ -106,7 +110,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                                 ),
                               ),
                               TextSpan(
-                                text: '£${person.price}',
+                                text: '£${price}',
                                 style: TextStyle(
                                   fontSize: context.responsiveFontSize(15),
                                   color: AppColor.secondaryText,
@@ -169,7 +173,7 @@ class TradePersonDetailsAppBar extends StatelessWidget
                             children: [
                               CustomButton(
                                 text: 'Book Now',
-                                onTap: () {},
+                                onTap: onBookNow,
                                 width: context.responsiveWidth(29),
                                 height: context.responsiveHeight(4.5),
                                 color: AppColor.orangeCustomColor,
@@ -241,7 +245,26 @@ class TradePersonDetailsAppBar extends StatelessWidget
       ),
     );
   }
+  // void _handleBookNow() async {
+  //   // Import the booking controller
+  //   final BookingController bookingController = Get.put(BookingController());
 
+  //   // Determine the service name based on selected criteria
+  //   String serviceName =
+  //       selectedService.isNotEmpty
+  //           ? selectedService
+  //           : '$selectedCategory Service';
+
+  //   // Show booking dialog (includes user type validation)
+  //   await bookingController.showBookingDialog(
+  //     traderName: person.name,
+  //     traderId: person.id,
+  //     category: selectedCategory.isNotEmpty ? selectedCategory : 'General',
+  //     service: serviceName,
+  //     jobType: selectedJobType.isNotEmpty ? selectedJobType : 'largeJob',
+  //     price: price,
+  //   );
+  // }
   Widget _buildAvatarWithFallback(BuildContext context) {
     return Container(
       width: context.responsiveWidth(24),

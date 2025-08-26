@@ -1,8 +1,13 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/controller/user_controller.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:traderwho/controller/job_post_controller.dart';
+import 'package:traderwho/core/services/notification_service.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/models/models.dart';
 
@@ -13,6 +18,269 @@ class BookingController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isBookingCreated = false.obs;
   RxString bookingStatus = ''.obs;
+
+  // Preferred time selection variables
+  Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
+  Rx<TimeOfDay?> selectedTime = Rx<TimeOfDay?>(null);
+  RxString preferredTimeDisplay = ''.obs;
+
+  // Image selection variables
+  final ImagePicker _imagePicker = ImagePicker();
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  RxList<XFile> selectedImages = <XFile>[].obs;
+  RxBool isUploadingImages = false.obs;
+
+  /// Select preferred date for booking
+  Future<void> selectPreferredDate(BuildContext context) async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().add(
+        const Duration(days: 1),
+      ), // Tomorrow as minimum
+      firstDate: DateTime.now().add(
+        const Duration(days: 1),
+      ), // Can't book for today
+      lastDate: DateTime.now().add(
+        const Duration(days: 90),
+      ), // 3 months in advance
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColor.orangeCustomColor,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: AppColor.primaryText,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      selectedDate.value = pickedDate;
+      _updatePreferredTimeDisplay();
+    }
+  }
+
+  /// Select preferred time for booking
+  Future<void> selectPreferredTime(BuildContext context) async {
+    if (selectedDate.value == null) {
+      Get.snackbar(
+        'Select Date First',
+        'Please select a preferred date before choosing time',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColor.orangeCustomColor,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: AppColor.primaryText,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedTime != null) {
+      // Validate that the selected time is in the future
+      final selectedDateTime = DateTime(
+        selectedDate.value!.year,
+        selectedDate.value!.month,
+        selectedDate.value!.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+
+      if (selectedDateTime.isBefore(DateTime.now())) {
+        Get.snackbar(
+          'Invalid Time',
+          'Please select a time in the future',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      selectedTime.value = pickedTime;
+      _updatePreferredTimeDisplay();
+    }
+  }
+
+  /// Update the preferred time display string
+  void _updatePreferredTimeDisplay() {
+    if (selectedDate.value != null && selectedTime.value != null) {
+      final dateFormat = DateFormat('MMM dd, yyyy');
+      final timeFormat = selectedTime.value!.format(Get.context!);
+      preferredTimeDisplay.value =
+          '${dateFormat.format(selectedDate.value!)} at $timeFormat';
+    } else if (selectedDate.value != null) {
+      final dateFormat = DateFormat('MMM dd, yyyy');
+      preferredTimeDisplay.value =
+          '${dateFormat.format(selectedDate.value!)} (Select time)';
+    } else {
+      preferredTimeDisplay.value = '';
+    }
+  }
+
+  /// Get the combined preferred DateTime
+  DateTime? get preferredDateTime {
+    if (selectedDate.value != null && selectedTime.value != null) {
+      return DateTime(
+        selectedDate.value!.year,
+        selectedDate.value!.month,
+        selectedDate.value!.day,
+        selectedTime.value!.hour,
+        selectedTime.value!.minute,
+      );
+    }
+    return null;
+  }
+
+  /// Validate preferred time selection
+  bool validatePreferredTime() {
+    if (selectedDate.value == null) {
+      Get.snackbar(
+        'Missing Date',
+        'Please select a preferred date for your booking',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    }
+
+    if (selectedTime.value == null) {
+      Get.snackbar(
+        'Missing Time',
+        'Please select a preferred time for your booking',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    }
+
+    final preferredDateTime = this.preferredDateTime;
+    if (preferredDateTime == null ||
+        preferredDateTime.isBefore(DateTime.now())) {
+      Get.snackbar(
+        'Invalid Time',
+        'Please select a time in the future',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  /// Reset preferred time selection
+  void resetPreferredTime() {
+    selectedDate.value = null;
+    selectedTime.value = null;
+    preferredTimeDisplay.value = '';
+  }
+
+  /// Select images for booking
+  Future<void> selectImages() async {
+    try {
+      final List<XFile> images = await _imagePicker.pickMultiImage(
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+
+      if (images.isNotEmpty) {
+        // Limit to maximum 5 images
+        if (selectedImages.length + images.length > 5) {
+          Get.snackbar(
+            'Too Many Images',
+            'You can upload maximum 5 images per booking',
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+          );
+
+          // Take only the images that fit within the limit
+          final availableSlots = 5 - selectedImages.length;
+          if (availableSlots > 0) {
+            selectedImages.addAll(images.take(availableSlots));
+          }
+        } else {
+          selectedImages.addAll(images);
+        }
+      }
+    } catch (e) {
+      print('❌ Error selecting images: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to select images. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  /// Remove an image from selection
+  void removeImage(int index) {
+    if (index >= 0 && index < selectedImages.length) {
+      selectedImages.removeAt(index);
+    }
+  }
+
+  /// Upload images to Firebase Storage
+  Future<List<String>> uploadImages(String bookingId) async {
+    if (selectedImages.isEmpty) return [];
+
+    isUploadingImages.value = true;
+    List<String> imageUrls = [];
+
+    try {
+      for (int i = 0; i < selectedImages.length; i++) {
+        final XFile image = selectedImages[i];
+        final String fileName =
+            'booking_${bookingId}_image_${i + 1}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final Reference ref = _storage.ref().child(
+          'bookings/$bookingId/$fileName',
+        );
+
+        final UploadTask uploadTask = ref.putFile(File(image.path));
+        final TaskSnapshot taskSnapshot = await uploadTask;
+        final String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+        imageUrls.add(downloadUrl);
+      }
+    } catch (e) {
+      print('❌ Error uploading images: $e');
+      Get.snackbar(
+        'Upload Error',
+        'Failed to upload some images. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isUploadingImages.value = false;
+    }
+
+    return imageUrls;
+  }
+
+  /// Reset image selection
+  void resetImageSelection() {
+    selectedImages.clear();
+    isUploadingImages.value = false;
+  }
 
   /// Create a new booking
   Future<bool> createBooking({
@@ -79,25 +347,45 @@ class BookingController extends GetxController {
           .add(booking.toFirestore());
 
       if (docRef.id.isNotEmpty) {
+        // Upload images if any are selected
+        List<String> imageUrls = [];
+        if (selectedImages.isNotEmpty) {
+          print('📸 Uploading ${selectedImages.length} images...');
+          imageUrls = await uploadImages(docRef.id);
+
+          // Update the booking document with image URLs
+          if (imageUrls.isNotEmpty) {
+            await docRef.update({'images': imageUrls});
+            print('✅ Images uploaded and booking updated with URLs');
+          }
+        }
+
         isBookingCreated.value = true;
         bookingStatus.value = 'Booking created successfully!';
-
-        Get.snackbar(
-          'Success',
-          'Booking created successfully! The trader will be notified.',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 3),
-        );
 
         print('✅ Booking created with ID: ${docRef.id}');
         print(
           '📊 Booking details: Category: $category, Service: $service, JobType: $jobType',
         );
+        if (imageUrls.isNotEmpty) {
+          print('📸 Uploaded ${imageUrls.length} images');
+        }
+
+        // Show success snackbar after a delay to avoid interfering with dialog close
+        Future.delayed(const Duration(milliseconds: 800), () {
+          Get.snackbar(
+            'Success',
+            'Booking created successfully! The trader will be notified.',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 3),
+          );
+        });
 
         return true;
       }
 
+      print('⚠️ docRef.id is empty, returning false');
       return false;
     } catch (e) {
       print('❌ Error creating booking: $e');
@@ -162,10 +450,44 @@ class BookingController extends GetxController {
   /// Update booking status
   Future<bool> updateBookingStatus(String bookingId, String status) async {
     try {
+      // Get booking data before updating for notification
+      final bookingDoc =
+          await _firestore.collection('bookings').doc(bookingId).get();
+      if (!bookingDoc.exists) {
+        Get.snackbar(
+          'Error',
+          'Booking not found',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+
+      final bookingData = bookingDoc.data()!;
+      final customerId = bookingData['userId'] as String;
+      final jobTitle =
+          bookingData['service'] ?? bookingData['category'] ?? 'Job';
+
+      // Update booking status
       await _firestore.collection('bookings').doc(bookingId).update({
         'status': status,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
       });
+
+      // Create notifications for booking acceptance/rejection
+      if (status == 'accepted') {
+        await NotificationService.createBookingAcceptedNotification(
+          customerId: customerId,
+          bookingId: bookingId,
+          jobTitle: jobTitle,
+        );
+      } else if (status == 'rejected') {
+        await NotificationService.createBookingRejectedNotification(
+          customerId: customerId,
+          bookingId: bookingId,
+          jobTitle: jobTitle,
+        );
+      }
 
       Get.snackbar(
         'Success',
@@ -222,9 +544,13 @@ class BookingController extends GetxController {
       return;
     }
 
+    // Reset preferred time selection when opening dialog
+    resetPreferredTime();
+    resetImageSelection();
+
     final TextEditingController notesController = TextEditingController();
 
-    Get.dialog(
+    await Get.dialog(
       AlertDialog(
         title: Text('Book $traderName'),
         content: SingleChildScrollView(
@@ -237,10 +563,217 @@ class BookingController extends GetxController {
               Text('Service: $service'),
               const SizedBox(height: 8),
               Text('Job Type: $jobType'),
-
               const SizedBox(height: 8),
               Text("Price: $price"),
+              const SizedBox(height: 16),
+
+              // Preferred Date Selection
+              const Text(
+                'Preferred Date & Time*',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.primaryText,
+                ),
+              ),
               const SizedBox(height: 8),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: Obx(
+                      () => OutlinedButton.icon(
+                        onPressed: () => selectPreferredDate(Get.context!),
+                        icon: const Icon(Icons.calendar_today, size: 18),
+                        label: Text(
+                          selectedDate.value != null
+                              ? DateFormat(
+                                'MMM dd, yyyy',
+                              ).format(selectedDate.value!)
+                              : 'Select Date',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColor.primaryText,
+                          side: BorderSide(
+                            color:
+                                selectedDate.value == null
+                                    ? Colors.red
+                                    : AppColor.primaryText,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 8,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Obx(
+                      () => OutlinedButton.icon(
+                        onPressed: () => selectPreferredTime(Get.context!),
+                        icon: const Icon(Icons.access_time, size: 18),
+                        label: Text(
+                          selectedTime.value != null
+                              ? selectedTime.value!.format(Get.context!)
+                              : 'Select Time',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColor.primaryText,
+                          side: BorderSide(
+                            color:
+                                selectedTime.value == null
+                                    ? Colors.red
+                                    : AppColor.primaryText,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 8,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              // Display selected date and time
+              Obx(
+                () =>
+                    preferredTimeDisplay.value.isNotEmpty
+                        ? Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColor.orangeCustomColor.withValues(
+                              alpha: 0.1,
+                            ),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: AppColor.orangeCustomColor.withValues(
+                                alpha: 0.3,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.schedule,
+                                size: 16,
+                                color: AppColor.orangeCustomColor,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  'Preferred: ${preferredTimeDisplay.value}',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppColor.primaryText,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        : const SizedBox.shrink(),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Image Selection Section
+              const Text(
+                'Images (Optional)',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.primaryText,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Add Images Button
+              OutlinedButton.icon(
+                onPressed: () => selectImages(),
+                icon: const Icon(Icons.add_photo_alternate, size: 18),
+                label: const Text('Add Images', style: TextStyle(fontSize: 14)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColor.primaryText,
+                  side: const BorderSide(color: AppColor.primaryText),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // Display selected images
+              Obx(
+                () =>
+                    selectedImages.isNotEmpty
+                        ? SizedBox(
+                          height: 100,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: selectedImages.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                margin: const EdgeInsets.only(right: 8),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(7),
+                                        child: Image.file(
+                                          File(selectedImages[index].path),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: -5,
+                                      top: -5,
+                                      child: IconButton(
+                                        onPressed: () => removeImage(index),
+                                        icon: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                            size: 14,
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                        : const SizedBox.shrink(),
+              ),
+
+              const SizedBox(height: 16),
+
               TextField(
                 controller: notesController,
                 decoration: const InputDecoration(
@@ -266,7 +799,11 @@ class BookingController extends GetxController {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () {
+              resetPreferredTime();
+              resetImageSelection();
+              Get.back();
+            },
             child: const Text(
               'Cancel',
               style: TextStyle(color: AppColor.primaryText),
@@ -282,22 +819,32 @@ class BookingController extends GetxController {
                   isLoading.value
                       ? null
                       : () async {
-                        UserController userController = Get.find();
+                        // Validate preferred time before proceeding
+                        if (!validatePreferredTime()) {
+                          return;
+                        }
+
+                        JobPostController controller = Get.find();
                         final success = await createBooking(
                           traderId: traderId,
                           category: category,
                           service: service,
                           jobType: jobType,
                           notes: notesController.text.trim(),
-                          latitude: userController.latitude.value,
-                          longitude: userController.longitude.value,
+                          preferredTime:
+                              preferredDateTime, // Pass the preferred time
+                          latitude: controller.selectedLat.value,
+                          longitude: controller.selectedLon.value,
                           price: price,
                         );
 
+                        print('🔍 Booking creation result: $success');
+
                         if (success) {
+                          resetPreferredTime();
+                          resetImageSelection();
+                          // Close the dialog immediately
                           Get.back();
-                          Get.back();
-                          // Close dialog
                         }
                       },
               child:
@@ -343,5 +890,7 @@ class BookingController extends GetxController {
     isLoading.value = false;
     isBookingCreated.value = false;
     bookingStatus.value = '';
+    resetPreferredTime();
+    resetImageSelection();
   }
 }

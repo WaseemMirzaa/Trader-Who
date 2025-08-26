@@ -279,7 +279,7 @@ class LoginController extends GetxController {
           "email": googleUser.email,
           "name": googleUser.displayName ?? '',
           "user_type": role,
-          "createdAt": DateTime.now(),
+          "createdAt": DateTime.now().millisecondsSinceEpoch,
           "status": role == 'tradesperson' ? 'pending' : null,
         };
 
@@ -330,7 +330,7 @@ class LoginController extends GetxController {
               "${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}"
                   .trim(),
           "user_type": selectedRole,
-          "createdAt": DateTime.now(),
+          "createdAt": DateTime.now().millisecondsSinceEpoch,
           "status": selectedRole == 'tradesperson' ? 'pending' : null,
         };
 

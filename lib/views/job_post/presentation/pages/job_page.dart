@@ -20,6 +20,7 @@ class _JobPageState extends State<JobPage> {
 
   String? _selectedJobType;
   ServiceItem? _selectedService;
+  String? _largeSelectCategory;
 
   final List<Map<String, String>> _jobTypes = [
     {'value': 'smallJob', 'label': 'Instant Book-Fixed Price'},
@@ -160,31 +161,99 @@ class _JobPageState extends State<JobPage> {
                       color: Colors.black,
                     ),
                     const Gap(10),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColor.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.check_circle,
-                            color: AppColor.primaryButton,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            widget.selectedCategory,
-                            style: TextStyle(
-                              color: AppColor.secondaryText,
-                              fontFamily: 'openSans',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                    if (_selectedJobType == 'smallJob')
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColor.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: AppColor.primaryButton,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 8),
+                            Text(
+                              widget.selectedCategory,
+                              style: TextStyle(
+                                color: AppColor.secondaryText,
+                                fontFamily: 'openSans',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    if (_selectedJobType == 'largeJob')
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColor.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _largeSelectCategory,
+                            hint: Row(
+                              children: [
+                                Icon(
+                                  Icons.category,
+                                  color: AppColor.secondaryText,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Select a category',
+                                  style: TextStyle(
+                                    color: AppColor.secondaryText,
+                                    fontFamily: 'openSans',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            isExpanded: true,
+                            icon: Icon(
+                              Icons.keyboard_arrow_down,
+                              color: AppColor.secondaryText,
+                            ),
+                            items:
+                                _serviceController.largeCategories.entries.map((
+                                  entry,
+                                ) {
+                                  return DropdownMenuItem<String>(
+                                    value: entry.key,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle,
+                                          color: AppColor.primaryButton,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          entry.key,
+                                          style: TextStyle(
+                                            color: AppColor.secondaryText,
+                                            fontFamily: 'openSans',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _largeSelectCategory = newValue;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
                     const Gap(20),
 
                     // Loading indicator
@@ -194,8 +263,8 @@ class _JobPageState extends State<JobPage> {
                     ],
 
                     // Conditional Sections Based on Job Type
-                    if (_selectedJobType == 'smallJob' &&
-                        !_jobController.isLoading.value) ...[
+                    if (!_jobController.isLoading.value &&
+                        _selectedJobType == 'smallJob') ...[
                       _buildQuickJobSelection(screenWidth, screenHeight),
                     ] else if (_selectedJobType == 'largeJob') ...[
                       _buildBudgetField(screenWidth, screenHeight),
@@ -216,7 +285,10 @@ class _JobPageState extends State<JobPage> {
                         Get.toNamed(
                           AppRoutes.tradeContainer,
                           arguments: {
-                            'selectedCategory': widget.selectedCategory,
+                            'selectedCategory':
+                                _selectedJobType == "largeJob"
+                                    ? _largeSelectCategory
+                                    : widget.selectedCategory,
                             'selectedService': _selectedService?.title,
                             'jobType': _selectedJobType,
                             'servicePrice': _selectedService?.price,
@@ -300,6 +372,7 @@ class _JobPageState extends State<JobPage> {
                 onTap: () {
                   setState(() {
                     _selectedService = service;
+                    Get.find<ServiceController>().selectedService(service);
                     _titleController.text =
                         '${widget.selectedCategory} - ${service.title}';
                     _descriptionController.text =
@@ -446,6 +519,17 @@ class _JobPageState extends State<JobPage> {
           hintStyle: const TextStyle(
             color: AppColor.grayHintText,
             fontSize: 15,
+          ),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.map, color: AppColor.midGray),
+            onPressed: () async {
+              await _jobController.pickLocationFromMap();
+              if (_jobController.address != null) {
+                setState(() {
+                  _locationController.text = _jobController.address!;
+                });
+              }
+            },
           ),
           keyboardType: TextInputType.streetAddress,
           validator: (value) {

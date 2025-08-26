@@ -144,7 +144,7 @@ class MyaccountController extends GetxController {
             'phone': phoneController.text,
             'address': addressController.text,
             'username': usernameController.text,
-            'updatedAt': FieldValue.serverTimestamp(),
+            'updatedAt': DateTime.now().millisecondsSinceEpoch,
             // Explicitly remove tradesperson fields for customers
             'title': FieldValue.delete(),
             'bio': FieldValue.delete(),

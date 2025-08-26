@@ -17,4 +17,16 @@ class HelperService {
         return status.capitalize ?? status;
     }
   }
+
+  static String formattedJobType(String jobType) {
+    switch (jobType) {
+      case 'smallJob':
+        return 'Small Job';
+      case 'largeJob':
+        return 'Large Job';
+
+      default:
+        return jobType.capitalize ?? jobType;
+    }
+  }
 }

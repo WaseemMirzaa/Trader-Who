@@ -96,16 +96,34 @@ class TradePeopleModel {
       status: data['status'],
       createdAt:
           data['created_at'] != null
-              ? (data['created_at'] as Timestamp).toDate()
+              ? (data['created_at'] is Timestamp
+                  ? (data['created_at'] as Timestamp).toDate()
+                  : (data['created_at'] is int
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                        data['created_at'] as int,
+                      )
+                      : DateTime.now()))
               : null,
       availability: data['availability'],
       startTime:
           data['start_time'] != null
-              ? (data['start_time'] as Timestamp).toDate()
+              ? (data['start_time'] is Timestamp
+                  ? (data['start_time'] as Timestamp).toDate()
+                  : (data['start_time'] is int
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                        data['start_time'] as int,
+                      )
+                      : null))
               : null,
       endTime:
           data['end_time'] != null
-              ? (data['end_time'] as Timestamp).toDate()
+              ? (data['end_time'] is Timestamp
+                  ? (data['end_time'] as Timestamp).toDate()
+                  : (data['end_time'] is int
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                        data['end_time'] as int,
+                      )
+                      : null))
               : null,
     );
   }
@@ -212,7 +230,13 @@ class OccupationModel {
       tradePeopleId: data['trade_people_id'],
       createdAt:
           data['created_at'] != null
-              ? (data['created_at'] as Timestamp).toDate()
+              ? (data['created_at'] is Timestamp
+                  ? (data['created_at'] as Timestamp).toDate()
+                  : (data['created_at'] is int
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                        data['created_at'] as int,
+                      )
+                      : DateTime.now()))
               : null,
     );
   }

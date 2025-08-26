@@ -3,6 +3,7 @@ import 'package:traderwho/controller/change_password_controller.dart';
 import 'package:traderwho/controller/chat_controller.dart';
 import 'package:traderwho/controller/custom_job_post_controller.dart';
 import 'package:traderwho/controller/homepage_controller.dart';
+import 'package:traderwho/controller/quote_controller.dart';
 import 'package:traderwho/controller/service_controller.dart';
 import 'package:traderwho/controller/job_history_page_controller.dart';
 import 'package:traderwho/controller/login_controller.dart';
@@ -31,5 +32,6 @@ import 'package:traderwho/controller/user_controller.dart';
 import 'package:traderwho/controller/verification_email_controller.dart';
 import 'package:traderwho/models/user_model.dart';
 import 'package:traderwho/views/splash/controller.dart';
+import 'package:traderwho/views/trades_profile/presentation/widgets/widgets.dart';
 
 part 'app_binding.dart';

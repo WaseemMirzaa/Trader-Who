@@ -42,11 +42,11 @@ class TradeRatePage extends StatelessWidget {
                             color: AppColor.primaryText,
                           ),
                           const SizedBox(height: 16),
-                          ...controller.categories.keys.map((category) {
+                          ...controller.smallCategories.keys.map((category) {
                             int enabledServices = controller
-                                .getEnabledServicesCount(category);
+                                .getEnabledSmallServicesCount(category);
                             int totalServices = controller
-                                .getTotalServicesCount(category);
+                                .getTotalSmallServicesCount(category);
                             return CategoryCard(
                               category: category,
                               icon: controller.getCategoryIcon(category),
@@ -130,7 +130,9 @@ class TradeRatePage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           ...controller
-                              .categories[controller.selectedCategory.value]!
+                              .smallCategories[controller
+                                  .selectedCategory
+                                  .value]!
                               .asMap()
                               .entries
                               .map((entry) {

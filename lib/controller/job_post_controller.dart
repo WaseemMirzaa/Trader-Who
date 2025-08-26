@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:traderwho/core/shared_widgets/map_picker_screen.dart';
 import 'package:traderwho/models/main_service_model.dart';
 import 'package:traderwho/models/models.dart';
 
@@ -14,6 +16,9 @@ class JobPostController extends GetxController {
   MainServiceModel? predefinedSmallJobs;
   Map<String, List<ServiceItem>> get smallCategories =>
       predefinedSmallJobs?.predefinedServices ?? {};
+  String? address;
+  RxDouble selectedLat = 0.0.obs;
+  RxDouble selectedLon = 0.0.obs;
 
   @override
   void onInit() {
@@ -21,6 +26,22 @@ class JobPostController extends GetxController {
     getPredefinedServices();
 
     loadAvailableServices();
+  }
+
+  Future<void> pickLocationFromMap() async {
+    try {
+      final result = await Get.to<Map<String, dynamic>>(
+        () => const MapPickerScreen(),
+      );
+      if (result != null) {
+        address = result['address'];
+        selectedLat.value = result['lat'];
+        selectedLon.value = result['lon'];
+      }
+    } catch (e) {
+      debugPrint("Error picking location: $e");
+      Get.snackbar('Error', 'Could not pick location');
+    }
   }
 
   getPredefinedServices() async {

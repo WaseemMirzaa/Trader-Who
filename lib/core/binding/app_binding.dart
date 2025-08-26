@@ -74,9 +74,7 @@ class TradesPageBinding extends Bindings {
 class TradesLargerJoBPageBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<TradeRateLargeJobController>(
-      () => TradeRateLargeJobController(),
-    );
+    Get.lazyPut<ServiceController>(() => ServiceController());
   }
 }
 
@@ -84,6 +82,7 @@ class JobHistoryPageBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<JobHistoryPageController>(() => JobHistoryPageController());
+    Get.lazyPut<QuoteController>(() => QuoteController());
   }
 }
 
@@ -143,6 +142,9 @@ class MainPageWithNavBarBinding extends Bindings {
     Get.lazyPut<JobHistoryPageController>(() => JobHistoryPageController());
     Get.lazyPut<ChatController>(() => ChatController());
 
+    // Quote controller for both customers and traders
+    Get.lazyPut<QuoteController>(() => QuoteController());
+
     // Trade pages controllers
     Get.lazyPut<TradeHomeController>(() => TradeHomeController());
     Get.lazyPut<TradeJobHistoryController>(() => TradeJobHistoryController());
@@ -161,9 +163,7 @@ class TradeContainerBinding extends Bindings {
 class TradeNotificationBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<TradeNotificationController>(
-      () => TradeNotificationController(),
-    );
+    Get.lazyPut<NotificationController>(() => NotificationController());
   }
 }
 

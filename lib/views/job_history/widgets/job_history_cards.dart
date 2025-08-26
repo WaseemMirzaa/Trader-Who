@@ -42,7 +42,7 @@ class JobHistoryCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        job.title,
+                        job.tradesPerson.name,
                         style: const TextStyle(
                           color: AppColor.primaryText,
                           fontFamily: 'openSans',

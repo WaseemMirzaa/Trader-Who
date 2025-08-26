@@ -105,13 +105,12 @@ class BookingModel {
       if (id != null) 'id': id,
       'createdAt':
           createdAt != null
-              ? Timestamp.fromDate(createdAt!)
-              : FieldValue.serverTimestamp(),
+              ? createdAt!.millisecondsSinceEpoch
+              : DateTime.now().millisecondsSinceEpoch,
       'images': images,
       'location': GeoPoint(latitude, longitude), // Firestore GeoPoint
       'notes': notes,
-      'preferredTime':
-          preferredTime != null ? Timestamp.fromDate(preferredTime!) : null,
+      'preferredTime': preferredTime?.millisecondsSinceEpoch,
       'price': price,
       'rating': rating,
       'review': review,
@@ -119,8 +118,8 @@ class BookingModel {
       'traderId': traderId,
       'updatedAt':
           updatedAt != null
-              ? Timestamp.fromDate(updatedAt!)
-              : FieldValue.serverTimestamp(),
+              ? updatedAt!.millisecondsSinceEpoch
+              : DateTime.now().millisecondsSinceEpoch,
       'userId': userId,
       'category': category,
       'service': service,
@@ -152,9 +151,11 @@ class BookingModel {
           map['createdAt'] != null
               ? (map['createdAt'] is Timestamp
                   ? (map['createdAt'] as Timestamp).toDate()
-                  : DateTime.fromMillisecondsSinceEpoch(
-                    map['createdAt'] as int,
-                  ))
+                  : (map['createdAt'] is int
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                        map['createdAt'] as int,
+                      )
+                      : DateTime.now()))
               : null,
       images:
           map['images'] != null
@@ -167,9 +168,11 @@ class BookingModel {
           map['preferredTime'] != null
               ? (map['preferredTime'] is Timestamp
                   ? (map['preferredTime'] as Timestamp).toDate()
-                  : DateTime.fromMillisecondsSinceEpoch(
-                    map['preferredTime'] as int,
-                  ))
+                  : (map['preferredTime'] is int
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                        map['preferredTime'],
+                      )
+                      : null))
               : null,
       price: (map['price'] as num?)?.toDouble() ?? 0.0,
       rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
@@ -180,9 +183,11 @@ class BookingModel {
           map['updatedAt'] != null
               ? (map['updatedAt'] is Timestamp
                   ? (map['updatedAt'] as Timestamp).toDate()
-                  : DateTime.fromMillisecondsSinceEpoch(
-                    map['updatedAt'] as int,
-                  ))
+                  : (map['updatedAt'] is int
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                        map['updatedAt'] as int,
+                      )
+                      : DateTime.now()))
               : null,
       userId: map['userId'] as String? ?? '',
       category: map['category'] as String? ?? '',

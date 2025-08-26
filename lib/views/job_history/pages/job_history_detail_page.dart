@@ -262,12 +262,12 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                             // Store controller if needed
                           },
                           initialCameraPosition: CameraPosition(
-                            target: LatLng(33.6844, 73.0479),
+                            target: widget.job.location,
                             zoom: 15.0,
                           ),
                           markers: {
                             Marker(
-                              markerId: const MarkerId('job_location'),
+                              markerId: MarkerId(widget.job.bookingId),
                               position: widget.job.location,
                               infoWindow: InfoWindow(title: widget.job.address),
                             ),

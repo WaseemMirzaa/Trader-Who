@@ -183,9 +183,9 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
                           onReject: () async {
                             // Update status in Firebase
                             final newStatus =
-                                job.showQuoteButtons
-                                    ? 'Not Interested'
-                                    : 'Rejected';
+                                job.jobType == "largeJob"
+                                    ? 'notInterested'
+                                    : 'rejected';
 
                             // Find the corresponding booking and update it
                             final booking = _findBookingForJob(
@@ -195,27 +195,36 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
                             if (booking != null) {
                               await jobHistoryController.updateBookingStatus(
                                 booking.id ?? '',
-                                newStatus.toLowerCase(),
+                                newStatus,
                               );
                             }
                           },
-                          onAccept: () async {
-                            // Update status in Firebase
-                            final newStatus =
-                                job.showQuoteButtons ? 'Quoted' : 'Accepted';
+                          // onAccept: () async {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder:
+                          //           (context) => TradeJobHistoryDetailPage(
+                          //             job: filteredJobs[index],
+                          //           ),
+                          //     ),
+                          //   );
+                          //   // Update status in Firebase
+                          //   // final newStatus =
+                          //   //     job.showQuoteButtons ? 'Quoted' : 'Accepted';
 
-                            // Find the corresponding booking and update it
-                            final booking = _findBookingForJob(
-                              job,
-                              jobHistoryController,
-                            );
-                            if (booking != null) {
-                              await jobHistoryController.updateBookingStatus(
-                                booking.id ?? '',
-                                newStatus.toLowerCase(),
-                              );
-                            }
-                          },
+                          //   // // Find the corresponding booking and update it
+                          //   // final booking = _findBookingForJob(
+                          //   //   job,
+                          //   //   jobHistoryController,
+                          //   // );
+                          //   // if (booking != null) {
+                          //   //   await jobHistoryController.updateBookingStatus(
+                          //   //     booking.id ?? '',
+                          //   //     newStatus.toLowerCase(),
+                          //   //   );
+                          //   // }
+                          // },
                         );
                       },
                       separatorBuilder:
@@ -239,14 +248,14 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
   ) {
     // Try to find in user bookings first
     for (final booking in controller.userBookings) {
-      if (booking.category == job.jobType && booking.price == job.price) {
+      if (booking.category == job.category && booking.price == job.price) {
         return booking;
       }
     }
 
     // Then try trader bookings
     for (final booking in controller.traderBookings) {
-      if (booking.category == job.jobType && booking.price == job.price) {
+      if (booking.category == job.category && booking.price == job.price) {
         return booking;
       }
     }

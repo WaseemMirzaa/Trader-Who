@@ -23,6 +23,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     } else if (sentAt is Timestamp) {
       final dt = sentAt.toDate();
       return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+    } else if (sentAt is int) {
+      final dt = DateTime.fromMillisecondsSinceEpoch(sentAt);
+      return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
     }
     return "";
   }

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:traderwho/controller/service_controller.dart';
 import 'package:traderwho/controller/trade_large_job_rate_controller.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
@@ -17,9 +18,7 @@ class TradeLargerRatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TradeRateLargeJobController controller = Get.put(
-      TradeRateLargeJobController(),
-    );
+    final ServiceController controller = Get.put(ServiceController());
 
     return TraderWhoScaffold(
       appBar: TradeRatesAppbar(title: "Set Fixed Prices for large Jobs"),
@@ -56,17 +55,17 @@ class TradeLargerRatePage extends StatelessWidget {
                             color: AppColor.primaryText,
                           ),
                           const SizedBox(height: 16),
-                          ...controller.categories.keys.map((category) {
+                          ...controller.largeCategories.keys.map((category) {
                             int enabledServices = controller
-                                .getEnabledServicesCount(category);
+                                .getEnabledLargeServicesCount(category);
                             int totalServices = controller
-                                .getTotalServicesCount(category);
+                                .getTotalLargeServicesCount(category);
                             return CategoryCard(
                               category: category,
                               icon: controller.getCategoryIcon(category),
                               enabledServices: enabledServices,
                               totalServices: totalServices,
-                              onTap: () => controller.selectCategory(category),
+                              onTap: () => controller.selectService(category),
                             );
                           }),
                           const SizedBox(height: 20),
@@ -86,7 +85,7 @@ class TradeLargerRatePage extends StatelessWidget {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () => controller.selectCategory(null),
+                                onTap: () => controller.selectedCategory(null),
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
@@ -142,7 +141,9 @@ class TradeLargerRatePage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           ...controller
-                              .categories[controller.selectedCategory.value]!
+                              .largeCategories[controller
+                                  .selectedCategory
+                                  .value]!
                               .asMap()
                               .entries
                               .map((entry) {
@@ -169,7 +170,9 @@ class TradeLargerRatePage extends StatelessWidget {
                           ],
                           const SizedBox(height: 32),
                           CustomButton(
-                            onTap: controller.saveUserServices,
+                            onTap: () {
+                              controller.saveUserServices(isFromLargeJob: true);
+                            },
                             color: AppColor.primaryButton,
                             text: 'Save Configuration',
                             textColor: AppColor.white,
@@ -185,7 +188,7 @@ class TradeLargerRatePage extends StatelessWidget {
 
   void _showPriceDialog(
     BuildContext context,
-    TradeRateLargeJobController controller,
+    ServiceController controller,
     ServiceItem service,
     int index,
     String category,

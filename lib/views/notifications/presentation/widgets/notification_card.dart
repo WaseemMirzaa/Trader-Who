@@ -20,7 +20,19 @@ class NotificationCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          CircleAvatar(radius: 30, backgroundImage: AssetImage(avatarImage)),
+          // Handle both network and asset images
+          CircleAvatar(
+            radius: 30,
+            backgroundImage:
+                avatarImage.startsWith('http')
+                    ? NetworkImage(avatarImage) as ImageProvider
+                    : AssetImage(avatarImage),
+            backgroundColor: AppColor.primaryButton.withOpacity(0.1),
+            child:
+                avatarImage.isEmpty
+                    ? const Icon(Icons.person, color: AppColor.primaryButton)
+                    : null,
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -29,19 +41,22 @@ class NotificationCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontFamily: 'openSans',
-
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.primaryText,
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontFamily: 'openSans',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.primaryText,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Text(
                       time,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         color: AppColor.secondaryText,
                         fontFamily: 'openSans',
@@ -52,11 +67,13 @@ class NotificationCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     color: AppColor.secondaryText,
                     fontFamily: 'openSans',
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

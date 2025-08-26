@@ -6,18 +6,30 @@ import 'package:get/get.dart';
 import 'package:traderwho/models/main_service_model.dart';
 import 'package:traderwho/models/models.dart';
 import 'package:traderwho/views/trades_profile/presentation/pages/pages.dart';
+import 'package:traderwho/views/trades_profile/presentation/pages/trade_large_job_rate_page.dart';
 
 class ServiceController extends GetxController {
   MainServiceModel? predefinedSmallJobs;
+  MainServiceModel? predefinedLargeJobs;
   RxString selectedCategory = RxString('');
   final RxMap<String, List<ServiceItem>> smallCategories =
       <String, List<ServiceItem>>{}.obs;
+  final RxMap<String, List<ServiceItem>> largeCategories =
+      <String, List<ServiceItem>>{}.obs;
+  Rx<ServiceItem?> selectedService = Rx<ServiceItem?>(null);
 
   /// Returns categories sorted alphabetically by category name
   /// Note: Categories are already sorted in the underlying data structure
   List<String> get sortedCategoryNames {
     return smallCategories.keys.toList();
   }
+
+  List<String> get sortedLargeCategoryNames {
+    return largeCategories.keys.toList();
+  }
+
+  // Note: Removed allCategories and allCategoryNames getters to keep
+  // small and large job categories separate as they have different structures
 
   final RxMap<String, List<ServiceItem>> categories =
       <String, List<ServiceItem>>{}.obs;
@@ -34,7 +46,9 @@ class ServiceController extends GetxController {
     if (kDebugMode) {
       print('🎯 ServiceController onInit() called');
     }
+    // Load both small and large jobs
     getPredefinedServices();
+    getPredefinedLargeJobs();
     fromProfile.value = Get.arguments == true;
     loadCategories();
   }
@@ -123,8 +137,126 @@ class ServiceController extends GetxController {
     }
   }
 
+  getPredefinedLargeJobs() async {
+    if (kDebugMode) {
+      print('🔄 Starting getPredefinedLargeJobs()');
+    }
+    try {
+      var data =
+          await FirebaseFirestore.instance
+              .collection('Services')
+              .doc('largejoblist')
+              .get();
+
+      if (!data.exists) {
+        if (kDebugMode) {
+          print('❌ largejoblist document does not exist');
+        }
+        // This is not an error since large jobs might not be set up yet
+        return;
+      }
+
+      if (kDebugMode) {
+        print('✅ largejoblist document found');
+      }
+
+      MainServiceModel dataModel = MainServiceModel.fromMap(data.data()!);
+
+      // Create a map to store filtered services
+      Map<String, List<ServiceItem>> filteredServices = {};
+
+      // Process all categories in parallel
+      await Future.wait(
+        dataModel.predefinedServices.entries.map((entry) async {
+          String category = entry.key;
+          List<ServiceItem> services = entry.value;
+
+          // Process all services in this category in parallel
+          List<ServiceItem> validServices = [];
+          List<Future<void>> serviceFutures =
+              services.map((serviceItem) async {
+                try {
+                  (double?, double?) priceRange = await getPriceRange(
+                    serviceItem.id,
+                  );
+                  if (priceRange.$1 != null && priceRange.$2 != null) {
+                    serviceItem.lowestPrice = priceRange.$1;
+                    serviceItem.highestPrice = priceRange.$2;
+                    validServices.add(serviceItem);
+                  }
+                } catch (e) {
+                  if (kDebugMode) {
+                    print(
+                      '⚠️ Error getting price range for ${serviceItem.id}: $e',
+                    );
+                  }
+                }
+              }).toList();
+
+          await Future.wait(serviceFutures);
+
+          // Only add category if it has valid services
+          if (validServices.isNotEmpty) {
+            // Sort services by name (title) alphabetically
+            validServices.sort(
+              (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+            );
+            filteredServices[category] = validServices;
+          } else {
+            filteredServices[category] = [];
+          }
+        }),
+      );
+
+      // Sort the categories by name and create a new sorted map
+      final sortedFilteredServices = sortCategoriesByName(filteredServices);
+
+      // Create a new MainServiceModel with sorted filtered services
+      predefinedLargeJobs = MainServiceModel(
+        createdAt: dataModel.createdAt,
+        updatedAt: dataModel.updatedAt,
+        predefinedServices: sortedFilteredServices,
+      );
+
+      // Update the reactive largeCategories map
+      largeCategories.clear();
+      largeCategories.addAll(sortedFilteredServices);
+
+      if (kDebugMode) {
+        print(
+          '✅ Loaded ${largeCategories.keys.length} large job categories: ${largeCategories.keys.join(", ")}',
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching predefined large jobs: $e');
+      }
+      // Don't show error snackbar for large jobs as they might not be set up yet
+    }
+  }
+
   void selectService(String category) {
     selectedCategory(category);
+  }
+
+  /// Get services for a category, checking both small and large jobs
+  List<ServiceItem> getServicesForCategory(String category) {
+    if (smallCategories.containsKey(category)) {
+      return smallCategories[category] ?? [];
+    } else if (largeCategories.containsKey(category)) {
+      return largeCategories[category] ?? [];
+    }
+    return [];
+  }
+
+  /// Check if a category is from small jobs
+  bool isSmallJobCategory(String category) {
+    return smallCategories.containsKey(category);
+  }
+
+  /// Check if a category is from large jobs
+  bool isLargeJobCategory(String category) {
+    return largeCategories.containsKey(category);
   }
 
   /// Helper method to sort services by name alphabetically
@@ -134,16 +266,23 @@ class ServiceController extends GetxController {
     );
   }
 
-  /// Helper method to sort categories by name alphabetically
+  /// Helper method to sort categories by name alphabetically, with Custom Services first
   Map<String, List<ServiceItem>> sortCategoriesByName(
     Map<String, List<ServiceItem>> categoriesMap,
   ) {
     final sortedCategories = <String, List<ServiceItem>>{};
-    final sortedCategoryNames =
-        categoriesMap.keys.toList()
+
+    // Always put Custom Services first
+    if (categoriesMap.containsKey('Custom Services')) {
+      sortedCategories['Custom Services'] = categoriesMap['Custom Services']!;
+    }
+
+    // Sort remaining categories alphabetically
+    final otherCategoryNames =
+        categoriesMap.keys.where((name) => name != 'Custom Services').toList()
           ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
-    for (final categoryName in sortedCategoryNames) {
+    for (final categoryName in otherCategoryNames) {
       sortedCategories[categoryName] = categoriesMap[categoryName]!;
     }
 
@@ -162,23 +301,37 @@ class ServiceController extends GetxController {
       categories.clear();
       categories['Custom Services'] = [];
 
-      // final userDoc = await _firestore.collection('users').doc(userId).get();
-      final servicesPricesSnap =
+      // Initialize Custom Services for both small and large categories
+      smallCategories.clear();
+      largeCategories.clear();
+      smallCategories['Custom Services'] = [];
+      largeCategories['Custom Services'] = [];
+
+      // Load both small and large job prices
+      final smallJobPricesSnap =
           await _firestore
               .collection('services_prices')
               .where('jobType', isEqualTo: 'smallJob')
               .where('trader_id', isEqualTo: userId)
               .get();
-      final snapshot =
+
+      final largeJobPricesSnap =
+          await _firestore
+              .collection('services_prices')
+              .where('jobType', isEqualTo: 'largeJob')
+              .where('trader_id', isEqualTo: userId)
+              .get();
+      // Load small job predefined services
+      final smallJobSnapshot =
           await _firestore.collection('Services').doc('smalljoblist').get();
 
-      if (!snapshot.exists || snapshot.data() == null) {
+      if (!smallJobSnapshot.exists || smallJobSnapshot.data() == null) {
         Get.snackbar(
           'Warning',
           'No services found in smalljoblist. You can add custom services.',
         );
       } else {
-        final data = snapshot.data()!;
+        final data = smallJobSnapshot.data()!;
         final predefinedServices =
             data['predefinedServices'] as Map<String, dynamic>? ?? {};
 
@@ -203,12 +356,49 @@ class ServiceController extends GetxController {
         }
       }
 
-      // if (userDoc.exists && userDoc.data()!.containsKey('smalljoblist')) {
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> userServices =
-          servicesPricesSnap.docs;
+      // Load large job predefined services
+      final largeJobSnapshot =
+          await _firestore.collection('Services').doc('largejoblist').get();
 
+      if (largeJobSnapshot.exists && largeJobSnapshot.data() != null) {
+        final data = largeJobSnapshot.data()!;
+        final predefinedServices =
+            data['predefinedServices'] as Map<String, dynamic>? ?? {};
+
+        for (String category in predefinedServices.keys) {
+          final servicesList = predefinedServices[category] as List? ?? [];
+          final services =
+              servicesList
+                  .map((item) {
+                    if (item is Map<String, dynamic>) {
+                      return ServiceItem.fromMap(item);
+                    }
+                    return null;
+                  })
+                  .where((item) => item != null)
+                  .cast<ServiceItem>()
+                  .toList();
+
+          // Sort services by name (title) alphabetically
+          sortServicesByName(services);
+
+          largeCategories[category] = services;
+        }
+
+        if (kDebugMode) {
+          print(
+            '✅ Loaded ${largeCategories.keys.length} large job categories for pricing',
+          );
+        }
+      } else {
+        if (kDebugMode) {
+          print('⚠️ No largejoblist found in Services collection');
+        }
+      }
+
+      // Process small job user services separately
       for (QueryDocumentSnapshot<Map<String, dynamic>> userService
-          in userServices) {
+          in smallJobPricesSnap.docs) {
         final categoryValue = userService.data()['category'];
         if (categoryValue == null) {
           continue;
@@ -243,7 +433,7 @@ class ServiceController extends GetxController {
             );
           } catch (e) {
             if (kDebugMode) {
-              print('Error updating service in $category: $e');
+              print('Error updating small job service in $category: $e');
             }
           }
         } else {
@@ -251,25 +441,95 @@ class ServiceController extends GetxController {
             categories[category]!.add(ServiceItem.fromMap(userService.data()));
           } catch (e) {
             if (kDebugMode) {
-              print('Error adding service to $category: $e');
+              print('Error adding small job service to $category: $e');
             }
           }
         }
       }
 
-      // Sort all categories by service name after processing user services
+      // Process large job user services separately
+      for (QueryDocumentSnapshot<Map<String, dynamic>> userService
+          in largeJobPricesSnap.docs) {
+        final categoryValue = userService.data()['category'];
+        if (categoryValue == null) {
+          continue;
+        }
+        final category = categoryValue as String;
+
+        // Check if userService.id is not null and contains underscore
+        if (userService.id.isEmpty || !userService.id.contains('_')) {
+          continue;
+        }
+
+        final serviceParts = userService.id.split("_");
+        if (serviceParts.length < 2) {
+          continue;
+        }
+
+        // Ensure category exists in largeCategories map
+        if (!largeCategories.containsKey(category)) {
+          largeCategories[category] = [];
+        }
+
+        final index =
+            largeCategories[category]?.indexWhere(
+              (item) => item.id == serviceParts[1],
+            ) ??
+            -1;
+
+        if (index != -1) {
+          try {
+            largeCategories[category]![index] = ServiceItem.fromMap(
+              userService.data(),
+            );
+          } catch (e) {
+            if (kDebugMode) {
+              print('Error updating large job service in $category: $e');
+            }
+          }
+        } else {
+          try {
+            largeCategories[category]!.add(
+              ServiceItem.fromMap(userService.data()),
+            );
+          } catch (e) {
+            if (kDebugMode) {
+              print('Error adding large job service to $category: $e');
+            }
+          }
+        }
+      }
+
+      if (kDebugMode) {
+        print(
+          '📋 Processed ${smallJobPricesSnap.docs.length} small job services and ${largeJobPricesSnap.docs.length} large job services',
+        );
+      }
+
+      // Sort all small job categories by service name after processing user services
       for (String category in categories.keys) {
         if (categories[category]!.isNotEmpty) {
           sortServicesByName(categories[category]!);
         }
       }
 
-      // Sort categories by category name to ensure consistent ordering
-      final sortedCategories = sortCategoriesByName(categories);
+      // Sort all large job categories by service name after processing user services
+      for (String category in largeCategories.keys) {
+        if (largeCategories[category]!.isNotEmpty) {
+          sortServicesByName(largeCategories[category]!);
+        }
+      }
 
-      // Replace the categories with sorted version
+      // Sort categories by category name to ensure consistent ordering
+      final sortedSmallCategories = sortCategoriesByName(categories);
+      final sortedLargeCategories = sortCategoriesByName(largeCategories);
+
+      // Replace the categories with sorted versions
       categories.clear();
-      categories.addAll(sortedCategories);
+      categories.addAll(sortedSmallCategories);
+
+      largeCategories.clear();
+      largeCategories.addAll(sortedLargeCategories);
       // }
     } catch (e) {
       Get.snackbar('Error', 'Failed to load services: ${e.toString()}');
@@ -317,12 +577,25 @@ class ServiceController extends GetxController {
     if (kDebugMode) {
       print('✏️ Updating service: ${updatedService.title} in $category');
     }
-    categories[category]![index] = updatedService;
 
-    // Re-sort the category to maintain alphabetical order
-    sortServicesByName(categories[category]!);
-
-    categories.refresh();
+    // Update in the appropriate category map
+    if (smallCategories.containsKey(category)) {
+      smallCategories[category]![index] = updatedService;
+      // Re-sort the category to maintain alphabetical order
+      sortServicesByName(smallCategories[category]!);
+      smallCategories.refresh();
+    } else if (largeCategories.containsKey(category)) {
+      largeCategories[category]![index] = updatedService;
+      // Re-sort the category to maintain alphabetical order
+      sortServicesByName(largeCategories[category]!);
+      largeCategories.refresh();
+    } else {
+      // Fallback to categories for backward compatibility
+      categories[category]![index] = updatedService;
+      // Re-sort the category to maintain alphabetical order
+      sortServicesByName(categories[category]!);
+      categories.refresh();
+    }
   }
 
   void addCustomService() {
@@ -331,9 +604,21 @@ class ServiceController extends GetxController {
       isCustom: true,
       id: FirebaseFirestore.instance.collection('Services').doc().id,
     );
-    categories['Custom Services']!.add(service);
+
+    // Add to the appropriate category map
+    if (smallCategories.containsKey('Custom Services')) {
+      smallCategories['Custom Services']!.add(service);
+      smallCategories.refresh();
+    } else if (largeCategories.containsKey('Custom Services')) {
+      largeCategories['Custom Services']!.add(service);
+      largeCategories.refresh();
+    } else {
+      // Fallback to categories for backward compatibility
+      categories['Custom Services']!.add(service);
+      categories.refresh();
+    }
+
     selectService('Custom Services');
-    categories.refresh();
     if (kDebugMode) {
       print('➕ Custom service added and selected.');
     }
@@ -343,8 +628,19 @@ class ServiceController extends GetxController {
     if (kDebugMode) {
       print('🗑 Removing custom service from $category at index $index');
     }
-    categories[category]!.removeAt(index);
-    categories.refresh();
+
+    // Remove from the appropriate category map
+    if (smallCategories.containsKey(category)) {
+      smallCategories[category]!.removeAt(index);
+      smallCategories.refresh();
+    } else if (largeCategories.containsKey(category)) {
+      largeCategories[category]!.removeAt(index);
+      largeCategories.refresh();
+    } else {
+      // Fallback to categories for backward compatibility
+      categories[category]!.removeAt(index);
+      categories.refresh();
+    }
   }
 
   int getEnabledServicesCount(String category) {
@@ -363,6 +659,44 @@ class ServiceController extends GetxController {
     return total;
   }
 
+  /// Get enabled services count for small job categories
+  int getEnabledSmallServicesCount(String category) {
+    final count =
+        smallCategories[category]?.where((s) => s.isEnabled).length ?? 0;
+    if (kDebugMode) {
+      print('✔️ $count enabled small job services in $category');
+    }
+    return count;
+  }
+
+  /// Get total services count for small job categories
+  int getTotalSmallServicesCount(String category) {
+    final total = smallCategories[category]?.length ?? 0;
+    if (kDebugMode) {
+      print('📊 $total total small job services in $category');
+    }
+    return total;
+  }
+
+  /// Get enabled services count for large job categories
+  int getEnabledLargeServicesCount(String category) {
+    final count =
+        largeCategories[category]?.where((s) => s.isEnabled).length ?? 0;
+    if (kDebugMode) {
+      print('✔️ $count enabled large job services in $category');
+    }
+    return count;
+  }
+
+  /// Get total services count for large job categories
+  int getTotalLargeServicesCount(String category) {
+    final total = largeCategories[category]?.length ?? 0;
+    if (kDebugMode) {
+      print('📊 $total total large job services in $category');
+    }
+    return total;
+  }
+
   IconData getCategoryIcon(String category) {
     const icons = {
       'Custom Services': Icons.add,
@@ -373,7 +707,7 @@ class ServiceController extends GetxController {
     return icons[category] ?? Icons.build;
   }
 
-  Future<void> saveUserServices() async {
+  Future<void> saveUserServices({bool isFromLargeJob = false}) async {
     try {
       // Get count of enabled categories for logging
       final enabledCategoriesCount =
@@ -392,7 +726,7 @@ class ServiceController extends GetxController {
       // }, SetOptions(merge: true));
 
       // Also save individual services with userId_serviceId format
-      await saveIndividualServices();
+      await saveIndividualServices(isLargeJob: isFromLargeJob);
 
       if (kDebugMode) {
         print('✅ Prices saved successfully!');
@@ -402,8 +736,9 @@ class ServiceController extends GetxController {
         // If came from profile, just go back
         Get.back();
       } else {
-        // If came from signup flow, proceed to onboarding
-        Get.off(() => const TradeRatePage());
+        isFromLargeJob
+            ? Get.off(() => const TradeLargerRatePage())
+            : Get.off(() => const TradeRatePage());
       }
     } catch (e) {
       if (kDebugMode) {
@@ -414,14 +749,18 @@ class ServiceController extends GetxController {
   }
 
   /// Save individual services with docId format: userId_serviceId
-  Future<void> saveIndividualServices() async {
+  Future<void> saveIndividualServices({bool isLargeJob = false}) async {
     try {
       if (kDebugMode) {
         print('💾 Saving individual services with userId_serviceId format...');
       }
 
-      for (String category in categories.keys) {
-        final servicesList = categories[category] ?? [];
+      // Choose the appropriate category map based on job type
+      final Map<String, List<ServiceItem>> targetCategories =
+          isLargeJob ? largeCategories : smallCategories;
+
+      for (String category in targetCategories.keys) {
+        final servicesList = targetCategories[category] ?? [];
 
         for (ServiceItem service in servicesList) {
           if (service.isEnabled &&
@@ -435,13 +774,13 @@ class ServiceController extends GetxController {
               'name': service.title,
               'category': category,
               'jobId': serviceId,
-              'jobType': 'smallJob',
+              'jobType': isLargeJob ? 'largeJob' : 'smallJob',
               'price': service.price,
               'trader_id': userId,
               'description': service.description ?? '',
               'isCustom': service.isCustom,
-              'createdAt': FieldValue.serverTimestamp(),
-              'updatedAt': FieldValue.serverTimestamp(),
+              'createdAt': DateTime.now().millisecondsSinceEpoch,
+              'updatedAt': DateTime.now().millisecondsSinceEpoch,
               'isEnabled': true,
             };
 
@@ -451,14 +790,18 @@ class ServiceController extends GetxController {
                 .set(serviceData, SetOptions(merge: true));
 
             if (kDebugMode) {
-              print('✅ Saved service: ${service.title} with docId: $docId');
+              print(
+                '✅ Saved ${isLargeJob ? 'large' : 'small'} job service: ${service.title} with docId: $docId',
+              );
             }
           }
         }
       }
 
       if (kDebugMode) {
-        print('✅ All individual services saved successfully!');
+        print(
+          '✅ All individual ${isLargeJob ? 'large' : 'small'} job services saved successfully!',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
@@ -467,48 +810,52 @@ class ServiceController extends GetxController {
     }
   }
 
-  /// Save a single service with userId_serviceId format
-  Future<void> saveSingleService(String category, ServiceItem service) async {
-    try {
-      if (!service.isEnabled || service.price == null || service.price! <= 0) {
-        if (kDebugMode) {
-          print('⚠️ Service not enabled or price not set');
-        }
-        return;
-      }
+  // /// Save a single service with userId_serviceId format
+  // Future<void> saveSingleService(
+  //   String category,
+  //   ServiceItem service, {
+  //   bool isLargeJob = false,
+  // }) async {
+  //   try {
+  //     if (!service.isEnabled || service.price == null || service.price! <= 0) {
+  //       if (kDebugMode) {
+  //         print('⚠️ Service not enabled or price not set');
+  //       }
+  //       return;
+  //     }
 
-      // Use existing service ID
-      final serviceId = service.id;
-      final docId = '${userId}_$serviceId';
+  //     // Use existing service ID
+  //     final serviceId = service.id;
+  //     final docId = '${userId}_$serviceId';
 
-      final serviceData = {
-        'name': service.title,
-        'category': category,
-        'jobId': serviceId,
-        'jobType': 'smallJob',
-        'price': service.price,
-        'trader_id': userId,
-        'description': service.description ?? '',
-        'isCustom': service.isCustom,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-        'isEnabled': true,
-      };
+  //     final serviceData = {
+  //       'name': service.title,
+  //       'category': category,
+  //       'jobId': serviceId,
+  //       'jobType': isLargeJob ? 'largeJob' : 'smallJob',
+  //       'price': service.price,
+  //       'trader_id': userId,
+  //       'description': service.description ?? '',
+  //       'isCustom': service.isCustom,
+  //       'createdAt': DateTime.now().millisecondsSinceEpoch,
+  //       'updatedAt': DateTime.now().millisecondsSinceEpoch,
+  //       'isEnabled': true,
+  //     };
 
-      await _firestore
-          .collection('services_prices')
-          .doc(docId)
-          .set(serviceData, SetOptions(merge: true));
+  //     await _firestore
+  //         .collection('services_prices')
+  //         .doc(docId)
+  //         .set(serviceData, SetOptions(merge: true));
 
-      if (kDebugMode) {
-        print('✅ Single service saved: ${service.title} with docId: $docId');
-      }
-      Get.snackbar('Success', 'Service "${service.title}" saved successfully');
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ Error saving single service: $e');
-      }
-      Get.snackbar('Error', 'Failed to save service: ${e.toString()}');
-    }
-  }
+  //     if (kDebugMode) {
+  //       print('✅ Single service saved: ${service.title} with docId: $docId');
+  //     }
+  //     Get.snackbar('Success', 'Service "${service.title}" saved successfully');
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print('❌ Error saving single service: $e');
+  //     }
+  //     Get.snackbar('Error', 'Failed to save service: ${e.toString()}');
+  //   }
+  // }
 }

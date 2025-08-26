@@ -52,7 +52,13 @@ class CustomerModel {
       username: data['username'],
       createdAt:
           data['created_at'] != null
-              ? (data['created_at'] as Timestamp).toDate()
+              ? (data['created_at'] is Timestamp
+                  ? (data['created_at'] as Timestamp).toDate()
+                  : (data['created_at'] is int
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                        data['created_at'] as int,
+                      )
+                      : DateTime.now()))
               : null,
       userId: data['user_id'],
     );

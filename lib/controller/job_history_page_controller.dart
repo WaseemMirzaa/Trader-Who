@@ -2,7 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:traderwho/controller/quote_controller.dart';
+import 'package:traderwho/core/services/notification_service.dart';
+import 'package:traderwho/core/utils/location_utils.dart';
 import 'package:traderwho/models/models.dart';
+import 'package:traderwho/models/user_model.dart';
 
 class JobHistoryPageController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -14,10 +18,77 @@ class JobHistoryPageController extends GetxController {
   RxList<JobHistory> jobHistoryItems = <JobHistory>[].obs;
   RxString selectedTab = 'New Jobs'.obs;
 
+  // Date filtering
+  Rx<DateTime?> selectedDate = Rx<DateTime?>(DateTime.now());
+
   @override
   void onInit() {
     super.onInit();
     fetchBookings();
+  }
+
+  /// Set selected date for filtering
+  void setSelectedDate(DateTime date) {
+    selectedDate.value = date;
+  }
+
+  /// Get jobs filtered by selected date
+  List<JobHistory> getJobsForSelectedDate() {
+    if (selectedDate.value == null) {
+      return jobHistoryItems.toList();
+    }
+
+    final selectedDay = selectedDate.value!;
+    return jobHistoryItems.where((job) {
+      // Parse the preferredTime string back to DateTime
+      return _isJobScheduledOnDate(job, selectedDay);
+    }).toList();
+  }
+
+  /// Check if a job is scheduled on a specific date
+  bool _isJobScheduledOnDate(JobHistory job, DateTime date) {
+    // Get the original booking to access preferredTime
+    final booking = _findBookingForJob(job);
+    if (booking?.preferredTime == null) {
+      return false;
+    }
+
+    final jobDate = booking!.preferredTime!;
+    return jobDate.year == date.year &&
+        jobDate.month == date.month &&
+        jobDate.day == date.day;
+  }
+
+  /// Find booking for a given job
+  BookingModel? _findBookingForJob(JobHistory job) {
+    // Try user bookings first
+    for (final booking in userBookings) {
+      if (booking.category == job.category && booking.price == job.price) {
+        return booking;
+      }
+    }
+
+    // Then try trader bookings
+    for (final booking in traderBookings) {
+      if (booking.category == job.category && booking.price == job.price) {
+        return booking;
+      }
+    }
+
+    return null;
+  }
+
+  /// Get dates that have jobs scheduled
+  List<DateTime> getJobDates() {
+    List<DateTime> dates = [];
+
+    for (final booking in [...userBookings, ...traderBookings]) {
+      if (booking.preferredTime != null) {
+        dates.add(booking.preferredTime!);
+      }
+    }
+
+    return dates;
   }
 
   /// Fetch all bookings for current user
@@ -104,17 +175,21 @@ class JobHistoryPageController extends GetxController {
   }
 
   /// Convert BookingModel objects to JobHistory for UI compatibility
-  void _convertBookingsToJobHistory() {
+  Future<void> _convertBookingsToJobHistory() async {
     List<JobHistory> historyItems = [];
 
     // Convert user bookings (jobs the user posted as a customer)
     for (BookingModel booking in userBookings) {
-      historyItems.add(_bookingToJobHistory(booking, isUserBooking: true));
+      historyItems.add(
+        await _bookingToJobHistory(booking, isUserBooking: true),
+      );
     }
 
     // Convert trader bookings (jobs received as a trader)
     for (BookingModel booking in traderBookings) {
-      historyItems.add(_bookingToJobHistory(booking, isUserBooking: false));
+      historyItems.add(
+        await _bookingToJobHistory(booking, isUserBooking: false),
+      );
     }
 
     // Sort by creation date (newest first)
@@ -124,36 +199,88 @@ class JobHistoryPageController extends GetxController {
   }
 
   /// Convert a single BookingModel to JobHistory
-  JobHistory _bookingToJobHistory(
+  Future<JobHistory> _bookingToJobHistory(
     BookingModel booking, {
     required bool isUserBooking,
-  }) {
-    // Create a default TradesPerson if not available
-    TradesPerson defaultTrader = TradesPerson(
-      id: booking.traderId,
-      name: isUserBooking ? 'Trader' : 'Customer',
-      bio: 'Professional service provider',
-      expertise: booking.category,
-      description: booking.notes.isNotEmpty ? booking.notes : 'Service booking',
-      imageUrl: 'assets/images/chat-avatar.png',
-      price: booking.price.toString(),
-      rating: booking.rating,
-      largeJobs: [],
-      smallJobs: [],
-      latitude: booking.latitude,
-      longitude: booking.longitude,
+  }) async {
+    UserModel? customer;
+    final userDetails =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(booking.userId)
+            .get();
+
+    if (userDetails.exists) {
+      customer = UserModel.fromFirestore(userDetails);
+    }
+
+    // Fetch trader details if available
+    TradesPerson? traderData;
+    if (booking.traderId.isNotEmpty) {
+      try {
+        final traderDoc =
+            await _firestore.collection('users').doc(booking.traderId).get();
+        if (traderDoc.exists) {
+          // final data = traderDoc.data() as Map<String, dynamic>;
+          traderData = TradesPerson.fromDocumentSnapshot(traderDoc);
+          // TradesPerson(
+          //   id: booking.traderId,
+          //   name: data['name'] ?? 'Trader',
+          //   title: data['title'] ?? 'Professional',
+          //   bio: data['bio'] ?? 'Professional service provider',
+          //   expertise: data['expertise'] ?? booking.category,
+          //   description:
+          //       data['description'] ?? booking.notes.isNotEmpty
+          //           ? booking.notes
+          //           : 'Service booking',
+          //   imageUrl: data['imageUrl'] ?? 'assets/images/chat-avatar.png',
+          //   price: data['price'] ?? booking.price.toString(),
+          //   rating: data['rating']?.toDouble() ?? booking.rating,
+          //   largeJobs: data['largeJobs'] ?? [],
+          //   smallJobs: data['smallJobs'] ?? [],
+          //   latitude: data['latitude']?.toDouble() ?? booking.latitude,
+          //   longitude: data['longitude']?.toDouble() ?? booking.longitude,
+          //   startTime: data['start_time'],
+          //   endTime: data['end_time'],
+          // );
+        }
+      } catch (e) {
+        print('❌ Error fetching trader details: $e');
+      }
+    }
+
+    TradesPerson defaultTrader =
+        traderData ??
+        TradesPerson(
+          id: booking.traderId,
+          name: isUserBooking ? 'Trader' : 'Customer',
+          bio: 'Professional service provider',
+          expertise: booking.category,
+          description:
+              booking.notes.isNotEmpty ? booking.notes : 'Service booking',
+          imageUrl: 'assets/images/chat-avatar.png',
+          price: booking.price.toString(),
+          rating: booking.rating,
+          largeJobs: [],
+          smallJobs: [],
+          latitude: booking.latitude,
+          longitude: booking.longitude,
+        );
+
+    // Get address from coordinates
+    final address = await LocationUtils.getAddressFromCoordinates(
+      booking.latitude,
+      booking.longitude,
     );
 
     return JobHistory(
       title: booking.category.isNotEmpty ? booking.category : 'Service',
       svgIcon: _getCategoryIcon(booking.category),
-      jobType: booking.category,
+      jobType: booking.jobType,
+      category: booking.category,
       price: booking.price,
-      preferredTime:
-          booking.preferredTime != null
-              ? _formatDateTime(booking.preferredTime!)
-              : _formatDateTime(booking.createdAt ?? DateTime.now()),
-      address: _formatLocation(booking.latitude, booking.longitude),
+      preferredTime: _formatDateTime(booking.preferredTime!),
+      address: address,
       status: booking.status,
       tradesPerson: defaultTrader,
       showQuoteButtons: booking.status == 'pending',
@@ -161,6 +288,8 @@ class JobHistoryPageController extends GetxController {
       notes: booking.notes,
       location: LatLng(booking.latitude, booking.longitude),
       bookingId: booking.id ?? "-",
+      userId: booking.userId,
+      customer: customer,
     );
   }
 
@@ -168,9 +297,9 @@ class JobHistoryPageController extends GetxController {
   String _getCategoryIcon(String category) {
     switch (category.toLowerCase()) {
       case 'plumbing':
-        return 'assets/svgs/plumbing.svg';
+        return 'assets/images/plumber.png';
       case 'electrical':
-        return 'assets/svgs/electric.svg';
+        return 'assets/images/electricity.png';
       case 'cleaning':
         return 'assets/svgs/cleaning.svg';
       case 'carpentry':
@@ -192,47 +321,19 @@ class JobHistoryPageController extends GetxController {
 
   /// Format DateTime for display
   String _formatDateTime(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inDays == 0) {
-      return 'Today, ${_formatTime(dateTime)}';
-    } else if (difference.inDays == 1) {
-      return 'Yesterday, ${_formatTime(dateTime)}';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
-    } else {
-      return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
-    }
+    return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
   }
-
-  /// Format time portion
-  String _formatTime(DateTime dateTime) {
-    final hour = dateTime.hour;
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-    final period = hour >= 12 ? 'PM' : 'AM';
-    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
-    return '$displayHour:$minute $period';
-  }
-
-  /// Format location coordinates
-  String _formatLocation(double latitude, double longitude) {
-    if (latitude == 0.0 && longitude == 0.0) {
-      return 'Location not specified';
-    }
-    return 'Lat: ${latitude.toStringAsFixed(4)}, Lon: ${longitude.toStringAsFixed(4)}';
-  }
-
-  /// Format booking status for display
 
   /// Filter bookings by status
   List<JobHistory> getFilteredJobs(String filter) {
     switch (filter) {
-      case 'pending':
+      case 'New Jobs':
         return jobHistoryItems
-            .where((job) => job.status == 'pending' || job.status == 'accepted')
+            .where(
+              (job) => job.status != 'completed' || job.status == 'cancelled',
+            )
             .toList();
-      case 'completed':
+      case 'Completed':
         return jobHistoryItems
             .where((job) => job.status == 'completed')
             .toList();
@@ -248,10 +349,39 @@ class JobHistoryPageController extends GetxController {
   /// Update booking status
   Future<void> updateBookingStatus(String bookingId, String newStatus) async {
     try {
+      // Get booking data before updating for notification
+      final bookingDoc =
+          await _firestore.collection('bookings').doc(bookingId).get();
+      if (!bookingDoc.exists) {
+        print('❌ Booking not found');
+        return;
+      }
+
+      final bookingData = bookingDoc.data()!;
+      final customerId = bookingData['userId'] as String;
+      final jobTitle =
+          bookingData['service'] ?? bookingData['category'] ?? 'Job';
+
+      // Update booking status
       await _firestore.collection('bookings').doc(bookingId).update({
         'status': newStatus,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
       });
+
+      // Create notifications for booking acceptance/rejection
+      if (newStatus == 'accepted') {
+        await NotificationService.createBookingAcceptedNotification(
+          customerId: customerId,
+          bookingId: bookingId,
+          jobTitle: jobTitle,
+        );
+      } else if (newStatus == 'rejected') {
+        await NotificationService.createBookingRejectedNotification(
+          customerId: customerId,
+          bookingId: bookingId,
+          jobTitle: jobTitle,
+        );
+      }
 
       // Refresh the bookings
       await fetchBookings();
@@ -270,6 +400,96 @@ class JobHistoryPageController extends GetxController {
   /// Refresh bookings
   Future<void> refreshBookings() async {
     await fetchBookings();
+  }
+
+  /// Submit a quote for a booking
+  Future<bool> submitQuote({
+    required String bookingId,
+    required String customerId,
+    required double quotedPrice,
+    required String details,
+  }) async {
+    try {
+      final quoteController = Get.find<QuoteController>();
+      final success = await quoteController.submitQuote(
+        bookingId: bookingId,
+        customerId: customerId,
+        quotedPrice: quotedPrice,
+        details: details,
+      );
+
+      if (success) {
+        // Refresh bookings to update status
+        await fetchBookings();
+      }
+
+      return success;
+    } catch (e) {
+      print('❌ Error submitting quote: $e');
+      return false;
+    }
+  }
+
+  /// Get existing quote for a booking (if any)
+  Future<QuoteModel?> getExistingQuote(String bookingId) async {
+    try {
+      final quoteController = Get.find<QuoteController>();
+      return await quoteController.getExistingQuote(bookingId);
+    } catch (e) {
+      print('❌ Error getting existing quote: $e');
+      return null;
+    }
+  }
+
+  /// Get quote status for a booking by current trader
+  Future<String?> getQuoteStatusForJob(String bookingId) async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) return null;
+
+      final quoteQuery =
+          await _firestore
+              .collection('quotes')
+              .where('bookingId', isEqualTo: bookingId)
+              .where('traderId', isEqualTo: currentUser.uid)
+              .limit(1)
+              .get();
+
+      if (quoteQuery.docs.isNotEmpty) {
+        final quote = QuoteModel.fromFirestore(quoteQuery.docs.first);
+        return quote.status;
+      }
+
+      return null; // No quote found
+    } catch (e) {
+      print('❌ Error getting quote status: $e');
+      return null;
+    }
+  }
+
+  /// Get quote details for a booking by current trader
+  Future<QuoteModel?> getQuoteForJob(String bookingId) async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) return null;
+
+      final quoteQuery =
+          await _firestore
+              .collection('quotes')
+              .where('bookingId', isEqualTo: bookingId)
+              .where('traderId', isEqualTo: currentUser.uid)
+              .limit(1)
+              .get();
+
+      if (quoteQuery.docs.isNotEmpty) {
+        return QuoteModel.fromFirestore(quoteQuery.docs.first);
+      }
+
+      return null; // No quote found
+    } catch (e) {
+      print('❌ Error getting quote: $e');
+      return null;
+    }
   }
 
   /// Check if the current user is a customer (not a trader)
@@ -294,4 +514,6 @@ class JobHistoryPageController extends GetxController {
       return true;
     }
   }
+
+  sendQuote(String jobId, double price, String details) {}
 }

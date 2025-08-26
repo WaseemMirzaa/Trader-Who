@@ -1,14 +1,23 @@
 part of 'widgets.dart';
 
 class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const TradeHomeAppBar({super.key});
+  final Function(DateTime)? onDateSelected;
+  final DateTime? selectedDate;
+  final List<DateTime>? jobDates;
+
+  const TradeHomeAppBar({
+    super.key,
+    this.onDateSelected,
+    this.selectedDate,
+    this.jobDates,
+  });
 
   @override
   Widget build(BuildContext context) {
     // Get current month and year (e.g., "May 2025")
     final String currentMonthYear = DateFormat(
       'MMMM yyyy',
-    ).format(DateTime.now());
+    ).format(selectedDate ?? DateTime.now());
 
     return AppBar(
       backgroundColor: AppColor.appBackground,
@@ -25,7 +34,7 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColor.grey.withOpacity(0.1),
+              color: AppColor.grey.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -104,7 +113,11 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                       border: Border.all(color: AppColor.paleGray, width: 1.0),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: CalendarPicker(),
+                    child: CalendarPicker(
+                      selectedDate: selectedDate,
+                      onDateSelected: onDateSelected,
+                      jobDates: jobDates,
+                    ),
                   ),
                 ),
               ],

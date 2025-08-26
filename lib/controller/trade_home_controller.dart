@@ -31,40 +31,18 @@ class TradeHomeController extends GetxController {
     await _jobHistoryController.refreshBookings();
   }
 
-  /// Accept a job
-  Future<void> acceptJob(JobHistory job) async {
-    final booking = _findBookingForJob(job);
-    if (booking != null) {
-      await _jobHistoryController.updateBookingStatus(
-        booking.id ?? '',
-        'accepted',
-      );
-    }
-  }
-
-  /// Reject a job
-  Future<void> rejectJob(JobHistory job) async {
-    final booking = _findBookingForJob(job);
-    if (booking != null) {
-      await _jobHistoryController.updateBookingStatus(
-        booking.id ?? '',
-        'rejected',
-      );
-    }
-  }
-
   /// Helper method to find the corresponding BookingModel for a JobHistory
   BookingModel? _findBookingForJob(JobHistory job) {
     // Try to find in trader bookings first (since this is trader home page)
     for (final booking in _jobHistoryController.traderBookings) {
-      if (booking.category == job.jobType && booking.price == job.price) {
+      if (booking.category == job.category && booking.price == job.price) {
         return booking;
       }
     }
 
     // Then try user bookings if needed
     for (final booking in _jobHistoryController.userBookings) {
-      if (booking.category == job.jobType && booking.price == job.price) {
+      if (booking.category == job.category && booking.price == job.price) {
         return booking;
       }
     }

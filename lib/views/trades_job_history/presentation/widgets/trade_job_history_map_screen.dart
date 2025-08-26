@@ -248,7 +248,8 @@ class _TradeJobHistoryMapScreenState
       icon: icon,
       onTap: () {
         setState(() {
-          _currentJobs = _getSampleJobs(isCompleted);
+          //TODO:
+          // _currentJobs = _getSampleJobs(isCompleted);
           _showingCompletedJobs = isCompleted;
           _showJobsPanel = true;
         });
@@ -256,41 +257,41 @@ class _TradeJobHistoryMapScreenState
     );
   }
 
-  List<JobHistory> _getSampleJobs(bool isCompleted) {
-    return List.generate(
-      1,
-      (index) => JobHistory(
-        bookingId: "3",
-        title: 'Electrical',
-        svgIcon: Assets.svgsElectric,
-        jobType: "Electrical",
-        price: 120.0 + (index * 50),
-        preferredTime: "ASAP",
-        address: "${index + 3} miles away",
-        status: isCompleted ? "completed" : "pending",
-        notes: "Please handle with care.",
-        images: ["https://example.com/image.jpg"],
-        location: LatLng(37.7749, -122.4194),
-        tradesPerson: TradesPerson(
-          id: "technician_${index + 1}",
-          bio:
-              "Experienced electrician specializing in residential and commercial work.",
-          name: "Technician ${index + 1}",
-          expertise: "Electrician",
-          description:
-              "Leaking kitchen sink, Pipe may be cracked. Water dripping into cabinet below. Happened after turning on garbage disposal.",
-          price: "\$${50 + (index * 10)}/hr",
-          imageUrl: "",
-          rating: 4.5 - (index * 0.1),
-          largeJobs: [],
-          smallJobs: [],
-          latitude: 37.7749,
-          longitude: -122.4194,
-        ),
-        showQuoteButtons: !isCompleted,
-      ),
-    );
-  }
+  // List<JobHistory> _getSampleJobs(bool isCompleted) {
+  //   return List.generate(
+  //     1,
+  //     (index) => JobHistory(
+  //       bookingId: "3",
+  //       title: 'Electrical',
+  //       svgIcon: Assets.svgsElectric,
+  //       jobType: "Electrical",
+  //       price: 120.0 + (index * 50),
+  //       preferredTime: "ASAP",
+  //       address: "${index + 3} miles away",
+  //       status: isCompleted ? "completed" : "pending",
+  //       notes: "Please handle with care.",
+  //       images: ["https://example.com/image.jpg"],
+  //       location: LatLng(37.7749, -122.4194),
+  //       tradesPerson: TradesPerson(
+  //         id: "technician_${index + 1}",
+  //         bio:
+  //             "Experienced electrician specializing in residential and commercial work.",
+  //         name: "Technician ${index + 1}",
+  //         expertise: "Electrician",
+  //         description:
+  //             "Leaking kitchen sink, Pipe may be cracked. Water dripping into cabinet below. Happened after turning on garbage disposal.",
+  //         price: "\$${50 + (index * 10)}/hr",
+  //         imageUrl: "",
+  //         rating: 4.5 - (index * 0.1),
+  //         largeJobs: [],
+  //         smallJobs: [],
+  //         latitude: 37.7749,
+  //         longitude: -122.4194,
+  //       ),
+  //       showQuoteButtons: !isCompleted,
+  //     ),
+  //   );
+  // }
 
   Widget _buildJobsPanel() {
     return AnimatedPositioned(

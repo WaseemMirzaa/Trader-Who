@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
+import 'package:traderwho/controller/booking_controller.dart';
+import 'package:traderwho/controller/service_controller.dart';
 import 'package:traderwho/core/extensions/media_query_extension.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/theme/app_color.dart';
@@ -10,21 +13,61 @@ import 'package:traderwho/views/trades_people/presentation/widgets/widgets.dart'
 
 class TradePersonDetailsPage extends StatefulWidget {
   final TradesPerson person;
+  final double price;
+  final String selectedJobType;
 
-  const TradePersonDetailsPage({super.key, required this.person});
+  const TradePersonDetailsPage({
+    super.key,
+    required this.person,
+    required this.price,
+    required this.selectedJobType,
+  });
 
   @override
   State<TradePersonDetailsPage> createState() => _TradePersonDetailsPageState();
 }
 
 class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
+  void _handleBookNow() async {
+    // Import the booking controller
+    final BookingController bookingController = Get.put(BookingController());
+    final ServiceController serviceController = Get.find();
+
+    // Determine the service name based on selected criteria
+    String serviceName =
+        serviceController.selectedService.value != null
+            ? serviceController.selectedService.value!.title
+            : '${serviceController.selectedCategory.value} Service';
+
+    // Show booking dialog (includes user type validation)
+    await bookingController.showBookingDialog(
+      traderName: widget.person.name,
+      traderId: widget.person.id,
+      category:
+          serviceController.selectedCategory.value.isNotEmpty
+              ? serviceController.selectedCategory.value
+              : 'General',
+      service: serviceName,
+      jobType:
+          widget.selectedJobType.isNotEmpty
+              ? widget.selectedJobType
+              : 'largeJob',
+      price: widget.price,
+    );
+    Get.back();
+  }
+
   @override
   Widget build(BuildContext context) {
     return TraderWhoScaffold(
       appBar: TradePersonDetailsAppBar(
         person: widget.person,
+        price: widget.price,
         onBackPressed: () {
           Navigator.pop(context);
+        },
+        onBookNow: () {
+          _handleBookNow();
         },
         screenHeight: context.screenHeight * 0.4 + 17,
       ),

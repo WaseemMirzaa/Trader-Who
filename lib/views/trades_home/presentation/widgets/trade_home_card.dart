@@ -4,14 +4,14 @@ class TradeHomeCard extends StatelessWidget {
   final JobHistory job;
   final VoidCallback? onTap;
   final VoidCallback? onReject;
-  final VoidCallback? onAccept;
+  // final VoidCallback? onAccept;
 
   const TradeHomeCard({
     super.key,
     required this.job,
     this.onTap,
     this.onReject,
-    this.onAccept,
+    // this.onAccept,
   });
 
   @override
@@ -21,8 +21,8 @@ class TradeHomeCard extends StatelessWidget {
 
     // Determine button text based on showQuoteButtons
     final String rejectText =
-        job.showQuoteButtons ? 'Not Interested' : 'REJECT';
-    final String acceptText = job.showQuoteButtons ? 'Quote' : 'ACCEPT';
+        job.jobType == 'largeJob' ? "Not Interested" : 'REJECT';
+    final String acceptText = job.jobType == 'largeJob' ? 'Quote' : 'ACCEPT';
 
     return GestureDetector(
       onTap: onTap,
@@ -50,7 +50,13 @@ class TradeHomeCard extends StatelessWidget {
                   circleColor: Colors.transparent,
                   backgroundColor: AppColor.lightCyan,
                   radius: 30,
-                  child: SvgPicture.asset(job.svgIcon, width: 26, height: 28),
+                  child: CachedNetworkImage(
+                    imageUrl: job.customer?.image ?? '',
+                    width: 26,
+                    height: 28,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -58,7 +64,7 @@ class TradeHomeCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        job.title,
+                        job.customer?.name ?? '',
                         style: const TextStyle(
                           fontFamily: 'openSans',
 
@@ -69,7 +75,7 @@ class TradeHomeCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 4),
                       Row(
                         children: [
                           SvgPicture.asset(
@@ -83,7 +89,8 @@ class TradeHomeCard extends StatelessWidget {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: '${job.jobType} - Fixed Price: ',
+                                    text:
+                                        '${HelperService.formattedJobType(job.jobType)}\nFixed Price: ',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'openSans',
@@ -103,7 +110,7 @@ class TradeHomeCard extends StatelessWidget {
                                 ],
                               ),
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                              maxLines: 2,
                             ),
                           ),
                         ],
@@ -247,7 +254,7 @@ class TradeHomeCard extends StatelessWidget {
 
             const SizedBox(height: 12),
             // Buttons Row with Intrinsic Width
-            if (!isCompleted) ...[
+            if (job.status == 'pending') ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -272,7 +279,7 @@ class TradeHomeCard extends StatelessWidget {
                         child: IntrinsicWidth(
                           child: CustomButton(
                             text: acceptText,
-                            onTap: onAccept,
+                            onTap: onTap,
                             color: AppColor.darkBlue,
                             textColor: AppColor.white,
                             height: 32,

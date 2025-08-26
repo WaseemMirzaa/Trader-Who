@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -14,7 +15,10 @@ import 'package:traderwho/core/shared_widgets/custom_toggle_button.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/core/theme/assets.dart';
 import 'package:traderwho/core/theme/constant.dart';
+import 'package:traderwho/core/utils/location_utils.dart';
+import 'package:traderwho/models/customer_model.dart';
 import 'package:traderwho/models/models.dart';
+import 'package:traderwho/models/user_model.dart';
 import 'package:traderwho/views/trades_home/presentation/widgets/widgets.dart';
 import 'package:traderwho/views/trades_job_history/presentation/widgets/widgets.dart';
 

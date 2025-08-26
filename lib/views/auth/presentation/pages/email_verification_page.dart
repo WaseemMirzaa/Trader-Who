@@ -25,17 +25,24 @@ class EmailVerificationScreen extends StatelessWidget {
     return TraderWhoScaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Main Card
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(32.0),
+                padding: const EdgeInsets.all(24.0),
                 decoration: BoxDecoration(
                   color: AppColor.white,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColor.grey.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -44,28 +51,28 @@ class EmailVerificationScreen extends StatelessWidget {
                     Obx(
                       () => AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
-                        width: 80,
-                        height: 80,
+                        width: 72,
+                        height: 72,
                         decoration: BoxDecoration(
                           color:
                               controller.isVerified.value
-                                  ? Colors.green.withOpacity(0.1)
-                                  : Get.theme.primaryColor.withOpacity(0.1),
+                                  ? AppColor.successGreen.withOpacity(0.1)
+                                  : AppColor.primaryButton.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           controller.isVerified.value
                               ? Icons.check_circle_rounded
                               : Icons.mail_outline_rounded,
-                          size: 40,
+                          size: 36,
                           color:
                               controller.isVerified.value
-                                  ? Colors.green
-                                  : Get.theme.primaryColor,
+                                  ? AppColor.successGreen
+                                  : AppColor.primaryButton,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
                     // Title
                     Obx(
@@ -73,13 +80,15 @@ class EmailVerificationScreen extends StatelessWidget {
                         controller.isVerified.value
                             ? 'Email Verified!'
                             : 'Check Your Email',
-                        style: Get.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Get.theme.colorScheme.onSurface,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
 
                     // Description
                     Obx(
@@ -88,15 +97,15 @@ class EmailVerificationScreen extends StatelessWidget {
                             ? 'Your email has been successfully verified. You can now continue to your account.'
                             : 'We\'ve sent a verification link to\n$userEmail\n\nPlease check your email and click the link to verify your account.',
                         textAlign: TextAlign.center,
-                        style: Get.textTheme.bodyMedium?.copyWith(
-                          color: Get.theme.colorScheme.onSurface.withOpacity(
-                            0.7,
-                          ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
                           height: 1.5,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
                     // Status Indicator
                     Obx(
@@ -114,26 +123,24 @@ class EmailVerificationScreen extends StatelessWidget {
                                           strokeWidth: 2,
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
-                                                Get.theme.colorScheme.onSurface
-                                                    .withOpacity(0.4),
+                                                AppColor.secondaryText
+                                                    .withOpacity(0.6),
                                               ),
                                         ),
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
                                         'Waiting for verification...',
-                                        style: Get.textTheme.bodySmall
-                                            ?.copyWith(
-                                              color: Get
-                                                  .theme
-                                                  .colorScheme
-                                                  .onSurface
-                                                  .withOpacity(0.6),
-                                            ),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.secondaryText
+                                              .withOpacity(0.8),
+                                          fontFamily: 'openSans',
+                                        ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 24),
+                                  const SizedBox(height: 20),
                                 ],
                               )
                               : const SizedBox.shrink(),
@@ -143,7 +150,7 @@ class EmailVerificationScreen extends StatelessWidget {
                     Obx(
                       () => SizedBox(
                         width: double.infinity,
-                        height: 56,
+                        height: 50,
                         child: ElevatedButton(
                           onPressed:
                               controller.isLoading.value
@@ -152,14 +159,14 @@ class EmailVerificationScreen extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 controller.isVerified.value
-                                    ? Colors.green
-                                    : Get.theme.primaryColor,
-                            foregroundColor: Colors.white,
+                                    ? AppColor.successGreen
+                                    : AppColor.primaryButton,
+                            foregroundColor: AppColor.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(25),
                             ),
-                            disabledBackgroundColor: Get.theme.primaryColor
+                            disabledBackgroundColor: AppColor.primaryButton
                                 .withOpacity(0.6),
                           ),
                           child:
@@ -168,7 +175,7 @@ class EmailVerificationScreen extends StatelessWidget {
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator(
-                                      color: Colors.white,
+                                      color: AppColor.white,
                                       strokeWidth: 2,
                                     ),
                                   )
@@ -176,9 +183,11 @@ class EmailVerificationScreen extends StatelessWidget {
                                     controller.isVerified.value
                                         ? 'Go to Dashboard'
                                         : 'Continue',
-                                    style: Get.textTheme.titleMedium?.copyWith(
-                                      color: Colors.white,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: AppColor.white,
                                       fontWeight: FontWeight.w600,
+                                      fontFamily: 'openSans',
                                     ),
                                   ),
                         ),
@@ -191,20 +200,18 @@ class EmailVerificationScreen extends StatelessWidget {
                           !controller.isVerified.value
                               ? Column(
                                 children: [
-                                  const SizedBox(height: 24),
+                                  const SizedBox(height: 20),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         'Didn\'t receive the email? ',
-                                        style: Get.textTheme.bodySmall
-                                            ?.copyWith(
-                                              color: Get
-                                                  .theme
-                                                  .colorScheme
-                                                  .onSurface
-                                                  .withOpacity(0.6),
-                                            ),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.secondaryText
+                                              .withOpacity(0.8),
+                                          fontFamily: 'openSans',
+                                        ),
                                       ),
                                       GestureDetector(
                                         onTap:
@@ -222,23 +229,20 @@ class EmailVerificationScreen extends StatelessWidget {
                                                         AlwaysStoppedAnimation<
                                                           Color
                                                         >(
-                                                          Get
-                                                              .theme
-                                                              .primaryColor,
+                                                          AppColor
+                                                              .primaryButton,
                                                         ),
                                                   ),
                                                 )
                                                 : Text(
                                                   'Resend',
-                                                  style: Get.textTheme.bodySmall
-                                                      ?.copyWith(
-                                                        color:
-                                                            Get
-                                                                .theme
-                                                                .primaryColor,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color:
+                                                        AppColor.primaryButton,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'openSans',
+                                                  ),
                                                 ),
                                       ),
                                     ],
@@ -249,12 +253,14 @@ class EmailVerificationScreen extends StatelessWidget {
                     ),
 
                     // Footer
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
                     Text(
                       'Make sure to check your spam folder if you don\'t see the email.',
                       textAlign: TextAlign.center,
-                      style: Get.textTheme.bodySmall?.copyWith(
-                        color: Get.theme.colorScheme.onSurface.withOpacity(0.4),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColor.secondaryText.withOpacity(0.6),
+                        fontFamily: 'openSans',
                       ),
                     ),
                   ],

@@ -19,7 +19,14 @@ class ReviewModel {
       reviewerName: data['reviewerName'] ?? '',
       comment: data['comment'] ?? '',
       rating: (data['rating'] ?? 0).toDouble(),
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      createdAt:
+          data['createdAt'] is Timestamp
+              ? (data['createdAt'] as Timestamp).toDate()
+              : (data['createdAt'] is int
+                  ? DateTime.fromMillisecondsSinceEpoch(
+                    data['createdAt'] as int,
+                  )
+                  : DateTime.now()),
     );
   }
 }

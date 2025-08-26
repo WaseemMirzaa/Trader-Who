@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:traderwho/models/models.dart';
 
 class MainServiceModel {
@@ -30,8 +31,18 @@ class MainServiceModel {
     }
 
     return MainServiceModel(
-      createdAt: map['createdAt']?.toDate() ?? DateTime.now(),
-      updatedAt: map['updatedAt']?.toDate() ?? DateTime.now(),
+      createdAt:
+          map['createdAt'] is Timestamp
+              ? (map['createdAt'] as Timestamp).toDate()
+              : (map['createdAt'] is int
+                  ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int)
+                  : DateTime.now()),
+      updatedAt:
+          map['updatedAt'] is Timestamp
+              ? (map['updatedAt'] as Timestamp).toDate()
+              : (map['updatedAt'] is int
+                  ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] as int)
+                  : DateTime.now()),
       predefinedServices: services,
     );
   }
@@ -43,8 +54,8 @@ class MainServiceModel {
     });
 
     return {
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'updatedAt': updatedAt.millisecondsSinceEpoch,
       'predefinedServices': servicesMap,
     };
   }

@@ -27,7 +27,12 @@ class TradesPeopleCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TradePersonDetailsPage(person: person),
+                builder:
+                    (context) => TradePersonDetailsPage(
+                      person: person,
+                      price: price,
+                      selectedJobType: selectedJobType,
+                    ),
               ),
             );
           },
@@ -145,7 +150,7 @@ class TradesPeopleCard extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: person.expertise,
+                    text: person.title,
                     style: TextStyle(
                       fontSize: 18,
                       color: AppColor.secondaryText,
@@ -169,86 +174,65 @@ class TradesPeopleCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             // Book Now Button
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => _handleBookNow(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColor.primaryButton,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text(
-                      'Book Now',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed:
-                        onTap ??
-                        () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      TradePersonDetailsPage(person: person),
-                            ),
-                          );
-                        },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColor.primaryButton,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      side: BorderSide(color: AppColor.primaryButton),
-                    ),
-                    child: const Text(
-                      'View Details',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: ElevatedButton(
+            //         onPressed: () => _handleBookNow(),
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: AppColor.primaryButton,
+            //           foregroundColor: Colors.white,
+            //           padding: const EdgeInsets.symmetric(vertical: 12),
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(10),
+            //           ),
+            //         ),
+            //         child: const Text(
+            //           'Book Now',
+            //           style: TextStyle(
+            //             fontSize: 14,
+            //             fontWeight: FontWeight.w600,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     const SizedBox(width: 12),
+            //     Expanded(
+            //       child: OutlinedButton(
+            //         onPressed:
+            //             onTap ??
+            //             () {
+            //               Navigator.push(
+            //                 context,
+            //                 MaterialPageRoute(
+            //                   builder:
+            //                       (context) =>
+            //                           TradePersonDetailsPage(person: person),
+            //                 ),
+            //               );
+            //             },
+            //         style: OutlinedButton.styleFrom(
+            //           foregroundColor: AppColor.primaryButton,
+            //           padding: const EdgeInsets.symmetric(vertical: 12),
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(10),
+            //           ),
+            //           side: BorderSide(color: AppColor.primaryButton),
+            //         ),
+            //         child: const Text(
+            //           'View Details',
+            //           style: TextStyle(
+            //             fontSize: 14,
+            //             fontWeight: FontWeight.w600,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
-    );
-  }
-
-  void _handleBookNow() async {
-    // Import the booking controller
-    final BookingController bookingController = Get.put(BookingController());
-
-    // Determine the service name based on selected criteria
-    String serviceName =
-        selectedService.isNotEmpty
-            ? selectedService
-            : '$selectedCategory Service';
-
-    // Show booking dialog (includes user type validation)
-    await bookingController.showBookingDialog(
-      traderName: person.name,
-      traderId: person.id,
-      category: selectedCategory.isNotEmpty ? selectedCategory : 'General',
-      service: serviceName,
-      jobType: selectedJobType.isNotEmpty ? selectedJobType : 'largeJob',
-      price: price,
     );
   }
 
