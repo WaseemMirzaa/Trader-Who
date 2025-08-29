@@ -183,7 +183,11 @@ class TradePersonDetailsAppBar extends StatelessWidget
                               ),
                               const SizedBox(width: 10),
                               GestureDetector(
-                                onTap: () {}, // Add call functionality here
+                                onTap: () {
+                                  launchUrl(
+                                    Uri.parse('tel:${person.phoneNumber}'),
+                                  );
+                                }, // Add call functionality here
                                 child: Container(
                                   width: context.responsiveWidth(10),
                                   height: context.responsiveWidth(10),

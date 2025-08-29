@@ -332,18 +332,27 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           ),
                         ),
                         kGap10,
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColor.darkBlue, // Dark blue background
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: SvgPicture.asset(
-                              Assets.svgsCall,
-                              width: 25,
-                              height: 25,
+                        InkWell(
+                          onTap: () {
+                            launchUrl(
+                              Uri.parse(
+                                'tel:${widget.job.tradesPerson.phoneNumber}',
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: AppColor.darkBlue, // Dark blue background
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: SvgPicture.asset(
+                                Assets.svgsCall,
+                                width: 25,
+                                height: 25,
+                              ),
                             ),
                           ),
                         ),

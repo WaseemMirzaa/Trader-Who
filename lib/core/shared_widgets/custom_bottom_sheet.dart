@@ -1,24 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:traderwho/controller/booking_controller.dart';
+import 'package:traderwho/controller/service_controller.dart';
 import 'package:traderwho/core/extensions/extensions.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
 import 'package:traderwho/core/theme/theme.dart';
+import 'package:traderwho/models/models.dart';
+import 'package:traderwho/views/chat/presentation/pages/pages.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CustomBottomSheet extends StatelessWidget {
-  final String professionalName;
-  final String profession;
-  final double rating;
-  final String description;
-  final String qualifications;
+  // final String professionalName;
+  // final String profession;
+  // final double rating;
+  // final String description;
+  // final String qualifications;
+
+  final double price;
+  final TradesPerson person;
+  final String selectedJobType;
 
   const CustomBottomSheet({
     super.key,
-    required this.professionalName,
-    required this.profession,
-    this.rating = 4.7,
-    required this.description,
-    required this.qualifications,
+    // required this.professionalName,
+    // required this.profession,
+    // this.rating = 4.7,
+    // required this.description,
+    // required this.qualifications,
+    required this.price,
+    required this.person,
+    required this.selectedJobType,
   });
 
   @override
@@ -80,7 +93,7 @@ class CustomBottomSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              professionalName,
+                              person.name,
                               style: const TextStyle(
                                 color: AppColor.primaryText,
                                 fontFamily: 'openSans',
@@ -89,7 +102,7 @@ class CustomBottomSheet extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              profession,
+                              person.title ?? "",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: AppColor.secondaryText,
@@ -104,7 +117,7 @@ class CustomBottomSheet extends StatelessWidget {
                                   (index) => Icon(
                                     Icons.star,
                                     color:
-                                        index < rating.floor()
+                                        index < person.rating.floor()
                                             ? Colors.amber
                                             : Colors.grey[300],
                                     size: 16,
@@ -112,7 +125,7 @@ class CustomBottomSheet extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  '$rating overall',
+                                  '${person.rating} overall',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey[600],
@@ -126,7 +139,7 @@ class CustomBottomSheet extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    description,
+                    person.bio,
                     style: const TextStyle(
                       color: AppColor.secondaryText,
                       fontFamily: 'openSans',
@@ -148,7 +161,7 @@ class CustomBottomSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    qualifications,
+                    person.expertise,
                     style: const TextStyle(
                       color: AppColor.secondaryText,
                       fontFamily: 'openSans',
@@ -172,7 +185,9 @@ class CustomBottomSheet extends StatelessWidget {
                 Expanded(
                   child: CustomButton(
                     text: 'Book Now',
-                    onTap: () {},
+                    onTap: () {
+                      _handleBookNow();
+                    },
                     height: 50,
                     color: AppColor.primaryButton,
                     textColor: Colors.white,
@@ -182,7 +197,9 @@ class CustomBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 GestureDetector(
-                  onTap: () {}, // Add call functionality here
+                  onTap: () {
+                    launchUrl(Uri.parse('tel:${person.phoneNumber}'));
+                  }, // Add call functionality here
                   child: Container(
                     width: 50,
                     height: 50,
@@ -201,7 +218,15 @@ class CustomBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 GestureDetector(
-                  onTap: () {}, // Add message functionality here
+                  onTap: () {
+                    Get.to(
+                      () => ChatDetailPage(
+                        avatarImage: person.imageUrl,
+                        userName: person.name,
+                        receiverId: person.id,
+                      ),
+                    );
+                  }, // Add message functionality here
                   child: Container(
                     width: 50,
                     height: 50,
@@ -224,5 +249,31 @@ class CustomBottomSheet extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _handleBookNow() async {
+    // Import the booking controller
+    final BookingController bookingController = Get.put(BookingController());
+    final ServiceController serviceController = Get.find();
+
+    // Determine the service name based on selected criteria
+    String serviceName =
+        serviceController.selectedService.value != null
+            ? serviceController.selectedService.value!.title
+            : '${serviceController.selectedCategory.value} Service';
+
+    // Show booking dialog (includes user type validation)
+    await bookingController.showBookingDialog(
+      traderName: person.name,
+      traderId: person.id,
+      category:
+          serviceController.selectedCategory.value.isNotEmpty
+              ? serviceController.selectedCategory.value
+              : 'General',
+      service: serviceName,
+      jobType: selectedJobType.isNotEmpty ? selectedJobType : 'largeJob',
+      price: price,
+    );
+    Get.back();
   }
 }

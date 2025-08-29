@@ -58,7 +58,7 @@ class _TradesPageState extends State<TradesPage> {
                   ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 18),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -127,64 +127,58 @@ class _TradesPageState extends State<TradesPage> {
                             },
                             child: Column(
                               children: [
-                                MediaQuery.removePadding(
-                                  context: context,
-                                  removeTop: true,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: serviceTrader.length,
-                                    // gridDelegate:
-                                    //     SliverGridDelegateWithFixedCrossAxisCount(
-                                    //       crossAxisCount:
-                                    //           _calculateCrossAxisCount(context),
-                                    //       crossAxisSpacing: 15,
-                                    //       mainAxisSpacing: 17,
-                                    //       childAspectRatio: 1.7,
-                                    //     ),
-                                    itemBuilder: (context, index) {
-                                      if (serviceTrader[index].tradesPerson ==
-                                          null) {
-                                        return Text(
-                                          'No trades person available',
+                                ListView.builder(
+                                  shrinkWrap: true,
+
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: serviceTrader.length,
+                                  // gridDelegate:
+                                  //     SliverGridDelegateWithFixedCrossAxisCount(
+                                  //       crossAxisCount:
+                                  //           _calculateCrossAxisCount(context),
+                                  //       crossAxisSpacing: 15,
+                                  //       mainAxisSpacing: 17,
+                                  //       childAspectRatio: 1.7,
+                                  //     ),
+                                  itemBuilder: (context, index) {
+                                    if (serviceTrader[index].tradesPerson ==
+                                        null) {
+                                      return Text('No trades person available');
+                                    }
+                                    return TradesPeopleCard(
+                                      person:
+                                          serviceTrader[index].tradesPerson!,
+                                      selectedCategory:
+                                          _controller.selectedCategory.value,
+                                      selectedService:
+                                          _controller.selectedService.value,
+                                      selectedJobType:
+                                          _controller.selectedJobType.value,
+                                      price: serviceTrader[index].price ?? 0,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    TradePersonDetailsPage(
+                                                      person:
+                                                          serviceTrader[index]
+                                                              .tradesPerson!,
+                                                      price:
+                                                          serviceTrader[index]
+                                                              .price ??
+                                                          0,
+                                                      selectedJobType:
+                                                          _controller
+                                                              .selectedJobType
+                                                              .value,
+                                                    ),
+                                          ),
                                         );
-                                      }
-                                      return TradesPeopleCard(
-                                        person:
-                                            serviceTrader[index].tradesPerson!,
-                                        selectedCategory:
-                                            _controller.selectedCategory.value,
-                                        selectedService:
-                                            _controller.selectedService.value,
-                                        selectedJobType:
-                                            _controller.selectedJobType.value,
-                                        price: serviceTrader[index].price ?? 0,
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (context) =>
-                                                      TradePersonDetailsPage(
-                                                        person:
-                                                            serviceTrader[index]
-                                                                .tradesPerson!,
-                                                        price:
-                                                            serviceTrader[index]
-                                                                .price ??
-                                                            0,
-                                                        selectedJobType:
-                                                            _controller
-                                                                .selectedJobType
-                                                                .value,
-                                                      ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
+                                      },
+                                    );
+                                  },
                                 ),
                                 if (_controller.isLoadingMore.value)
                                   Padding(

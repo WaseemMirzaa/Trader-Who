@@ -80,7 +80,12 @@ class _MapScreenState extends State<_MapScreenView> {
               title: service.tradesPerson?.name ?? '',
               snippet: service.tradesPerson?.bio ?? '',
               onTap:
-                  () => _showCustomBottomSheet(context, service.tradesPerson!),
+                  () => _showCustomBottomSheet(
+                    context,
+                    service.tradesPerson!,
+                    service.price!,
+                    _controller.selectedJobType.value,
+                  ),
             ),
           ),
         );
@@ -93,18 +98,21 @@ class _MapScreenState extends State<_MapScreenView> {
     });
   }
 
-  void _showCustomBottomSheet(BuildContext context, TradesPerson person) {
+  void _showCustomBottomSheet(
+    BuildContext context,
+    TradesPerson person,
+    double price,
+    String selectedJobType,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder:
           (context) => CustomBottomSheet(
-            professionalName: person.name,
-            profession: person.title ?? '',
-            rating: person.rating,
-            description: person.bio,
-            qualifications: person.expertise,
+            person: person,
+            price: price,
+            selectedJobType: selectedJobType,
           ),
     );
   }

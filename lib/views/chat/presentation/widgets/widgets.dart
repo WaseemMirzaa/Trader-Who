@@ -5,6 +5,7 @@ import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/custom_text.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/core/theme/assets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'chat_appbar.dart';
 part 'chat_card.dart';

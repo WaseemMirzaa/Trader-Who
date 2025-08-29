@@ -17,6 +17,7 @@ import 'package:traderwho/models/models.dart';
 import 'package:traderwho/views/feedback/presentation/pages/pages.dart';
 import 'package:traderwho/views/job_history/widgets/widgets.dart';
 import 'package:traderwho/views/trades_people/presentation/widgets/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'job_history_detail_page.dart';
 part 'job_history_page.dart';

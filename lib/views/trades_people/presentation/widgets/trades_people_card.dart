@@ -38,6 +38,7 @@ class TradesPeopleCard extends StatelessWidget {
           },
       child: Container(
         padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),

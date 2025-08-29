@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:traderwho/core/services/notification_service.dart';
 
 class UserController extends GetxController {
   final Rx<User?> user = Rx<User?>(null);
@@ -38,6 +39,17 @@ class UserController extends GetxController {
               .get();
 
       if (userDoc.exists) {
+        await NotificationService.requestNotificationPermission();
+        await NotificationService.initializeNotificationState();
+
+        // Initialize Firebase notification listeners
+        await NotificationService.initFirebasePushNotification(Get.context!);
+
+        // Setup token refresh listener
+        NotificationService.setupTokenRefreshListener();
+
+        // Get and print Firebase token for debugging
+        await NotificationService.getFirebaseToken();
         final data = userDoc.data();
         fullName.value = data?['name'] ?? authUser.displayName ?? 'User';
         email.value = data?['email'] ?? authUser.email ?? 'No email';

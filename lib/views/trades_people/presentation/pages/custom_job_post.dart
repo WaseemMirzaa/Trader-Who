@@ -160,43 +160,36 @@ class _CustomJobPostState extends State<CustomJobPost> {
                   ),
                   const Gap(5),
                   // Image upload section
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final itemWidth = (constraints.maxWidth - 40) / 3;
-                      return Row(
-                        children: List.generate(
-                          2,
-                          (index) => Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Container(
-                              width: itemWidth * 1.60,
-                              height: itemWidth * 1,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(12),
-                                color: AppColor.white,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    Assets.svgsIconAwesomeImage,
-                                    width: itemWidth * 0.36,
-                                    height: itemWidth * 0.28,
-                                  ),
-                                  const Gap(8),
-                                  const CustomText(
-                                    text: 'Tap to Upload',
-                                    fontSize: 12,
-                                    color: AppColor.secondaryText,
-                                  ),
-                                ],
-                              ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Container(
+                      // width: itemWidth * 1.60,
+                      // height: itemWidth * 1,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(12),
+                        color: AppColor.white,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              Assets.svgsIconAwesomeImage,
+                              // width: itemWidth * 0.36,
+                              // height: itemWidth * 0.28,
                             ),
-                          ),
+                            const Gap(8),
+                            const CustomText(
+                              text: 'Tap to Upload',
+                              fontSize: 12,
+                              color: AppColor.secondaryText,
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
 
                   const Gap(100),

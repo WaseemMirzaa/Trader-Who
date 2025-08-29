@@ -18,6 +18,7 @@ class TradesPerson {
   double latitude;
   double longitude;
   String? title;
+  String? phoneNumber;
 
   TradesPerson({
     required this.name,
@@ -37,6 +38,7 @@ class TradesPerson {
     required this.latitude,
     required this.longitude,
     this.title,
+    this.phoneNumber,
   });
 
   factory TradesPerson.fromDocumentSnapshot(DocumentSnapshot doc) {
@@ -54,6 +56,7 @@ class TradesPerson {
       description: map['description'] ?? '',
       price: map['price'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
+      phoneNumber: map['phone'] ?? '',
       rating:
           (map['rating'] is int)
               ? (map['rating'] as int).toDouble()
