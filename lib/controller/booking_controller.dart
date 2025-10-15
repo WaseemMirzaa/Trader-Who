@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:traderwho/controller/chat_controller.dart';
 import 'package:traderwho/controller/job_post_controller.dart';
 import 'package:traderwho/core/services/notification_service.dart';
 import 'package:traderwho/core/theme/app_color.dart';
@@ -367,6 +368,7 @@ class BookingController extends GetxController {
         print(
           '📊 Booking details: Category: $category, Service: $service, JobType: $jobType',
         );
+
         if (imageUrls.isNotEmpty) {
           print('📸 Uploaded ${imageUrls.length} images');
         }
@@ -381,6 +383,13 @@ class BookingController extends GetxController {
             duration: const Duration(seconds: 3),
           );
         });
+        ChatController chatController = Get.put(ChatController());
+        await chatController.createChatIfNotExists(
+          FirebaseAuth.instance.currentUser!.uid,
+          traderId,
+          true,
+          docRef.id,
+        );
 
         return true;
       }
@@ -892,5 +901,26 @@ class BookingController extends GetxController {
     bookingStatus.value = '';
     resetPreferredTime();
     resetImageSelection();
+  }
+
+  Future<BookingModel?> getBookingFromId(String? orderId) async {
+    if (orderId == null) return null;
+
+    // Fetch booking details from Firestore
+    return await _firestore
+        .collection('bookings')
+        .doc(orderId)
+        .get()
+        .then((doc) {
+          if (doc.exists) {
+            return BookingModel.fromFirestore(doc);
+          }
+
+          return null;
+        })
+        .catchError((error) {
+          print('❌ Error fetching booking: $error');
+          return null;
+        });
   }
 }

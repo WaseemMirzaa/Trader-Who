@@ -5,8 +5,7 @@ class TradeRatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ServiceController controller = Get.put(ServiceController());
-
+    final NewServiceController controller = Get.put(NewServiceController());
     return TraderWhoScaffold(
       appBar: TradeRatesAppbar(title: "Set Fixed Prices for Small Jobs"),
       body: SafeArea(
@@ -42,17 +41,39 @@ class TradeRatePage extends StatelessWidget {
                             color: AppColor.primaryText,
                           ),
                           const SizedBox(height: 16),
-                          ...controller.smallCategories.keys.map((category) {
+                          ...controller.smallCategories.keys.map((categoryId) {
                             int enabledServices = controller
-                                .getEnabledSmallServicesCount(category);
+                                .getEnabledServicesCount(categoryId, 'small');
                             int totalServices = controller
-                                .getTotalSmallServicesCount(category);
+                                .getTotalServicesCount(categoryId, 'small');
+                            final category =
+                                controller.categories
+                                    .firstWhereOrNull((c) => c.id == categoryId)
+                                    ?.name ??
+                                categoryId;
                             return CategoryCard(
                               category: category,
-                              icon: controller.getCategoryIcon(category),
+                              icon: Icons.build, // Optionally map to icons
                               enabledServices: enabledServices,
                               totalServices: totalServices,
-                              onTap: () => controller.selectService(category),
+                              onTap: () {
+                                print(
+                                  '🔍 Tapping category: $category (ID: $categoryId)',
+                                );
+                                print(
+                                  '🔍 smallCategories keys: ${controller.smallCategories.keys.toList()}',
+                                );
+                                print(
+                                  '🔍 Selected category before: ${controller.selectedCategory.value}',
+                                );
+                                controller.selectService(categoryId);
+                                print(
+                                  '🔍 Selected category after: ${controller.selectedCategory.value}',
+                                );
+                                print(
+                                  '🔍 smallCategories has key: ${controller.smallCategories.containsKey(categoryId)}',
+                                );
+                              },
                             );
                           }),
                           const SizedBox(height: 20),
@@ -73,7 +94,7 @@ class TradeRatePage extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  controller.selectedCategory(null);
+                                  controller.selectedCategory('');
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
@@ -97,23 +118,53 @@ class TradeRatePage extends StatelessWidget {
                                   ).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Icon(
-                                  controller.getCategoryIcon(
-                                    controller.selectedCategory.value,
-                                  ),
-                                  color: const Color(0xFFFF6B35),
-                                  size: 20,
+                                child: Builder(
+                                  builder: (context) {
+                                    final selectedCategoryName =
+                                        controller.categories
+                                            .firstWhereOrNull(
+                                              (c) =>
+                                                  c.id ==
+                                                  controller
+                                                      .selectedCategory
+                                                      .value,
+                                            )
+                                            ?.name ??
+                                        controller.selectedCategory.value;
+                                    return Icon(
+                                      controller.getCategoryIcon(
+                                        selectedCategoryName,
+                                      ),
+                                      color: const Color(0xFFFF6B35),
+                                      size: 20,
+                                    );
+                                  },
                                 ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
-                                child: Text(
-                                  controller.selectedCategory.value,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1E3A8A),
-                                  ),
+                                child: Builder(
+                                  builder: (context) {
+                                    final selectedCategoryName =
+                                        controller.categories
+                                            .firstWhereOrNull(
+                                              (c) =>
+                                                  c.id ==
+                                                  controller
+                                                      .selectedCategory
+                                                      .value,
+                                            )
+                                            ?.name ??
+                                        controller.selectedCategory.value;
+                                    return Text(
+                                      selectedCategoryName,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1E3A8A),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ],
@@ -130,36 +181,42 @@ class TradeRatePage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           ...controller
-                              .smallCategories[controller
-                                  .selectedCategory
-                                  .value]!
+                              .getJobsForCategory(
+                                controller.selectedCategory.value,
+                                'small',
+                              )
                               .asMap()
                               .entries
                               .map((entry) {
                                 int index = entry.key;
-                                ServiceItem service = entry.value;
+                                JobModel job = entry.value;
+                                final price = controller.getJobPrice(job.id);
+                                final isEnabled = controller.isJobEnabled(
+                                  job.id,
+                                );
                                 return ServiceCardWidget(
-                                  service: service,
+                                  job: job,
+                                  price: price,
+                                  isEnabled: isEnabled,
                                   onEditPressed:
                                       () => _showPriceDialog(
                                         context,
                                         controller,
-                                        service,
+                                        job,
                                         index,
                                         controller.selectedCategory.value,
+                                        null,
                                       ),
                                 );
                               }),
-                          if (controller.selectedCategory.value ==
-                              'Custom Services') ...[
-                            const SizedBox(height: 16),
-                            AddCustomServiceButton(
-                              onPressed: controller.addCustomService,
-                            ),
-                          ],
+                          // Custom Services logic removed
                           const SizedBox(height: 32),
                           CustomButton(
-                            onTap: controller.saveUserServices,
+                            onTap: () {
+                              controller.saveUserServices(
+                                isFromLargeJob: false,
+                              );
+                            },
                             color: AppColor.primaryButton,
                             text: 'Save Configuration',
                             textColor: AppColor.white,
@@ -175,17 +232,16 @@ class TradeRatePage extends StatelessWidget {
 
   void _showPriceDialog(
     BuildContext context,
-    ServiceController controller,
-    ServiceItem service,
+    NewServiceController controller,
+    JobModel job,
     int index,
-    String category,
+    String categoryId,
+    TraderServiceModel? traderService,
   ) {
-    final titleController = TextEditingController(text: service.title);
-    final descController = TextEditingController(
-      text: service.description ?? '',
-    );
+    final titleController = TextEditingController(text: job.title);
+    final descController = TextEditingController(text: job.description ?? '');
     final priceController = TextEditingController(
-      text: service.price?.toStringAsFixed(0) ?? '',
+      text: job.price?.toStringAsFixed(0) ?? '',
     );
 
     showDialog(
@@ -193,7 +249,7 @@ class TradeRatePage extends StatelessWidget {
       builder:
           (context) => AlertDialog(
             title: Text(
-              service.isCustom ? 'Add Custom Service' : 'Set Fixed Price',
+              job.isCustom ? 'Add Custom Service' : 'Set Fixed Price',
             ),
             content: SingleChildScrollView(
               child: SizedBox(
@@ -201,7 +257,7 @@ class TradeRatePage extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (service.isCustom) ...[
+                    if (job.isCustom) ...[
                       TextField(
                         style: TextStyle(color: AppColor.secondaryText),
                         controller: titleController,
@@ -292,10 +348,10 @@ class TradeRatePage extends StatelessWidget {
               ),
             ),
             actions: [
-              if (service.isCustom)
+              if (job.isCustom)
                 TextButton(
                   onPressed: () {
-                    controller.removeCustomService(category, index);
+                    controller.removeCustomService(categoryId, index);
                     Navigator.pop(context);
                   },
                   child: const Text(
@@ -313,23 +369,21 @@ class TradeRatePage extends StatelessWidget {
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () {
-                  final updatedService = service.copyWith(
+                  final updatedService = job.copyWith(
                     title:
-                        service.isCustom
-                            ? titleController.text.trim()
-                            : service.title,
+                        job.isCustom ? titleController.text.trim() : job.title,
                     description:
-                        service.isCustom
+                        job.isCustom
                             ? (descController.text.trim().isEmpty
                                 ? null
                                 : descController.text.trim())
-                            : service.description,
+                            : job.description,
                     price: double.tryParse(priceController.text),
                     isEnabled:
                         double.tryParse(priceController.text) != null &&
                         double.tryParse(priceController.text)! > 0,
                   );
-                  controller.updateService(category, index, updatedService);
+                  controller.updateService(categoryId, index, updatedService);
                   Navigator.pop(context);
                 },
                 child: const Text('Save'),

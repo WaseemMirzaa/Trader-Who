@@ -193,7 +193,12 @@ class ChatController extends GetxController {
   }
 
   // Create chat document if not exists
-  Future<void> createChatIfNotExists(String senderId, String receiverId) async {
+  Future<void> createChatIfNotExists(
+    String senderId,
+    String receiverId,
+    bool isOrderChat,
+    String? orderId,
+  ) async {
     final chatId = getChatId(senderId, receiverId);
     final chatRef = _firestore.collection('chats').doc(chatId);
     final doc = await chatRef.get();
@@ -207,6 +212,8 @@ class ChatController extends GetxController {
         'lastMessageTime': Timestamp.now(),
         'senderUnreadCount': 0,
         'receiverUnreadCount': 0,
+        'isOrderChat': isOrderChat,
+        'orderId': orderId,
       });
     }
   }

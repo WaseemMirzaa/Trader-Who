@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:traderwho/controller/service_controller.dart';
-import 'package:traderwho/controller/trade_large_job_rate_controller.dart';
+import 'package:traderwho/controller/new_service_controller.dart';
+// legacy imports removed - using NewServiceController
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/shared_widgets/custom_text.dart';
@@ -18,7 +18,7 @@ class TradeLargerRatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ServiceController controller = Get.put(ServiceController());
+    final NewServiceController controller = Get.put(NewServiceController());
 
     return TraderWhoScaffold(
       appBar: TradeRatesAppbar(title: "Set Fixed Prices for large Jobs"),
@@ -55,17 +55,39 @@ class TradeLargerRatePage extends StatelessWidget {
                             color: AppColor.primaryText,
                           ),
                           const SizedBox(height: 16),
-                          ...controller.largeCategories.keys.map((category) {
+                          ...controller.largeCategories.keys.map((categoryId) {
                             int enabledServices = controller
-                                .getEnabledLargeServicesCount(category);
+                                .getEnabledLargeServicesCount(categoryId);
                             int totalServices = controller
-                                .getTotalLargeServicesCount(category);
+                                .getTotalLargeServicesCount(categoryId);
+                            final categoryName =
+                                controller.categories
+                                    .firstWhereOrNull((c) => c.id == categoryId)
+                                    ?.name ??
+                                categoryId;
                             return CategoryCard(
-                              category: category,
-                              icon: controller.getCategoryIcon(category),
+                              category: categoryName,
+                              icon: controller.getCategoryIcon(categoryName),
                               enabledServices: enabledServices,
                               totalServices: totalServices,
-                              onTap: () => controller.selectService(category),
+                              onTap: () {
+                                print(
+                                  '🔍 Tapping category: $categoryName (ID: $categoryId)',
+                                );
+                                print(
+                                  '🔍 largeCategories keys: ${controller.largeCategories.keys.toList()}',
+                                );
+                                print(
+                                  '🔍 Selected category before: ${controller.selectedCategory.value}',
+                                );
+                                controller.selectService(categoryId);
+                                print(
+                                  '🔍 Selected category after: ${controller.selectedCategory.value}',
+                                );
+                                print(
+                                  '🔍 largeCategories has key: ${controller.largeCategories.containsKey(categoryId)}',
+                                );
+                              },
                             );
                           }),
                           const SizedBox(height: 20),
@@ -85,7 +107,7 @@ class TradeLargerRatePage extends StatelessWidget {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () => controller.selectedCategory(null),
+                                onTap: () => controller.selectedCategory(''),
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
@@ -108,23 +130,53 @@ class TradeLargerRatePage extends StatelessWidget {
                                   ).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Icon(
-                                  controller.getCategoryIcon(
-                                    controller.selectedCategory.value,
-                                  ),
-                                  color: const Color(0xFFFF6B35),
-                                  size: 20,
+                                child: Builder(
+                                  builder: (context) {
+                                    final selectedCategoryName =
+                                        controller.categories
+                                            .firstWhereOrNull(
+                                              (c) =>
+                                                  c.id ==
+                                                  controller
+                                                      .selectedCategory
+                                                      .value,
+                                            )
+                                            ?.name ??
+                                        controller.selectedCategory.value;
+                                    return Icon(
+                                      controller.getCategoryIcon(
+                                        selectedCategoryName,
+                                      ),
+                                      color: const Color(0xFFFF6B35),
+                                      size: 20,
+                                    );
+                                  },
                                 ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
-                                child: Text(
-                                  controller.selectedCategory.value,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1E3A8A),
-                                  ),
+                                child: Builder(
+                                  builder: (context) {
+                                    final selectedCategoryName =
+                                        controller.categories
+                                            .firstWhereOrNull(
+                                              (c) =>
+                                                  c.id ==
+                                                  controller
+                                                      .selectedCategory
+                                                      .value,
+                                            )
+                                            ?.name ??
+                                        controller.selectedCategory.value;
+                                    return Text(
+                                      selectedCategoryName,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1E3A8A),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ],
@@ -141,16 +193,21 @@ class TradeLargerRatePage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           ...controller
-                              .largeCategories[controller
-                                  .selectedCategory
-                                  .value]!
+                              .getJobsForCategory(
+                                controller.selectedCategory.value,
+                                'large',
+                              )
                               .asMap()
                               .entries
                               .map((entry) {
                                 int index = entry.key;
-                                ServiceItem service = entry.value;
+                                JobModel service = entry.value;
                                 return ServiceCardWidget(
-                                  service: service,
+                                  job: service,
+                                  price: controller.getJobPrice(service.id),
+                                  isEnabled: controller.isJobEnabled(
+                                    service.id,
+                                  ),
                                   onEditPressed:
                                       () => _showPriceDialog(
                                         context,
@@ -161,13 +218,13 @@ class TradeLargerRatePage extends StatelessWidget {
                                       ),
                                 );
                               }),
-                          if (controller.selectedCategory.value ==
-                              'Custom Services') ...[
-                            const SizedBox(height: 16),
-                            AddCustomServiceButton(
-                              onPressed: controller.addCustomService,
-                            ),
-                          ],
+                          // if (controller.selectedCategory.value ==
+                          //     'Custom Services') ...[
+                          //   const SizedBox(height: 16),
+                          //   AddCustomServiceButton(
+                          //     onPressed: controller.addCustomService,
+                          //   ),
+                          // ],
                           const SizedBox(height: 32),
                           CustomButton(
                             onTap: () {
@@ -188,8 +245,8 @@ class TradeLargerRatePage extends StatelessWidget {
 
   void _showPriceDialog(
     BuildContext context,
-    ServiceController controller,
-    ServiceItem service,
+    NewServiceController controller,
+    JobModel service,
     int index,
     String category,
   ) {
@@ -205,70 +262,68 @@ class TradeLargerRatePage extends StatelessWidget {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text(
-              service.isCustom ? 'Add Custom Service' : 'Set Fixed Price',
-            ),
+            title: Text('Set Fixed Price'),
             content: SingleChildScrollView(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (service.isCustom) ...[
-                      TextField(
-                        style: TextStyle(color: AppColor.secondaryText),
-                        controller: titleController,
-                        cursorColor: AppColor.primaryText,
-                        decoration: const InputDecoration(
-                          labelText: 'Service Title',
-                          labelStyle: TextStyle(color: AppColor.primaryText),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.primaryText),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.primaryText),
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.primaryText),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.primaryText),
-                          ),
-                          contentPadding: EdgeInsets.all(12),
-                        ),
-                        autofocus: true,
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        style: TextStyle(color: AppColor.secondaryText),
-                        controller: descController,
-                        cursorColor: AppColor.primaryText,
-                        decoration: const InputDecoration(
-                          labelText: 'Description (Optional)',
-                          labelStyle: TextStyle(color: AppColor.primaryText),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.primaryText),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.primaryText),
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.primaryText),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColor.primaryText),
-                          ),
-                          hintText: 'Brief description of what\'s included',
-                          hintStyle: TextStyle(
-                            color: AppColor.secondaryText,
-                            fontFamily: 'openSans',
-                          ),
-                          contentPadding: EdgeInsets.all(12),
-                        ),
-                        maxLines: 2,
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                    // if (service.isCustom) ...[
+                    //   TextField(
+                    //     style: TextStyle(color: AppColor.secondaryText),
+                    //     controller: titleController,
+                    //     cursorColor: AppColor.primaryText,
+                    //     decoration: const InputDecoration(
+                    //       labelText: 'Service Title',
+                    //       labelStyle: TextStyle(color: AppColor.primaryText),
+                    //       border: OutlineInputBorder(
+                    //         borderSide: BorderSide(color: AppColor.primaryText),
+                    //       ),
+                    //       focusedBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(color: AppColor.primaryText),
+                    //       ),
+                    //       disabledBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(color: AppColor.primaryText),
+                    //       ),
+                    //       enabledBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(color: AppColor.primaryText),
+                    //       ),
+                    //       contentPadding: EdgeInsets.all(12),
+                    //     ),
+                    //     autofocus: true,
+                    //   ),
+                    //   const SizedBox(height: 16),
+                    //   TextField(
+                    //     style: TextStyle(color: AppColor.secondaryText),
+                    //     controller: descController,
+                    //     cursorColor: AppColor.primaryText,
+                    //     decoration: const InputDecoration(
+                    //       labelText: 'Description (Optional)',
+                    //       labelStyle: TextStyle(color: AppColor.primaryText),
+                    //       border: OutlineInputBorder(
+                    //         borderSide: BorderSide(color: AppColor.primaryText),
+                    //       ),
+                    //       focusedBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(color: AppColor.primaryText),
+                    //       ),
+                    //       disabledBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(color: AppColor.primaryText),
+                    //       ),
+                    //       enabledBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(color: AppColor.primaryText),
+                    //       ),
+                    //       hintText: 'Brief description of what\'s included',
+                    //       hintStyle: TextStyle(
+                    //         color: AppColor.secondaryText,
+                    //         fontFamily: 'openSans',
+                    //       ),
+                    //       contentPadding: EdgeInsets.all(12),
+                    //     ),
+                    //     maxLines: 2,
+                    //   ),
+                    //   const SizedBox(height: 16),
+                    // ],
                     TextField(
                       style: TextStyle(color: AppColor.secondaryText),
                       controller: priceController,

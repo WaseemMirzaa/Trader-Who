@@ -47,20 +47,50 @@ class JobPostController extends GetxController {
   getPredefinedServices() async {
     isLoading(true);
     try {
-      var data =
-          await FirebaseFirestore.instance
-              .collection('Services')
-              .doc('smalljoblist')
+      // New DB: predefined quick jobs are stored as documents in `jobs` collection
+      // We'll query for small jobs and group them by categoryName to build the
+      // legacy-shaped MainServiceModel.predefinedServices map.
+      final snapshot =
+          await _firestore
+              .collection('jobs')
+              .where('jobType', isEqualTo: 'small')
+              .where('isActive', isEqualTo: true)
+              .orderBy('order')
               .get();
-      final dataModel = MainServiceModel.fromMap(data.data()!);
 
-      // Sort the categories by name
-      final sortedServices = sortCategoriesByName(dataModel.predefinedServices);
+      final Map<String, List<ServiceItem>> grouped = {};
+
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final title = data['title'] ?? '';
+        final description = data['description'] ?? '';
+        final categoryName = data['categoryName'] ?? 'Other';
+
+        final serviceItem = ServiceItem(
+          title: title,
+          description: description,
+          price: null,
+          id: doc.id,
+          isEnabled: false,
+          isCustom: false,
+        );
+
+        grouped.putIfAbsent(categoryName, () => []).add(serviceItem);
+      }
+
+      // Sort each category's services alphabetically
+      for (final key in grouped.keys) {
+        grouped[key]!.sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
+      }
+
+      final sorted = sortCategoriesByName(grouped);
 
       predefinedSmallJobs = MainServiceModel(
-        createdAt: dataModel.createdAt,
-        updatedAt: dataModel.updatedAt,
-        predefinedServices: sortedServices,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        predefinedServices: sorted,
       );
     } catch (e) {
       print('Error fetching predefined services: $e');
@@ -112,7 +142,10 @@ class JobPostController extends GetxController {
       for (var doc in servicesSnapshot.docs) {
         try {
           final serviceData = doc.data();
-          final category = serviceData['category'] as String? ?? 'Other';
+          final category =
+              serviceData['categoryName'] as String? ??
+              serviceData['category'] as String? ??
+              'Other';
           final price = (serviceData['price'] as num?)?.toDouble();
 
           // Skip services without valid price
@@ -121,8 +154,28 @@ class JobPostController extends GetxController {
             continue;
           }
 
-          // Create ServiceItem from the data
-          final serviceItem = ServiceItem.fromMap(serviceData);
+          // Create ServiceItem from the services_prices document
+          final serviceItem = ServiceItem(
+            title: serviceData['jobTitle'] ?? serviceData['title'] ?? '',
+            description:
+                serviceData['customDescription'] ??
+                serviceData['description'] ??
+                '',
+            price: price,
+            lowestPrice:
+                serviceData['lowestPrice'] != null
+                    ? (serviceData['lowestPrice'] as num).toDouble()
+                    : null,
+            highestPrice:
+                serviceData['highestPrice'] != null
+                    ? (serviceData['highestPrice'] as num).toDouble()
+                    : null,
+            isEnabled: serviceData['isEnabled'] ?? true,
+            isCustom: serviceData['isCustom'] ?? false,
+            tradesPerson: null,
+            traderId: serviceData['traderId'] ?? serviceData['trader_id'] ?? '',
+            id: serviceData['jobId'] ?? doc.id,
+          );
 
           // Group by category
           if (!categorizedServices.containsKey(category)) {
@@ -228,10 +281,15 @@ class JobPostController extends GetxController {
       categoryPriceRanges.clear();
 
       // Query services by job type
+      // Map UI jobType values (e.g., 'smallJob'/'largeJob') to DB values ('small'/'large')
+      String dbJobType = jobType;
+      if (jobType == 'smallJob') dbJobType = 'small';
+      if (jobType == 'largeJob') dbJobType = 'large';
+
       final servicesSnapshot =
           await _firestore
               .collection('services_prices')
-              .where('jobType', isEqualTo: jobType)
+              .where('jobType', isEqualTo: dbJobType)
               .where('isEnabled', isEqualTo: true)
               .get();
 
@@ -246,7 +304,10 @@ class JobPostController extends GetxController {
       for (var doc in servicesSnapshot.docs) {
         try {
           final serviceData = doc.data();
-          final category = serviceData['category'] as String? ?? 'Other';
+          final category =
+              serviceData['categoryName'] as String? ??
+              serviceData['category'] as String? ??
+              'Other';
           final price = (serviceData['price'] as num?)?.toDouble();
 
           // Skip services without valid price
@@ -256,7 +317,27 @@ class JobPostController extends GetxController {
           }
 
           // Create ServiceItem from the data
-          final serviceItem = ServiceItem.fromMap(serviceData);
+          final serviceItem = ServiceItem(
+            title: serviceData['jobTitle'] ?? serviceData['title'] ?? '',
+            description:
+                serviceData['customDescription'] ??
+                serviceData['description'] ??
+                '',
+            price: price,
+            lowestPrice:
+                serviceData['lowestPrice'] != null
+                    ? (serviceData['lowestPrice'] as num).toDouble()
+                    : null,
+            highestPrice:
+                serviceData['highestPrice'] != null
+                    ? (serviceData['highestPrice'] as num).toDouble()
+                    : null,
+            isEnabled: serviceData['isEnabled'] ?? true,
+            isCustom: serviceData['isCustom'] ?? false,
+            tradesPerson: null,
+            traderId: serviceData['traderId'] ?? serviceData['trader_id'] ?? '',
+            id: serviceData['jobId'] ?? doc.id,
+          );
 
           // Group by category
           if (!categorizedServices.containsKey(category)) {

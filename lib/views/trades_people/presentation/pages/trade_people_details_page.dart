@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/controller/booking_controller.dart';
-import 'package:traderwho/controller/service_controller.dart';
+import 'package:traderwho/controller/new_service_controller.dart';
+// legacy ServiceController imports removed; using NewServiceController for service lookups
 import 'package:traderwho/core/extensions/media_query_extension.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderwho/core/theme/app_color.dart';
@@ -31,13 +32,13 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
   void _handleBookNow() async {
     // Import the booking controller
     final BookingController bookingController = Get.put(BookingController());
-    final ServiceController serviceController = Get.find();
+    final NewServiceController serviceController = Get.find();
 
-    // Determine the service name based on selected criteria
+    // Determine the service name based on selected criteria.
     String serviceName =
-        serviceController.selectedService.value != null
-            ? serviceController.selectedService.value!.title
-            : '${serviceController.selectedCategory.value} Service';
+        serviceController.selectedCategory.value.isNotEmpty
+            ? '${serviceController.selectedCategory.value} Service'
+            : 'General Service';
 
     // Show booking dialog (includes user type validation)
     await bookingController.showBookingDialog(

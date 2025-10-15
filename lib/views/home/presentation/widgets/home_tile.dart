@@ -1,13 +1,15 @@
 part of 'widgets.dart';
 
 class HomeTiles extends StatelessWidget {
-  final String imagePath;
+  final String? iconUrl;
+  final String fallbackImage;
   final String title;
   final VoidCallback? onTap;
   final Color textColor;
   const HomeTiles({
     super.key,
-    required this.imagePath,
+    this.iconUrl,
+    required this.fallbackImage,
     required this.title,
     this.onTap,
     this.textColor = Colors.black,
@@ -20,7 +22,7 @@ class HomeTiles extends StatelessWidget {
       child: Container(
         height: 105,
         width: 105,
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -35,7 +37,37 @@ class HomeTiles extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(imagePath, width: 40, height: 40),
+            iconUrl != null && iconUrl!.isNotEmpty
+                ? CachedNetworkImage(
+                  imageUrl: iconUrl!,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                  placeholder:
+                      (context, url) => SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColor.orangeCustomColor,
+                          ),
+                        ),
+                      ),
+                  errorWidget:
+                      (context, url, error) => Image.asset(
+                        fallbackImage,
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                      ),
+                )
+                : Image.asset(
+                  fallbackImage,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                ),
             const SizedBox(height: 8),
             Text(
               title,

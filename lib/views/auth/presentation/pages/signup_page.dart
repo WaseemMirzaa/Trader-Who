@@ -168,20 +168,60 @@ class _SignupPageState extends State<SignupPage> {
 
                     // Tradesperson-specific fields
                     if (widget.isTradesperson) ...[
-                      // Title Field
-                      CustomTextField(
-                        controller: controller.titleController,
-                        borderColor: Colors.transparent,
-                        hintText: 'Professional Title (e.g., Plumber)',
-                        hintStyle: const TextStyle(color: AppColor.midGray),
-                        keyboardType: TextInputType.text,
-                        textColor: AppColor.midGray,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your professional title';
-                          }
-                          return null;
-                        },
+                      // Professional Category Dropdown
+                      Obx(
+                        () => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child:
+                              controller.isLoadingCategories.value
+                                  ? const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                  : DropdownButtonHideUnderline(
+                                    child: DropdownButton<CategoryModel>(
+                                      isExpanded: true,
+                                      hint: const Text(
+                                        'Select Professional Category',
+                                        style: TextStyle(
+                                          color: AppColor.midGray,
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      value: controller.selectedCategory.value,
+                                      items:
+                                          controller.categories.map((category) {
+                                            return DropdownMenuItem<
+                                              CategoryModel
+                                            >(
+                                              value: category,
+                                              child: Text(
+                                                category.name,
+                                                style: const TextStyle(
+                                                  color: AppColor.midGray,
+                                                  fontStyle: FontStyle.italic,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                      onChanged: (CategoryModel? newValue) {
+                                        controller.selectedCategory.value =
+                                            newValue;
+                                      },
+                                    ),
+                                  ),
+                        ),
                       ),
                       const Gap(20),
 
@@ -296,14 +336,22 @@ class _SignupPageState extends State<SignupPage> {
                         text: 'Sign Up',
                         onTap: () {
                           if (_formKey.currentState!.validate()) {
-                            if (widget.isTradesperson &&
-                                (controller.startTime.value == null ||
-                                    controller.endTime.value == null)) {
-                              Get.snackbar(
-                                'Error',
-                                'Please select your working hours',
-                              );
-                              return;
+                            if (widget.isTradesperson) {
+                              if (controller.selectedCategory.value == null) {
+                                Get.snackbar(
+                                  'Error',
+                                  'Please select your professional category',
+                                );
+                                return;
+                              }
+                              if (controller.startTime.value == null ||
+                                  controller.endTime.value == null) {
+                                Get.snackbar(
+                                  'Error',
+                                  'Please select your working hours',
+                                );
+                                return;
+                              }
                             }
                             print('Submitting signup form');
                             controller.signup(
@@ -322,9 +370,7 @@ class _SignupPageState extends State<SignupPage> {
                                       ? controller.bioController.text
                                       : null,
                               title:
-                                  widget.isTradesperson
-                                      ? controller.titleController.text
-                                      : null,
+                                  null, // No longer used, category is used instead
                             );
                           } else {
                             print('Form validation failed');

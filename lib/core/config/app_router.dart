@@ -39,7 +39,15 @@ class AppRouter {
     ),
     GetPage(
       name: AppRoutes.jobPage,
-      page: () => JobPage(selectedCategory: Get.arguments),
+      page: () {
+        final args = Get.arguments;
+        // Handle both old string format and new map format
+        final selectedCategory =
+            args is Map
+                ? (args['categoryName'] ?? args['categoryId'] ?? '')
+                : (args ?? '');
+        return JobPage(selectedCategory: selectedCategory);
+      },
       binding: JobPageBinding(),
     ),
     GetPage(
@@ -52,7 +60,6 @@ class AppRouter {
       page: () => const TradeLargerRatePage(),
       binding: TradesLargerJoBPageBinding(),
     ),
-
 
     GetPage(
       name: AppRoutes.jobHistoryPage,

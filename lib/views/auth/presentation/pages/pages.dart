@@ -14,6 +14,7 @@ import 'package:traderwho/core/shared_widgets/custom_text.dart';
 import 'package:traderwho/core/shared_widgets/custom_textfield.dart';
 import 'package:traderwho/core/theme/theme.dart';
 import 'package:traderwho/models/user_model.dart';
+import 'package:traderwho/models/category_model.dart';
 
 part 'email_verification_page.dart';
 part 'forget_password_page.dart';

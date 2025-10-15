@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/controller/job_post_controller.dart';
-import 'package:traderwho/controller/service_controller.dart';
+import 'package:traderwho/controller/new_service_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_dropdown.dart';

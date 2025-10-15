@@ -191,7 +191,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                   ),
                   kGap10,
                   // Conditionally show Tradesperson, Location, and Map
-                  if (!isWaitingForProposal) ...[
+                  if (true || !isWaitingForProposal) ...[
                     // Tradesperson Section
                     ...[
                       const SizedBox(height: 12),
@@ -216,27 +216,31 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           height: 16,
                         ),
                         const SizedBox(width: 4),
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              const TextSpan(
-                                text: 'Address: ',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColor.primaryText,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'openSans',
+                        Expanded(
+                          child: RichText(
+                            maxLines: 3,
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: 'Address: ',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColor.primaryText,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'openSans',
+                                  ),
                                 ),
-                              ),
-                              TextSpan(
-                                text: widget.job.address,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColor.secondaryText,
-                                  fontFamily: 'openSans',
+                                TextSpan(
+                                  text: widget.job.address,
+
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColor.secondaryText,
+                                    fontFamily: 'openSans',
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],

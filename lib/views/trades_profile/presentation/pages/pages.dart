@@ -5,10 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
-import 'package:traderwho/controller/service_controller.dart';
+import 'package:traderwho/controller/new_service_controller.dart';
 import 'package:traderwho/controller/trade_myaccount_controller.dart';
 import 'package:traderwho/controller/trade_profile_controller.dart';
-import 'package:traderwho/controller/trade_small_job_rate_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
@@ -20,7 +19,10 @@ import 'package:traderwho/core/shared_widgets/delete_dialog_box.dart';
 import 'package:traderwho/core/shared_widgets/textFieldCustom.dart';
 import 'package:traderwho/core/theme/theme.dart';
 import 'package:traderwho/models/models.dart';
+import 'package:traderwho/models/trader_service_model.dart';
+import 'package:traderwho/models/category_model.dart';
 import 'package:traderwho/views/profile/presentation/widgets/widgets.dart';
+// Removed unused imports during migration
 import 'package:traderwho/views/trade_onboarding/presentation/pages/pages.dart';
 import 'package:traderwho/views/trades_profile/presentation/widgets/widgets.dart';
 

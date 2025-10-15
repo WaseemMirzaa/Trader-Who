@@ -16,11 +16,10 @@ class _JobPageState extends State<JobPage> {
   final TextEditingController _budgetController = TextEditingController();
 
   late final JobPostController _jobController;
-  final ServiceController _serviceController = Get.find();
+  final NewServiceController _serviceController = Get.find();
 
   String? _selectedJobType;
-  ServiceItem? _selectedService;
-  String? _largeSelectCategory;
+  JobModel? _selectedService;
 
   final List<Map<String, String>> _jobTypes = [
     {'value': 'smallJob', 'label': 'Instant Book-Fixed Price'},
@@ -31,6 +30,9 @@ class _JobPageState extends State<JobPage> {
   void initState() {
     super.initState();
     _jobController = Get.put(JobPostController());
+
+    // Select the category in ServiceController so services are loaded
+    _serviceController.selectService(widget.selectedCategory);
   }
 
   @override
@@ -153,7 +155,7 @@ class _JobPageState extends State<JobPage> {
                     ),
                     const Gap(20),
 
-                    // Selected Category
+                    // Selected Category (Read-only - from home page selection)
                     CustomText(
                       text: 'Selected Category',
                       fontSize: screenWidth > 600 ? 18 : 16,
@@ -161,99 +163,31 @@ class _JobPageState extends State<JobPage> {
                       color: Colors.black,
                     ),
                     const Gap(10),
-                    if (_selectedJobType == 'smallJob')
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              color: AppColor.primaryButton,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              widget.selectedCategory,
-                              style: TextStyle(
-                                color: AppColor.secondaryText,
-                                fontFamily: 'openSans',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColor.white,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    if (_selectedJobType == 'largeJob')
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: _largeSelectCategory,
-                            hint: Row(
-                              children: [
-                                Icon(
-                                  Icons.category,
-                                  color: AppColor.secondaryText,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Select a category',
-                                  style: TextStyle(
-                                    color: AppColor.secondaryText,
-                                    fontFamily: 'openSans',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            isExpanded: true,
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              color: AppColor.secondaryText,
-                            ),
-                            items:
-                                _serviceController.largeCategories.entries.map((
-                                  entry,
-                                ) {
-                                  return DropdownMenuItem<String>(
-                                    value: entry.key,
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.check_circle,
-                                          color: AppColor.primaryButton,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          entry.key,
-                                          style: TextStyle(
-                                            color: AppColor.secondaryText,
-                                            fontFamily: 'openSans',
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _largeSelectCategory = newValue;
-                              });
-                            },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle,
+                            color: AppColor.primaryButton,
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          Text(
+                            widget.selectedCategory,
+                            style: TextStyle(
+                              color: AppColor.secondaryText,
+                              fontFamily: 'openSans',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
                     const Gap(20),
 
                     // Loading indicator
@@ -282,13 +216,14 @@ class _JobPageState extends State<JobPage> {
                     CustomButton(
                       text: 'Find Tradepeople',
                       onTap: () {
+                        if (_locationController.text.isEmpty) {
+                          Get.snackbar('Error', 'Please select a location');
+                          return;
+                        }
                         Get.toNamed(
                           AppRoutes.tradeContainer,
                           arguments: {
-                            'selectedCategory':
-                                _selectedJobType == "largeJob"
-                                    ? _largeSelectCategory
-                                    : widget.selectedCategory,
+                            'selectedCategory': widget.selectedCategory,
                             'selectedService': _selectedService?.title,
                             'jobType': _selectedJobType,
                             'servicePrice': _selectedService?.price,
@@ -315,13 +250,6 @@ class _JobPageState extends State<JobPage> {
   }
 
   Widget _buildQuickJobSelection(double screenWidth, double screenHeight) {
-    final categoryServices = _jobController.getServicesForCategory(
-      widget.selectedCategory,
-    );
-    final priceRange = _jobController.getFormattedPriceRange(
-      widget.selectedCategory,
-    );
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -355,28 +283,23 @@ class _JobPageState extends State<JobPage> {
             ),
           ),
         ] else ...[
-          ..._serviceController.selectedCategoryServices.map((
-            ServiceItem service,
-          ) {
-            final isSelected = _selectedService?.id == service.id;
+          ..._serviceController.selectedCategoryServices.map((JobModel job) {
+            final isSelected = _selectedService?.id == job.id;
+            final price = _serviceController.getJobPrice(job.id);
             final displayPrice =
-                service.lowestPrice != null
-                    ? (service.lowestPrice == service.highestPrice
-                        ? '£${service.lowestPrice!.toInt()}'
-                        : '£${service.lowestPrice!.toInt()}-${service.highestPrice!.toInt()}')
-                    : 'Price on request';
+                price != null ? '£${price.toInt()}' : 'Price on request';
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    _selectedService = service;
-                    Get.find<ServiceController>().selectedService(service);
+                    _selectedService = job;
+                    Get.find<NewServiceController>().selectService(job.id);
                     _titleController.text =
-                        '${widget.selectedCategory} - ${service.title}';
+                        '${widget.selectedCategory} - ${job.title}';
                     _descriptionController.text =
-                        'I need a ${service.title} service. ${service.description ?? ""} Estimated price: $displayPrice';
+                        'I need a ${job.title} service. ${job.description ?? ""} Estimated price: $displayPrice';
                   });
                 },
                 child: Container(
@@ -403,7 +326,7 @@ class _JobPageState extends State<JobPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              service.title,
+                              job.title,
                               style: TextStyle(
                                 fontFamily: 'openSans',
                                 fontSize: 15,
@@ -414,11 +337,11 @@ class _JobPageState extends State<JobPage> {
                                         : Colors.black,
                               ),
                             ),
-                            if (service.description != null &&
-                                service.description!.isNotEmpty) ...[
+                            if (job.description != null &&
+                                job.description!.isNotEmpty) ...[
                               const SizedBox(height: 4),
                               Text(
-                                service.description!,
+                                job.description!,
                                 style: TextStyle(
                                   fontFamily: 'openSans',
                                   fontSize: 12,
@@ -446,7 +369,7 @@ class _JobPageState extends State<JobPage> {
                 ),
               ),
             );
-          }),
+          }).toList(),
         ],
         const Gap(10),
       ],
@@ -515,7 +438,16 @@ class _JobPageState extends State<JobPage> {
           controller: _locationController,
           borderColor: AppColor.white,
           fontStyle: FontStyle.normal,
-          hintText: 'Auto-fill from GPS or manual entry',
+          readOnly: true,
+          // onTap: () async {
+          //   await _jobController.pickLocationFromMap();
+          //   if (_jobController.address != null) {
+          //     setState(() {
+          //       _locationController.text = _jobController.address!;
+          //     });
+          //   }
+          // },
+          hintText: 'Auto-fill from GPS',
           hintStyle: const TextStyle(
             color: AppColor.grayHintText,
             fontSize: 15,

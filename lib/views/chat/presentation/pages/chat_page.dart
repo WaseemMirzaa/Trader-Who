@@ -86,6 +86,7 @@ class _ChatPageState extends State<ChatPage> {
                                     userName: user.name,
                                     avatarImage: user.image ?? '',
                                     receiverId: otherUserId,
+                                    chatModel: chat,
                                   ),
                             ),
                           );

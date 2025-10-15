@@ -1,12 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/custom_text.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/core/theme/assets.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:traderwho/core/utils/location_utils.dart';
+import 'package:traderwho/models/models.dart';
+import 'package:traderwho/models/user_model.dart';
+import 'package:traderwho/views/job_history/pages/pages.dart';
 
+part 'booking_info_widget.dart';
 part 'chat_appbar.dart';
 part 'chat_card.dart';
 part 'chat_page_detail_appbar.dart';

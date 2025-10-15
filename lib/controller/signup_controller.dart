@@ -8,6 +8,7 @@ import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/map_picker_screen.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/models/user_model.dart';
+import 'package:traderwho/models/category_model.dart';
 
 class SignupController extends GetxController {
   // Text controllers for input fields
@@ -32,6 +33,11 @@ class SignupController extends GetxController {
   final selectedLat = Rx<double?>(null);
   final selectedLon = Rx<double?>(null);
 
+  // Categories
+  var categories = <CategoryModel>[].obs;
+  var isLoadingCategories = false.obs;
+  var selectedCategory = Rx<CategoryModel?>(null);
+
   // Firebase instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -40,6 +46,37 @@ class SignupController extends GetxController {
   void onInit() {
     super.onInit();
     isTradesperson.value = Get.arguments ?? false;
+    if (isTradesperson.value) {
+      loadCategories();
+    }
+  }
+
+  /// Load categories from Firebase
+  Future<void> loadCategories() async {
+    try {
+      isLoadingCategories.value = true;
+      debugPrint('📂 Loading categories from Firebase...');
+
+      final snapshot =
+          await _firestore.collection('categories').orderBy('name').get();
+
+      categories.value =
+          snapshot.docs
+              .map((doc) => CategoryModel.fromMap(doc.data(), doc.id))
+              .toList();
+
+      debugPrint('✅ Loaded ${categories.length} categories');
+    } catch (e) {
+      debugPrint('❌ Error loading categories: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to load categories. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingCategories.value = false;
+    }
   }
 
   Future<void> signup({
@@ -99,9 +136,9 @@ class SignupController extends GetxController {
           Get.snackbar('Error', 'Please enter your bio');
           return;
         }
-        if (title == null || title.isEmpty) {
-          debugPrint('Validation failed: Title is empty');
-          Get.snackbar('Error', 'Please enter your professional title');
+        if (selectedCategory.value == null) {
+          debugPrint('Validation failed: Category not selected');
+          Get.snackbar('Error', 'Please select your professional category');
           return;
         }
         if (startTime.value == null || endTime.value == null) {
@@ -109,8 +146,14 @@ class SignupController extends GetxController {
           Get.snackbar('Error', 'Please select your working hours');
           return;
         }
-        if (endTime.value!.isBefore(startTime.value!)) {
-          debugPrint('Validation failed: End time is before start time');
+        // Compare times by converting to minutes
+        final startMinutes =
+            startTime.value!.hour * 60 + startTime.value!.minute;
+        final endMinutes = endTime.value!.hour * 60 + endTime.value!.minute;
+        if (endMinutes <= startMinutes) {
+          debugPrint(
+            'Validation failed: End time is before or equal to start time',
+          );
           Get.snackbar('Error', 'End time must be after start time');
           return;
         }
@@ -161,7 +204,7 @@ class SignupController extends GetxController {
         lon: double.tryParse(longitudeController.text.trim()),
         userType: isTradesperson.value ? 'tradesperson' : 'customer',
         createdAt: DateTime.now(),
-        title: isTradesperson.value ? title?.trim() : null,
+        title: isTradesperson.value ? selectedCategory.value?.name : null,
         bio: isTradesperson.value ? bio?.trim() : null,
         status: isTradesperson.value ? 'pending' : null,
         availability: isTradesperson.value ? availability.value : null,

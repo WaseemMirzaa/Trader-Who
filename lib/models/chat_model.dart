@@ -9,6 +9,8 @@ class ChatModel {
   final Timestamp lastMessageTime;
   final int senderUnreadCount;
   final int receiverUnreadCount;
+  final bool isOrderChat;
+  final String? orderId;
 
   ChatModel({
     required this.id,
@@ -19,6 +21,8 @@ class ChatModel {
     required this.lastMessageTime,
     required this.senderUnreadCount,
     required this.receiverUnreadCount,
+    required this.isOrderChat,
+    this.orderId,
   });
 
   factory ChatModel.fromMap(Map<String, dynamic> map, String docId) {
@@ -31,6 +35,8 @@ class ChatModel {
       lastMessageTime: map['lastMessageTime'] ?? Timestamp.now(),
       senderUnreadCount: map['senderUnreadCount'] ?? 0,
       receiverUnreadCount: map['receiverUnreadCount'] ?? 0,
+      isOrderChat: map['isOrderChat'] ?? false,
+      orderId: map['orderId'],
     );
   }
 
@@ -43,6 +49,8 @@ class ChatModel {
       'lastMessageTime': lastMessageTime,
       'senderUnreadCount': senderUnreadCount,
       'receiverUnreadCount': receiverUnreadCount,
+      'isOrderChat': isOrderChat,
+      'orderId': orderId,
     };
   }
 }

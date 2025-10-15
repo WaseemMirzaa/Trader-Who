@@ -97,6 +97,7 @@ class JobHistoryCard extends StatelessWidget {
                   ),
                   child: Text(
                     HelperService.formatStatus(job.status),
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: AppColor.primaryText,
                       fontFamily: 'openSans',
@@ -147,28 +148,30 @@ class JobHistoryCard extends StatelessWidget {
               children: [
                 SvgPicture.asset(Assets.svgsLocation, width: 16, height: 16),
                 const SizedBox(width: 4),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      const TextSpan(
-                        text: 'Address: ',
-                        style: TextStyle(
-                          color: AppColor.primaryText,
-                          fontFamily: 'openSans',
-                          fontSize: 14,
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: 'Address: ',
+                          style: TextStyle(
+                            color: AppColor.primaryText,
+                            fontFamily: 'openSans',
+                            fontSize: 14,
 
-                          fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      TextSpan(
-                        text: job.address,
-                        style: TextStyle(
-                          color: AppColor.secondaryText,
-                          fontFamily: 'openSans',
-                          fontSize: 14,
+                        TextSpan(
+                          text: job.address,
+                          style: TextStyle(
+                            color: AppColor.secondaryText,
+                            fontFamily: 'openSans',
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

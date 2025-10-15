@@ -227,18 +227,121 @@ class TradeMyaccountPage extends StatelessWidget {
                     ),
                     maxLines: 1,
                   ),
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
 
-                  // Title Field
-                  TextFieldCustom(
-                    prefixLabel: 'Professional Title',
-                    controller: controller.titleController,
-                    textColor: AppColor.black,
-                    fillColor: Colors.white,
-                    borderColor: AppColor.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                  // Professional Category Dropdown (matching TextFieldCustom style)
+                  Obx(
+                    () => Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (controller.isLoadingCategories.value)
+                            const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          else
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Expanded(
+                                    child: Text(
+                                      'Professional Title',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.mediumGray,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<CategoryModel>(
+                                        isExpanded: true,
+                                        alignment:
+                                            AlignmentDirectional.centerEnd,
+                                        isDense: false,
+                                        hint: const Text(
+                                          'Select Category',
+                                          style: TextStyle(
+                                            color: AppColor.midGray,
+                                            fontSize: 14,
+                                          ),
+                                          maxLines: null,
+                                          softWrap: true,
+                                        ),
+                                        value:
+                                            controller.selectedCategory.value,
+                                        icon: const Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: AppColor.midGray,
+                                        ),
+                                        style: const TextStyle(
+                                          color: AppColor.black,
+                                          fontSize: 14,
+                                        ),
+                                        selectedItemBuilder: (
+                                          BuildContext context,
+                                        ) {
+                                          return controller.categories.map((
+                                            category,
+                                          ) {
+                                            return Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                category.name,
+                                                style: const TextStyle(
+                                                  color: AppColor.black,
+                                                  fontSize: 14,
+                                                ),
+                                                maxLines: null,
+                                                softWrap: true,
+                                                textAlign: TextAlign.right,
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
+                                        items:
+                                            controller.categories.map((
+                                              category,
+                                            ) {
+                                              return DropdownMenuItem<
+                                                CategoryModel
+                                              >(
+                                                value: category,
+                                                child: Text(
+                                                  category.name,
+                                                  maxLines: null,
+                                                  softWrap: true,
+                                                ),
+                                              );
+                                            }).toList(),
+                                        onChanged: (CategoryModel? newValue) {
+                                          controller.selectedCategory.value =
+                                              newValue;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),

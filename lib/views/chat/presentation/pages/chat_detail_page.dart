@@ -4,12 +4,14 @@ class ChatDetailPage extends StatefulWidget {
   final String userName;
   final String avatarImage;
   final String receiverId;
+  final ChatModel? chatModel;
 
   const ChatDetailPage({
     super.key,
     required this.userName,
     required this.avatarImage,
     required this.receiverId,
+    this.chatModel,
   });
 
   @override
@@ -33,7 +35,16 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final ChatController chatController = Get.put(ChatController());
+  final BookingController bookingController = Get.put(BookingController());
   late String chatId;
+  BookingModel? bookingModel;
+  bool get isOrderChat => widget.chatModel?.isOrderChat ?? false;
+  bool get isBookingCompleted =>
+      bookingModel?.status.toLowerCase() == 'completed';
+  bool get isBookingCancelled =>
+      bookingModel?.status.toLowerCase() == 'cancelled';
+  bool get canSendMessages =>
+      !isOrderChat || (!isBookingCompleted && !isBookingCancelled);
 
   @override
   void initState() {
@@ -47,7 +58,16 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       await chatController.createChatIfNotExists(
         currentUserId,
         widget.receiverId,
+        false,
+        null,
       );
+      if (widget.chatModel != null) {
+        bookingModel = await bookingController.getBookingFromId(
+          widget.chatModel?.orderId,
+        );
+        // Trigger a rebuild to update the UI with booking info
+        setState(() {});
+      }
       chatController.listenToMessages(chatId, reset: true);
       await chatController.markMessagesAsRead(chatId, currentUserId);
       _scrollToBottom();
@@ -74,7 +94,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
+        _scrollController.position.minScrollExtent,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
@@ -90,6 +110,10 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       ),
       body: Column(
         children: [
+          // Show booking info for order chats
+          if (isOrderChat && bookingModel != null)
+            BookingInfoWidget(booking: bookingModel!),
+
           Expanded(
             child: Obx(() {
               final messages = chatController.messages;
@@ -98,7 +122,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 reverse: true,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 8,
+                  vertical: 4,
                 ),
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
@@ -116,72 +140,108 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
               );
             }),
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColor.white,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, -4),
+
+          // Message input (disabled for completed/cancelled order chats)
+          if (canSendMessages)
+            Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
-              ],
-            ),
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.lightCyan,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField(
-                        controller: _messageController,
-                        decoration: const InputDecoration(
-                          hintStyle: TextStyle(
-                            color: AppColor.secondaryText,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'openSans',
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColor.lightCyan,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextFormField(
+                          controller: _messageController,
+                          cursorColor: AppColor.primaryText,
+                          decoration: const InputDecoration(
+                            hintStyle: TextStyle(
+                              color: AppColor.secondaryText,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'openSans',
+                            ),
+                            hintText: 'Write message',
+                            border: InputBorder.none,
                           ),
-                          hintText: 'Write message',
-                          border: InputBorder.none,
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.darkBlue,
-                    shape: BoxShape.circle,
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.darkBlue,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.send, color: Colors.white),
+                      onPressed: () async {
+                        if (_messageController.text.isNotEmpty) {
+                          await chatController.sendMessage(
+                            chatId: chatId,
+                            senderId: FirebaseAuth.instance.currentUser!.uid,
+                            receiverId: widget.userName,
+                            message: _messageController.text,
+                          );
+                          _scrollToBottom();
+                          _messageController.clear();
+                        }
+                      },
+                    ),
                   ),
-                  child: IconButton(
-                    icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: () async {
-                      if (_messageController.text.isNotEmpty) {
-                        await chatController.sendMessage(
-                          chatId: chatId,
-                          senderId: FirebaseAuth.instance.currentUser!.uid,
-                          receiverId: widget.userName,
-                          message: _messageController.text,
-                        );
-                        _scrollToBottom();
-                        _messageController.clear();
-                      }
-                    },
+                ],
+              ),
+            )
+          else if (isOrderChat)
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    isBookingCompleted ? Icons.check_circle : Icons.block,
+                    color: isBookingCompleted ? Colors.green : Colors.red,
+                    size: 20,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      isBookingCompleted
+                          ? 'This booking has been completed. No more messages can be sent.'
+                          : 'This booking has been cancelled. No more messages can be sent.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColor.secondaryText,
+                        fontFamily: 'openSans',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

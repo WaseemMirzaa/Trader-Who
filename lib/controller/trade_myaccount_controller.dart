@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:traderwho/models/user_model.dart';
+import 'package:traderwho/models/category_model.dart';
 
 class TradeMyaccountController extends GetxController {
   // Text controllers for input fields
@@ -25,9 +26,15 @@ class TradeMyaccountController extends GetxController {
   final Rx<File?> profileImage = Rx<File?>(null);
   final ImagePicker _picker = ImagePicker();
 
+  // Categories
+  var categories = <CategoryModel>[].obs;
+  var isLoadingCategories = false.obs;
+  var selectedCategory = Rx<CategoryModel?>(null);
+
   @override
   void onInit() {
     super.onInit();
+    loadCategories();
     fetchUserData();
   }
 
@@ -140,6 +147,37 @@ class TradeMyaccountController extends GetxController {
     }
   }
 
+  /// Load categories from Firebase
+  Future<void> loadCategories() async {
+    try {
+      isLoadingCategories.value = true;
+      debugPrint('📂 Loading categories from Firebase...');
+
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection('categories')
+              .orderBy('name')
+              .get();
+
+      categories.value =
+          snapshot.docs
+              .map((doc) => CategoryModel.fromMap(doc.data(), doc.id))
+              .toList();
+
+      debugPrint('✅ Loaded ${categories.length} categories');
+    } catch (e) {
+      debugPrint('❌ Error loading categories: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to load categories. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingCategories.value = false;
+    }
+  }
+
   Future<void> fetchUserData() async {
     try {
       showShimmer(true);
@@ -186,6 +224,13 @@ class TradeMyaccountController extends GetxController {
         // Set tradesperson specific fields if user is a tradesperson
         titleController.text = userData.title ?? '';
         bioController.text = userData.bio ?? '';
+
+        // Set selected category based on title
+        if (userData.title != null && userData.title!.isNotEmpty) {
+          selectedCategory.value = categories.firstWhereOrNull(
+            (cat) => cat.name == userData.title,
+          );
+        }
       } else {
         // Document doesn't exist, use auth data
         print('TradeMyAccount: Document does not exist, using auth data');
@@ -251,7 +296,7 @@ class TradeMyaccountController extends GetxController {
         'email': emailController.text.trim(),
         'phone': phoneController.text.trim(),
         'address': addressController.text.trim(),
-        'title': titleController.text.trim(),
+        'title': selectedCategory.value?.name ?? titleController.text.trim(),
         'bio': bioController.text.trim(),
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
         if (imageUrl != null) 'image': imageUrl,

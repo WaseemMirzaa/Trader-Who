@@ -4,7 +4,7 @@ import 'package:traderwho/controller/chat_controller.dart';
 import 'package:traderwho/controller/custom_job_post_controller.dart';
 import 'package:traderwho/controller/homepage_controller.dart';
 import 'package:traderwho/controller/quote_controller.dart';
-import 'package:traderwho/controller/service_controller.dart';
+import 'package:traderwho/controller/new_service_controller.dart';
 import 'package:traderwho/controller/job_history_page_controller.dart';
 import 'package:traderwho/controller/login_controller.dart';
 import 'package:traderwho/controller/main_page_with_nav_bar_controller.dart';
