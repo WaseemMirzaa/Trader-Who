@@ -52,7 +52,8 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                 itemCount: controller.categories.length,
                                 itemBuilder: (context, index) {
-                                  final category = controller.categories[index];
+                                  CategoryModel category =
+                                      controller.categories[index];
 
                                   return HomeTiles(
                                     iconUrl: category.iconUrl,

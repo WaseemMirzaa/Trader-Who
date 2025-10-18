@@ -46,6 +46,18 @@ class QuoteController extends GetxController {
       // Update quote with generated ID
       await docRef.update({'id': docRef.id});
 
+      // Update booking status to 'quoted' after quote submission
+      try {
+        await _firestore.collection('bookings').doc(bookingId).update({
+          'status': 'quoted',
+          'updatedAt': DateTime.now().millisecondsSinceEpoch,
+        });
+        print('✅ Updated booking $bookingId status to quoted');
+      } catch (e) {
+        print('❌ Error updating booking status: $e');
+        // Continue with the process even if booking update fails
+      }
+
       // Get booking info for job title
       String jobTitle = 'Job';
       try {
@@ -100,6 +112,21 @@ class QuoteController extends GetxController {
         'updatedAt': DateTime.now(),
       });
 
+      // Update booking price with the quoted price
+      try {
+        await _firestore.collection('bookings').doc(quote.bookingId).update({
+          'price': quote.quotedPrice,
+          'status': 'accepted',
+          'updatedAt': DateTime.now().millisecondsSinceEpoch,
+        });
+        print(
+          '✅ Updated booking ${quote.bookingId} price to £${quote.quotedPrice} and status to accepted',
+        );
+      } catch (e) {
+        print('❌ Error updating booking price: $e');
+        // Continue with the process even if booking update fails
+      }
+
       // Get booking info for job title
       String jobTitle = 'Job';
       try {
@@ -122,7 +149,10 @@ class QuoteController extends GetxController {
         jobTitle: jobTitle,
       );
 
-      Get.snackbar('Success', 'Quote accepted successfully');
+      Get.snackbar(
+        'Success',
+        'Quote accepted! Price updated to £${quote.quotedPrice}',
+      );
       return true;
     } catch (e) {
       print('❌ Error accepting quote: $e');

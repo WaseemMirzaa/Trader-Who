@@ -1,6 +1,6 @@
 part of 'widgets.dart';
 
-class TradeJobHistoryBottomSheet extends StatelessWidget {
+class TradeJobHistoryBottomSheet extends StatefulWidget {
   final String title;
   final String description;
   final VoidCallback? onSubmit;
@@ -15,6 +15,15 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
     required this.priceController,
     required this.reasonController,
   });
+
+  @override
+  State<TradeJobHistoryBottomSheet> createState() =>
+      _TradeJobHistoryBottomSheetState();
+}
+
+class _TradeJobHistoryBottomSheetState
+    extends State<TradeJobHistoryBottomSheet> {
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +64,7 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
                 children: [
                   // Title
                   Text(
-                    title,
+                    widget.title,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -82,7 +91,7 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
                   // Price TextField
                   CustomTextField(
                     borderColor: AppColor.white,
-                    controller: priceController,
+                    controller: widget.priceController,
                     hintText: 'Enter price',
                     hintStyle: TextStyle(color: AppColor.customsLightGray),
                     keyboardType: TextInputType.number,
@@ -103,7 +112,7 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
                   // Reason TextField
                   CustomTextField(
                     borderColor: AppColor.white,
-                    controller: reasonController,
+                    controller: widget.reasonController,
                     hintText: 'Briefly explain',
                     hintStyle: const TextStyle(color: AppColor.midGray),
                     keyboardType: TextInputType.multiline,
@@ -128,10 +137,16 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: CustomButton(
-                text: 'Submit',
-                onTap: onSubmit ?? () {},
+                text: _isLoading ? 'Submitting...' : 'Submit',
+                onTap:
+                    _isLoading
+                        ? null
+                        : () {
+                          setState(() => _isLoading = true);
+                          widget.onSubmit?.call();
+                        },
                 height: 45,
-                color: AppColor.darkBlue,
+                color: _isLoading ? Colors.grey : AppColor.darkBlue,
                 textColor: AppColor.white,
                 fontWeight: FontWeight.bold,
                 radius: 25,
@@ -144,7 +159,7 @@ class TradeJobHistoryBottomSheet extends StatelessWidget {
   }
 }
 
-class TradeJobQuoteBottomSheet extends StatelessWidget {
+class TradeJobQuoteBottomSheet extends StatefulWidget {
   final String title;
   final String description;
   final VoidCallback? onSubmit;
@@ -159,6 +174,14 @@ class TradeJobQuoteBottomSheet extends StatelessWidget {
     required this.priceController,
     required this.detailsController,
   });
+
+  @override
+  State<TradeJobQuoteBottomSheet> createState() =>
+      _TradeJobQuoteBottomSheetState();
+}
+
+class _TradeJobQuoteBottomSheetState extends State<TradeJobQuoteBottomSheet> {
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +222,7 @@ class TradeJobQuoteBottomSheet extends StatelessWidget {
                 children: [
                   // Title
                   Text(
-                    title,
+                    widget.title,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -226,7 +249,7 @@ class TradeJobQuoteBottomSheet extends StatelessWidget {
                   // Price TextField
                   CustomTextField(
                     borderColor: AppColor.white,
-                    controller: priceController,
+                    controller: widget.priceController,
                     hintText: 'Enter price',
                     hintStyle: TextStyle(color: AppColor.customsLightGray),
                     keyboardType: TextInputType.number,
@@ -247,7 +270,7 @@ class TradeJobQuoteBottomSheet extends StatelessWidget {
                   // Reason TextField
                   CustomTextField(
                     borderColor: AppColor.white,
-                    controller: detailsController,
+                    controller: widget.detailsController,
                     hintText: 'Briefly explain',
                     hintStyle: const TextStyle(color: AppColor.midGray),
                     keyboardType: TextInputType.multiline,
@@ -272,10 +295,16 @@ class TradeJobQuoteBottomSheet extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: CustomButton(
-                text: 'Submit',
-                onTap: onSubmit ?? () {},
+                text: _isLoading ? 'Submitting...' : 'Submit',
+                onTap:
+                    _isLoading
+                        ? null
+                        : () {
+                          setState(() => _isLoading = true);
+                          widget.onSubmit?.call();
+                        },
                 height: 45,
-                color: AppColor.darkBlue,
+                color: _isLoading ? Colors.grey : AppColor.darkBlue,
                 textColor: AppColor.white,
                 fontWeight: FontWeight.bold,
                 radius: 25,

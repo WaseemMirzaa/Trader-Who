@@ -116,7 +116,9 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
       _detailsController.clear();
 
       // Close the bottom sheet
-      Navigator.pop(context);
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
 
       // Show success message
       Get.snackbar(
@@ -137,40 +139,56 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
             mainAxisAlignment:
                 MainAxisAlignment.center, // Optional: centers the buttons
             children: [
-              IntrinsicWidth(
-                child: CustomButton(
-                  text: widget.job.jobType == "largeJob" ? "Quote" : 'Accept',
-                  onTap: () async {
-                    if (widget.job.jobType == "largeJob") {
-                      _showQuoteBottomSheet();
-                    }
+              Obx(() {
+                final isLoading = jobHistoryPageController.isLoading.value;
+                return IntrinsicWidth(
+                  child: CustomButton(
+                    text:
+                        isLoading
+                            ? (widget.job.jobType == "largeJob"
+                                ? "Submitting..."
+                                : "Processing...")
+                            : (widget.job.jobType == "largeJob"
+                                ? "Quote"
+                                : 'Accept'),
+                    onTap:
+                        isLoading
+                            ? null
+                            : () async {
+                              if (widget.job.jobType == "largeJob") {
+                                _showQuoteBottomSheet();
+                              }
 
-                    if (widget.job.jobType == "smallJob") {
-                      // Update status in Firebase
-                      final newStatus =
-                          widget.job.showQuoteButtons ? 'Quoted' : 'Accepted';
+                              if (widget.job.jobType == "smallJob") {
+                                // Update status in Firebase
+                                final newStatus =
+                                    widget.job.showQuoteButtons
+                                        ? 'Quoted'
+                                        : 'Accepted';
 
-                      // Find the corresponding booking and update it
-                      final booking = _findBookingForJob(
-                        widget.job,
-                        jobHistoryPageController,
-                      );
-                      if (booking != null) {
-                        await jobHistoryPageController.updateBookingStatus(
-                          booking.id ?? '',
-                          newStatus.toLowerCase(),
-                        );
-                      }
-                    }
-                  },
-                  color: AppColor.darkBlue,
-                  textColor: AppColor.white,
-                  height: 50,
-                  radius: 30,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+                                // Find the corresponding booking and update it
+                                final booking = _findBookingForJob(
+                                  widget.job,
+                                  jobHistoryPageController,
+                                );
+                                if (booking != null) {
+                                  await jobHistoryPageController
+                                      .updateBookingStatus(
+                                        booking.id ?? '',
+                                        newStatus.toLowerCase(),
+                                      );
+                                }
+                              }
+                            },
+                    color: isLoading ? Colors.grey : AppColor.darkBlue,
+                    textColor: AppColor.white,
+                    height: 50,
+                    radius: 30,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                );
+              }),
               kGap10, // Your predefined spacing widget
               Expanded(
                 child: CustomButton(
@@ -279,62 +297,267 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
   Widget build(BuildContext context) {
     final isCompleted = widget.job.status.toLowerCase() == 'completed';
 
-    return TraderWhoScaffold(
-      appBar: TradeJobHistoryDetailAppbar(status: widget.job.status),
-      body: Column(
-        children: [
-          // Scrollable main content
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 12),
-                  // Job title, price, and status row
-                  Row(
+    return StreamBuilder<DocumentSnapshot>(
+      stream:
+          FirebaseFirestore.instance
+              .collection('bookings')
+              .doc(widget.job.bookingId)
+              .snapshots(),
+      builder: (context, snapshot) {
+        // Use real-time status if available, otherwise use widget.job.status
+        String currentStatus = widget.job.status;
+        if (snapshot.hasData && snapshot.data?.data() != null) {
+          final data = snapshot.data!.data() as Map<String, dynamic>;
+          currentStatus = data['status'] ?? widget.job.status;
+        }
+
+        return TraderWhoScaffold(
+          appBar: TradeJobHistoryDetailAppbar(status: currentStatus),
+          body: Column(
+            children: [
+              // Scrollable main content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 20,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomCircleAvatar(
-                        circleColor: Colors.transparent,
-                        backgroundColor: AppColor.white,
-                        radius: 26,
-                        child: SvgPicture.asset(
-                          widget.job.svgIcon,
-                          width: 24,
-                          height: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.job.title,
-                              style: const TextStyle(
-                                color: AppColor.primaryText,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                      const SizedBox(height: 12),
+                      // Job title, price, and status row
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomCircleAvatar(
+                            circleColor: Colors.transparent,
+                            backgroundColor: AppColor.white,
+                            radius: 26,
+                            child: SvgPicture.asset(
+                              widget.job.svgIcon,
+                              width: 24,
+                              height: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.job.title,
+                                  style: const TextStyle(
+                                    color: AppColor.primaryText,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'openSans',
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      Assets.svgsPound,
+                                      width: 16,
+                                      height: 16,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text:
+                                                '${HelperService.formattedJobType(widget.job.jobType)}\nFixed Price: ',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: AppColor.primaryText,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: 'openSans',
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: '£${widget.job.price}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: AppColor.secondaryText,
+                                              fontFamily: 'openSans',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: 80,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColor.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: AppColor.white,
+                                width: 0,
+                              ),
+                            ),
+                            child: Text(
+                              HelperService.formatStatus(widget.job.status),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColor.green,
+                                fontWeight: FontWeight.w500,
                                 fontFamily: 'openSans',
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Row(
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Preferred Time
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            Assets.svgsTime,
+                            width: 16,
+                            height: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          RichText(
+                            text: TextSpan(
                               children: [
-                                SvgPicture.asset(
-                                  Assets.svgsPound,
-                                  width: 16,
-                                  height: 16,
+                                const TextSpan(
+                                  text: 'Preferred Time: ',
+                                  style: TextStyle(
+                                    fontFamily: 'openSans',
+
+                                    fontSize: 14,
+                                    color: AppColor.primaryText,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                                const SizedBox(width: 4),
-                                RichText(
+                                TextSpan(
+                                  text: widget.job.preferredTime,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColor.secondaryText,
+                                    fontFamily: 'openSans',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Description Section
+                      Text(
+                        'Notes:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.job.notes == '' ? 'No notes' : widget.job.notes,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
+                        ),
+                      ),
+                      if (widget.job.images.isNotEmpty)
+                        const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          for (var image in widget.job.images)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: image,
+                                width: 70,
+                                height: 60,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                        ],
+                      ),
+                      // Images Row (only show for completed jobs)
+                      if (isCompleted) ...[kGap10],
+
+                      // Customer Details Section
+                      if (widget.job.customer != null) ...[
+                        const SizedBox(height: 20),
+                        Text(
+                          'Customer Details',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.primaryText,
+                            fontFamily: 'openSans',
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        CustomerCard(
+                          customer: widget.job.customer!,
+                          onTap: () {
+                            // Optional: Navigate to customer profile or show more details
+                          },
+                        ),
+                      ],
+
+                      // Location and Map
+                      const SizedBox(height: 20),
+                      CustomText(
+                        text: 'Location',
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'openSans',
+
+                        fontSize: 16,
+                        color: AppColor.primaryText,
+                      ),
+                      kGap10,
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            Assets.svgsLocation,
+                            width: 16,
+                            height: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: FutureBuilder<String>(
+                              future: LocationUtils.getAddressFromLatLng(
+                                widget.job.location,
+                              ),
+                              builder: (context, snapshot) {
+                                String addressText;
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  addressText = 'Loading...';
+                                } else if (snapshot.hasError) {
+                                  addressText = 'Error loading address';
+                                } else {
+                                  addressText =
+                                      snapshot.data ?? 'Address not available';
+                                }
+
+                                return RichText(
                                   text: TextSpan(
                                     children: [
-                                      TextSpan(
-                                        text:
-                                            '${HelperService.formattedJobType(widget.job.jobType)}\nFixed Price: ',
+                                      const TextSpan(
+                                        text: 'Address: ',
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: AppColor.primaryText,
@@ -343,7 +566,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: '£${widget.job.price}',
+                                        text: addressText,
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: AppColor.secondaryText,
@@ -352,357 +575,194 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                                       ),
                                     ],
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                ),
-                              ],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      kGap10,
+                      // Map Container
+                      Container(
+                        height: 156,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColor.grey.withOpacity(0.1),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
                             ),
                           ],
                         ),
-                      ),
-                      Container(
-                        width: 80,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColor.white, width: 0),
+                          child: GoogleMap(
+                            onMapCreated: (controller) {},
+                            initialCameraPosition: CameraPosition(
+                              target: widget.job.location,
+                              zoom: 15.0,
+                            ),
+                            markers: {
+                              Marker(
+                                markerId: const MarkerId('job_location'),
+                                position: widget.job.location,
+                                infoWindow: InfoWindow(
+                                  title: widget.job.address,
+                                ),
+                              ),
+                            },
+                            myLocationEnabled: false,
+                            zoomControlsEnabled: false,
+                            scrollGesturesEnabled: true,
+
+                            tiltGesturesEnabled: false,
+                            rotateGesturesEnabled: true,
+                          ),
                         ),
-                        child: Text(
-                          HelperService.formatStatus(widget.job.status),
+                      ),
+                      // Feedback Section (only for completed jobs)
+                      if (isCompleted) ...[
+                        const SizedBox(height: 20),
+                        Text(
+                          'Custom Feedback',
                           style: TextStyle(
-                            fontSize: 12,
-                            color: AppColor.green,
+                            fontSize: 16,
+                            color: AppColor.primaryText,
                             fontWeight: FontWeight.w500,
                             fontFamily: 'openSans',
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  // Preferred Time
-                  Row(
-                    children: [
-                      SvgPicture.asset(Assets.svgsTime, width: 16, height: 16),
-                      const SizedBox(width: 4),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Preferred Time: ',
-                              style: TextStyle(
-                                fontFamily: 'openSans',
-
-                                fontSize: 14,
-                                color: AppColor.primaryText,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            TextSpan(
-                              text: widget.job.preferredTime,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColor.secondaryText,
-                                fontFamily: 'openSans',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  // Description Section
-                  Text(
-                    'Notes:',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.primaryText,
-                      fontFamily: 'openSans',
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.job.notes == '' ? 'No notes' : widget.job.notes,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColor.secondaryText,
-                      fontFamily: 'openSans',
-                    ),
-                  ),
-                  if (widget.job.images.isNotEmpty) const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      for (var image in widget.job.images)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CachedNetworkImage(
-                            imageUrl: image,
-                            width: 70,
-                            height: 60,
-                            fit: BoxFit.cover,
+                        kGap10,
+                        if (widget.job.rating != null && widget.job.rating! > 0)
+                          Row(
+                            children: List.generate(5, (index) {
+                              return Icon(
+                                Icons.star,
+                                color:
+                                    index < widget.job.rating!.floor()
+                                        ? Colors.amber
+                                        : Colors.grey,
+                                size: 24,
+                              );
+                            }),
                           ),
-                        ),
-                    ],
-                  ),
-                  // Images Row (only show for completed jobs)
-                  if (isCompleted) ...[kGap10],
-
-                  // Customer Details Section
-                  if (widget.job.customer != null) ...[
-                    const SizedBox(height: 20),
-                    Text(
-                      'Customer Details',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColor.primaryText,
-                        fontFamily: 'openSans',
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    CustomerCard(
-                      customer: widget.job.customer!,
-                      onTap: () {
-                        // Optional: Navigate to customer profile or show more details
-                      },
-                    ),
-                  ],
-
-                  // Location and Map
-                  const SizedBox(height: 20),
-                  CustomText(
-                    text: 'Location',
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'openSans',
-
-                    fontSize: 16,
-                    color: AppColor.primaryText,
-                  ),
-                  kGap10,
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        Assets.svgsLocation,
-                        width: 16,
-                        height: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: FutureBuilder<String>(
-                          future: LocationUtils.getAddressFromLatLng(
-                            widget.job.location,
+                        const SizedBox(height: 12),
+                        Text(
+                          widget.job.review ?? 'No feedback provided.',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColor.secondaryText,
+                            fontFamily: 'openSans',
                           ),
-                          builder: (context, snapshot) {
-                            String addressText;
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              addressText = 'Loading...';
-                            } else if (snapshot.hasError) {
-                              addressText = 'Error loading address';
-                            } else {
-                              addressText =
-                                  snapshot.data ?? 'Address not available';
-                            }
-
-                            return RichText(
-                              text: TextSpan(
-                                children: [
-                                  const TextSpan(
-                                    text: 'Address: ',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.primaryText,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'openSans',
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: addressText,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.secondaryText,
-                                      fontFamily: 'openSans',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  kGap10,
-                  // Map Container
-                  Container(
-                    height: 156,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColor.grey.withOpacity(0.1),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
                         ),
                       ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: GoogleMap(
-                        onMapCreated: (controller) {},
-                        initialCameraPosition: CameraPosition(
-                          target: widget.job.location,
-                          zoom: 15.0,
-                        ),
-                        markers: {
-                          Marker(
-                            markerId: const MarkerId('job_location'),
-                            position: widget.job.location,
-                            infoWindow: InfoWindow(title: widget.job.address),
-                          ),
-                        },
-                        myLocationEnabled: false,
-                        zoomControlsEnabled: false,
-                        scrollGesturesEnabled: true,
-
-                        tiltGesturesEnabled: false,
-                        rotateGesturesEnabled: true,
-                      ),
-                    ),
+                      const SizedBox(height: 80),
+                    ],
                   ),
-                  // Feedback Section (only for completed jobs)
-                  if (isCompleted) ...[
-                    const SizedBox(height: 20),
-                    Text(
-                      'Custom Feedback',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColor.primaryText,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'openSans',
-                      ),
-                    ),
-                    kGap10,
-                    if (widget.job.rating != null && widget.job.rating! > 0)
-                      Row(
-                        children: List.generate(5, (index) {
-                          return Icon(
-                            Icons.star,
-                            color:
-                                index < widget.job.rating!.floor()
-                                    ? Colors.amber
-                                    : Colors.grey,
-                            size: 24,
-                          );
-                        }),
-                      ),
-                    const SizedBox(height: 12),
-                    Text(
-                      widget.job.review ?? 'No feedback provided.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColor.secondaryText,
-                        fontFamily: 'openSans',
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 80),
-                ],
+                ),
               ),
-            ),
+              // Bottom action bar (only for non-completed jobs)
+              if (!isCompleted && currentStatus == 'pending')
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: _buildNewJobFooter(),
+                ),
+              if (currentStatus == 'accepted' && currentStatus != "completed")
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: CustomButton(
+                    text: 'Start Working',
+                    onTap: () async {
+                      // Update job status to inProgress
+                      await jobHistoryPageController.updateBookingStatus(
+                        widget.job.bookingId,
+                        'inProgress',
+                      );
+                      Get.back();
+                    },
+                    color: AppColor.green,
+                    textColor: AppColor.white,
+                    height: 50,
+                    radius: 30,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              if (currentStatus == 'inProgress' && currentStatus != "completed")
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: CustomButton(
+                    text: 'Mark Complete',
+                    onTap: () async {
+                      // Update job status to completed
+                      await jobHistoryPageController.updateBookingStatus(
+                        widget.job.bookingId,
+                        'completed',
+                      );
+                      Get.back();
+                    },
+                    color: AppColor.green,
+                    textColor: AppColor.white,
+                    height: 50,
+                    radius: 30,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+            ],
           ),
-          // Bottom action bar (only for non-completed jobs)
-          if (!isCompleted && widget.job.status == 'pending')
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, -5),
-                  ),
-                ],
-              ),
-              child: _buildNewJobFooter(),
-            ),
-          if (widget.job.status == 'accepted' &&
-              widget.job.status != "completed")
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, -5),
-                  ),
-                ],
-              ),
-              child: CustomButton(
-                text: 'Start Working',
-                onTap: () async {
-                  // Update job status to inProgress
-                  await jobHistoryPageController.updateBookingStatus(
-                    widget.job.bookingId,
-                    'inProgress',
-                  );
-                  Get.back();
-                },
-                color: AppColor.green,
-                textColor: AppColor.white,
-                height: 50,
-                radius: 30,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          if (widget.job.status == 'inProgress' &&
-              widget.job.status != "completed")
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, -5),
-                  ),
-                ],
-              ),
-              child: CustomButton(
-                text: 'Mark Complete',
-                onTap: () async {
-                  // Update job status to completed
-                  await jobHistoryPageController.updateBookingStatus(
-                    widget.job.bookingId,
-                    'completed',
-                  );
-                  Get.back();
-                },
-                color: AppColor.green,
-                textColor: AppColor.white,
-                height: 50,
-                radius: 30,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-        ],
-      ),
-    );
+        ); // Close TraderWhoScaffold
+      }, // Close StreamBuilder builder
+    ); // Close StreamBuilder
   }
 
   BookingModel? _findBookingForJob(

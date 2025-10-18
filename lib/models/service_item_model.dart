@@ -89,13 +89,14 @@ class ServiceItem {
 
   factory ServiceItem.fromMap(Map<String, dynamic> map) {
     return ServiceItem(
-      title: map['title'] ?? map['name'] ?? '',
-      description: map['description'] ?? "",
+      title: map['title'] ?? map['name'] ?? map['jobTitle'] ?? '',
+      description: map['description'] ?? map['customDescription'] ?? "",
       price: map['price']?.toDouble(),
       isEnabled: map['isEnabled'] ?? false,
       isCustom: map['isCustom'] ?? false,
       id: map['jobId'] ?? map['id'] ?? '',
-      traderId: map['trader_id'] ?? '',
+      traderId:
+          map['traderId'] ?? map['trader_id'] ?? '', // Support both formats
     );
   }
 }

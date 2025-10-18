@@ -80,7 +80,7 @@ class TradeLargerRatePage extends StatelessWidget {
                                 print(
                                   '🔍 Selected category before: ${controller.selectedCategory.value}',
                                 );
-                                controller.selectService(categoryId);
+                                controller.selectCategory(categoryId);
                                 print(
                                   '🔍 Selected category after: ${controller.selectedCategory.value}',
                                 );
@@ -107,7 +107,7 @@ class TradeLargerRatePage extends StatelessWidget {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () => controller.selectedCategory(''),
+                                onTap: () => controller.selectCategory(''),
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(

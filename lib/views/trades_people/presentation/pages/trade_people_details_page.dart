@@ -29,31 +29,81 @@ class TradePersonDetailsPage extends StatefulWidget {
 }
 
 class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
+  @override
+  void initState() {
+    super.initState();
+    print('🔍 TradePersonDetailsPage for: ${widget.person.name}');
+    print('   Large jobs: ${widget.person.largeJobs.length} categories');
+    print('   Small jobs: ${widget.person.smallJobs.length} categories');
+
+    // Debug: Print details of each category
+    for (var job in widget.person.largeJobs) {
+      print('   📦 Large - ${job.category}: ${job.services.length} services');
+    }
+    for (var job in widget.person.smallJobs) {
+      print('   📦 Small - ${job.category}: ${job.services.length} services');
+    }
+  }
+
   void _handleBookNow() async {
     // Import the booking controller
     final BookingController bookingController = Get.put(BookingController());
     final NewServiceController serviceController = Get.find();
 
-    // Determine the service name based on selected criteria.
-    String serviceName =
-        serviceController.selectedCategory.value.isNotEmpty
-            ? '${serviceController.selectedCategory.value} Service'
-            : 'General Service';
+    // Get category name from the selected category ID
+    String categoryName = 'General';
+    if (serviceController.selectedCategory.value.isNotEmpty) {
+      final category = serviceController.categories.firstWhereOrNull(
+        (c) => c.id == serviceController.selectedCategory.value,
+      );
+      categoryName = category?.name ?? serviceController.selectedCategory.value;
+    }
+
+    // Get service name from the selected job ID
+    String serviceName = 'Service';
+    if (serviceController.selectedJobId.value.isNotEmpty) {
+      final job = serviceController.getJobById(
+        serviceController.selectedJobId.value,
+      );
+      serviceName = job?.title ?? serviceController.selectedJobId.value;
+    }
+
+    print('🔍 Creating booking with:');
+    print('  Category ID: ${serviceController.selectedCategory.value}');
+    print('  Category Name: $categoryName');
+    print('  Job ID: ${serviceController.selectedJobId.value}');
+    print('  Service: $serviceName');
+    print('  Job Type: ${widget.selectedJobType}');
+
+    // Get trader's available times
+    DateTime? traderStartTime;
+    DateTime? traderEndTime;
+
+    if (widget.person.startTime != null) {
+      traderStartTime = DateTime.fromMillisecondsSinceEpoch(
+        widget.person.startTime!,
+      );
+    }
+
+    if (widget.person.endTime != null) {
+      traderEndTime = DateTime.fromMillisecondsSinceEpoch(
+        widget.person.endTime!,
+      );
+    }
 
     // Show booking dialog (includes user type validation)
     await bookingController.showBookingDialog(
       traderName: widget.person.name,
       traderId: widget.person.id,
-      category:
-          serviceController.selectedCategory.value.isNotEmpty
-              ? serviceController.selectedCategory.value
-              : 'General',
+      category: categoryName, // Pass category NAME, not ID
       service: serviceName,
       jobType:
           widget.selectedJobType.isNotEmpty
               ? widget.selectedJobType
               : 'largeJob',
       price: widget.price,
+      traderStartTime: traderStartTime,
+      traderEndTime: traderEndTime,
     );
     Get.back();
   }
@@ -84,7 +134,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
               Text(
                 widget.person.bio,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: AppColor.secondaryText,
                   fontFamily: 'openSans',
                   height: 1.5,
@@ -128,7 +178,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                                   ? avgRating.toStringAsFixed(1)
                                   : "0.0",
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 14,
                                 color: AppColor.orangeCustomColor,
                               ),
                             );
@@ -169,7 +219,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                       Text(
                         text,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 16,
                           color: AppColor.secondaryText,
                           fontFamily: 'openSans',
                           height: 1.5,
@@ -179,7 +229,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                       Text(
                         reviewer,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: AppColor.black,
                         ),
@@ -194,7 +244,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                   child: Text(
                     "No reviews",
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: AppColor.darkerGray,
                       fontFamily: 'openSans',
                     ),

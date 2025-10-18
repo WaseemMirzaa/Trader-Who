@@ -21,9 +21,14 @@ class _JobPageState extends State<JobPage> {
   String? _selectedJobType;
   JobModel? _selectedService;
 
+  String? _categoryId;
+  String? _categoryName;
+
+  Future<List<MapEntry<JobModel, (double?, double?)>>>? _jobsWithPricesFuture;
+
   final List<Map<String, String>> _jobTypes = [
     {'value': 'smallJob', 'label': 'Instant Book-Fixed Price'},
-    {'value': 'largeJob', 'label': 'Custom QuoteFlexible Price'},
+    {'value': 'largeJob', 'label': 'Custom Quote-Flexible Price'},
   ];
 
   @override
@@ -31,8 +36,47 @@ class _JobPageState extends State<JobPage> {
     super.initState();
     _jobController = Get.put(JobPostController());
 
-    // Select the category in ServiceController so services are loaded
-    _serviceController.selectService(widget.selectedCategory);
+    // Get the arguments to extract both categoryId and categoryName
+    final args = Get.arguments;
+    if (args is Map) {
+      _categoryId = args['categoryId'];
+      _categoryName = args['categoryName'];
+    }
+
+    // If we have categoryId, use it directly
+    if (_categoryId != null) {
+      print('🔍 JobPage: Using categoryId: $_categoryId, name: $_categoryName');
+      _serviceController.selectCategory(_categoryId!);
+    } else {
+      // Fallback: try to find by name or use the value directly
+      print(
+        '🔍 JobPage: No categoryId, searching by name: ${widget.selectedCategory}',
+      );
+      final category = _serviceController.categories.firstWhereOrNull(
+        (c) => c.name == widget.selectedCategory,
+      );
+
+      if (category != null) {
+        _categoryId = category.id;
+        _categoryName = category.name;
+        print(
+          '🔍 JobPage: Found category - ID: $_categoryId, Name: $_categoryName',
+        );
+        _serviceController.selectCategory(category.id);
+      } else {
+        // Last resort: treat selectedCategory as ID
+        print(
+          '⚠️ JobPage: Category not found, using as ID: ${widget.selectedCategory}',
+        );
+        _categoryId = widget.selectedCategory;
+        _categoryName = widget.selectedCategory;
+        _serviceController.selectCategory(widget.selectedCategory);
+      }
+    }
+
+    print(
+      '📋 JobPage: Selected category services: ${_serviceController.selectedCategoryServices.length}',
+    );
   }
 
   @override
@@ -144,6 +188,10 @@ class _JobPageState extends State<JobPage> {
                             _titleController.clear();
                             _descriptionController.clear();
                           }
+                          // Load the jobs with prices when job type is selected
+                          if (newValue == 'smallJob') {
+                            _jobsWithPricesFuture = _loadJobsWithPrices();
+                          }
                         });
                         // Load services for the selected job type
                         if (newValue != null) {
@@ -177,7 +225,7 @@ class _JobPageState extends State<JobPage> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            widget.selectedCategory,
+                            _categoryName ?? widget.selectedCategory,
                             style: TextStyle(
                               color: AppColor.secondaryText,
                               fontFamily: 'openSans',
@@ -201,6 +249,7 @@ class _JobPageState extends State<JobPage> {
                         _selectedJobType == 'smallJob') ...[
                       _buildQuickJobSelection(screenWidth, screenHeight),
                     ] else if (_selectedJobType == 'largeJob') ...[
+                      _buildLargeJobSelection(screenWidth, screenHeight),
                       _buildBudgetField(screenWidth, screenHeight),
                     ],
 
@@ -210,7 +259,7 @@ class _JobPageState extends State<JobPage> {
                     // Job Description
                     _buildDescriptionField(screenWidth, screenHeight),
 
-                    const Gap(100),
+                    const Gap(10),
 
                     // Find TradePeople Button
                     CustomButton(
@@ -220,14 +269,32 @@ class _JobPageState extends State<JobPage> {
                           Get.snackbar('Error', 'Please select a location');
                           return;
                         }
+
+                        // For smallJob, service_id is required
+                        if (_selectedJobType == 'smallJob' &&
+                            _selectedService?.id == null) {
+                          Get.snackbar('Error', 'Please select a service');
+                          return;
+                        }
+
+                        print('🚀 Navigating to trade container with:');
+                        print('  Category ID: $_categoryId');
+                        print('  Category Name: $_categoryName');
+                        print('  Service ID: ${_selectedService?.id}');
+                        print('  Service Title: ${_selectedService?.title}');
+                        print('  Job Type: $_selectedJobType');
+
                         Get.toNamed(
                           AppRoutes.tradeContainer,
                           arguments: {
-                            'selectedCategory': widget.selectedCategory,
+                            'selectedCategory':
+                                _categoryId, // Pass category ID, not name
+                            'categoryName':
+                                _categoryName, // Also pass name for display
                             'selectedService': _selectedService?.title,
                             'jobType': _selectedJobType,
                             'servicePrice': _selectedService?.price,
-                            'service_id': _selectedService?.id,
+                            'service_id': _selectedService?.id ?? '',
                           },
                         );
                       },
@@ -268,109 +335,303 @@ class _JobPageState extends State<JobPage> {
 
         const Gap(15),
 
-        // Services List
-        if (_serviceController.selectedCategoryServices.isEmpty) ...[
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColor.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.grey[300]!, width: 1.0),
-            ),
-            child: Text(
-              'No services available for this category yet.',
-              style: TextStyle(fontSize: 14, color: AppColor.secondaryText),
-            ),
-          ),
-        ] else ...[
-          ..._serviceController.selectedCategoryServices.map((JobModel job) {
-            final isSelected = _selectedService?.id == job.id;
-            final price = _serviceController.getJobPrice(job.id);
-            final displayPrice =
-                price != null ? '£${price.toInt()}' : 'Price on request';
+        // Services List - Using FutureBuilder to load services with prices
+        FutureBuilder<List<MapEntry<JobModel, (double?, double?)>>>(
+          future: _jobsWithPricesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedService = job;
-                    Get.find<NewServiceController>().selectService(job.id);
-                    _titleController.text =
-                        '${widget.selectedCategory} - ${job.title}';
-                    _descriptionController.text =
-                        'I need a ${job.title} service. ${job.description ?? ""} Estimated price: $displayPrice';
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color:
-                        isSelected
-                            ? AppColor.primaryButton.withOpacity(0.1)
-                            : AppColor.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color:
-                          isSelected
-                              ? AppColor.primaryButton
-                              : Colors.grey[300]!,
-                      width: 1.0,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              job.title,
-                              style: TextStyle(
-                                fontFamily: 'openSans',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color:
-                                    isSelected
-                                        ? AppColor.primaryButton
-                                        : Colors.black,
-                              ),
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColor.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey[300]!, width: 1.0),
+                ),
+                child: Text(
+                  'No services available for this category yet.',
+                  style: TextStyle(fontSize: 14, color: AppColor.secondaryText),
+                ),
+              );
+            }
+
+            final jobsWithPrices = snapshot.data!;
+
+            return Column(
+              children:
+                  jobsWithPrices.map((entry) {
+                    final job = entry.key;
+                    final (minPrice, maxPrice) = entry.value;
+                    final isSelected = _selectedService?.id == job.id;
+
+                    String displayPrice = 'Price on request';
+                    if (minPrice != null && maxPrice != null) {
+                      if (minPrice == maxPrice) {
+                        displayPrice = '£${minPrice.toInt()}';
+                      } else {
+                        displayPrice =
+                            '£${minPrice.toInt()} - £${maxPrice.toInt()}';
+                      }
+                    } else if (minPrice != null) {
+                      displayPrice = 'From £${minPrice.toInt()}';
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedService = job;
+                            Get.find<NewServiceController>().selectService(
+                              job.id,
+                            );
+                            _titleController.text =
+                                '${_categoryName ?? widget.selectedCategory} - ${job.title}';
+                            _descriptionController.text =
+                                'I need a ${job.title} service. ${job.description ?? ""} Estimated price: $displayPrice';
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color:
+                                isSelected
+                                    ? AppColor.primaryButton.withOpacity(0.1)
+                                    : AppColor.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color:
+                                  isSelected
+                                      ? AppColor.primaryButton
+                                      : Colors.grey[300]!,
+                              width: 1.0,
                             ),
-                            if (job.description != null &&
-                                job.description!.isNotEmpty) ...[
-                              const SizedBox(height: 4),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      job.title,
+                                      style: TextStyle(
+                                        fontFamily: 'openSans',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color:
+                                            isSelected
+                                                ? AppColor.primaryButton
+                                                : Colors.black,
+                                      ),
+                                    ),
+                                    if (job.description != null &&
+                                        job.description!.isNotEmpty) ...[
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        job.description!,
+                                        style: TextStyle(
+                                          fontFamily: 'openSans',
+                                          fontSize: 12,
+                                          color: AppColor.secondaryText,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
                               Text(
-                                job.description!,
+                                displayPrice,
                                 style: TextStyle(
                                   fontFamily: 'openSans',
-                                  fontSize: 12,
-                                  color: AppColor.secondaryText,
+                                  fontSize: 15,
+                                  color: AppColor.primaryButton,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+            );
+          },
+        ),
+        const Gap(2),
+      ],
+    );
+  }
+
+  /// Load jobs with their price ranges, filtering out jobs without prices
+  Future<List<MapEntry<JobModel, (double?, double?)>>>
+  _loadJobsWithPrices() async {
+    print('🔍 _loadJobsWithPrices: Starting...');
+    print('🔍 Selected job type: $_selectedJobType');
+    print('🔍 Selected category ID: $_categoryId');
+
+    // Make sure we're getting jobs for the right type
+    final jobs = _serviceController.getJobsForCategory(
+      _categoryId ?? '',
+      'small', // Force small job type since this is only shown for smallJob
+    );
+
+    print('🔍 Found ${jobs.length} jobs for category');
+
+    final jobsWithPrices = <MapEntry<JobModel, (double?, double?)>>[];
+
+    for (final job in jobs) {
+      print('🔍 Checking prices for job: ${job.title} (${job.id})');
+      final priceRange = await _serviceController.getPriceRange(job.id);
+      final (minPrice, maxPrice) = priceRange;
+
+      print('🔍 Price range: min=$minPrice, max=$maxPrice');
+
+      // Only include jobs that have at least a minimum price set
+      if (minPrice != null) {
+        jobsWithPrices.add(MapEntry(job, priceRange));
+        print('✅ Added job with price: ${job.title}');
+      } else {
+        print('❌ Skipped job without price: ${job.title}');
+      }
+    }
+
+    print('🔍 Total jobs with prices: ${jobsWithPrices.length}');
+    return jobsWithPrices;
+  }
+
+  Widget _buildLargeJobSelection(double screenWidth, double screenHeight) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Large Job Selection (without prices)
+        CustomText(
+          text: 'Select Job Type',
+          fontSize: screenWidth > 600 ? 18 : 16,
+          fontWeight: FontWeight.w500,
+          color: Colors.black,
+        ),
+        const Gap(10),
+        Text(
+          'Select the type of work you need (optional)',
+          style: TextStyle(fontSize: 14, color: AppColor.secondaryText),
+        ),
+
+        const Gap(15),
+
+        // Large Jobs List - without prices
+        Obx(() {
+          final jobs = _serviceController.getJobsForCategory(
+            _categoryId ?? '',
+            'large',
+          );
+
+          if (jobs.isEmpty) {
+            return Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey[300]!, width: 1.0),
+              ),
+              child: Text(
+                'No jobs available for this category yet.',
+                style: TextStyle(fontSize: 14, color: AppColor.secondaryText),
+              ),
+            );
+          }
+
+          return Column(
+            children:
+                jobs.map((job) {
+                  final isSelected = _selectedService?.id == job.id;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedService = job;
+                          Get.find<NewServiceController>().selectService(
+                            job.id,
+                          );
+                          _titleController.text =
+                              '${_categoryName ?? widget.selectedCategory} - ${job.title}';
+                          _descriptionController.text =
+                              'I need a ${job.title} service. ${job.description ?? ""}';
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color:
+                              isSelected
+                                  ? AppColor.primaryButton.withOpacity(0.1)
+                                  : AppColor.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color:
+                                isSelected
+                                    ? AppColor.primaryButton
+                                    : Colors.grey[300]!,
+                            width: 1.0,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    job.title,
+                                    style: TextStyle(
+                                      fontFamily: 'openSans',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color:
+                                          isSelected
+                                              ? AppColor.primaryButton
+                                              : Colors.black,
+                                    ),
+                                  ),
+                                  if (job.description != null &&
+                                      job.description!.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      job.description!,
+                                      style: TextStyle(
+                                        fontFamily: 'openSans',
+                                        fontSize: 12,
+                                        color: AppColor.secondaryText,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        displayPrice,
-                        style: TextStyle(
-                          fontFamily: 'openSans',
-                          fontSize: 15,
-                          color: AppColor.primaryButton,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ],
+                    ),
+                  );
+                }).toList(),
+          );
+        }),
         const Gap(10),
       ],
     );

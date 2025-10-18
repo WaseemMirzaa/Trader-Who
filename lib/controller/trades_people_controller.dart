@@ -26,39 +26,208 @@ class TradesPeopleController extends GetxController {
     super.onInit();
     // Check if arguments are passed (from navigation)
     final arguments = Get.arguments as Map<String, dynamic>?;
+
+    print('🔍 TradesPeopleController.onInit - Received arguments: $arguments');
+
     if (arguments != null) {
       selectedCategory.value = arguments['selectedCategory'] ?? '';
       selectedServiceId.value = arguments['service_id'] ?? '';
       selectedService.value = arguments['selectedService'] ?? '';
       selectedJobType.value = arguments['jobType'] ?? '';
       selectedServicePrice.value = arguments['servicePrice'] ?? 0.0;
+
+      print('📋 Parsed arguments:');
+      print('  Category: ${selectedCategory.value}');
+      print('  Category Name: ${arguments['categoryName']}');
+      print('  Service ID: ${selectedServiceId.value}');
+      print('  Service: ${selectedService.value}');
+      print('  Job Type: ${selectedJobType.value}');
+      print('  Price: ${selectedServicePrice.value}');
+    } else {
+      print('⚠️ No arguments passed to TradesPeopleController');
     }
-    fetchServices(selectedServiceId.value);
+
+    // For smallJob, fetch by specific service ID
+    // For largeJob, fetch by category (and filter by trader's title field)
+    if (selectedJobType.value == 'smallJob' &&
+        selectedServiceId.value.isNotEmpty) {
+      print(
+        '📍 Fetching services for smallJob with serviceId: ${selectedServiceId.value}',
+      );
+      fetchServices(selectedServiceId.value);
+    } else if (selectedJobType.value == 'largeJob' &&
+        selectedCategory.value.isNotEmpty) {
+      final categoryName = arguments?['categoryName'] as String?;
+      print(
+        '📍 Fetching services for largeJob with categoryId: ${selectedCategory.value}, categoryName: $categoryName',
+      );
+      fetchServicesByCategory(
+        selectedCategory.value,
+        'large',
+        categoryName: categoryName,
+      );
+    } else {
+      print(
+        '⚠️ Unable to determine fetch strategy - JobType: ${selectedJobType.value}, ServiceId: ${selectedServiceId.value}, CategoryId: ${selectedCategory.value}',
+      );
+    }
     // fetchTradesPeople();
   }
 
   void fetchServices(String serviceId) async {
     isLoading.value = true;
+    print(
+      '🔍 TradesPeopleController.fetchServices called with serviceId: "$serviceId"',
+    );
+
     try {
+      if (serviceId.isEmpty) {
+        print('⚠️ Service ID is empty, cannot fetch services');
+        filteredServices.value = [];
+        return;
+      }
+
+      print('🔍 Querying services_prices where jobId == "$serviceId"');
       final query =
           await FirebaseFirestore.instance
               .collection('services_prices')
               .where('jobId', isEqualTo: serviceId)
               .get();
+
+      print('📊 Found ${query.docs.length} service prices');
+
       List<ServiceItem> services =
-          query.docs.map((doc) => ServiceItem.fromMap(doc.data())).toList();
+          query.docs.map((doc) {
+            print('📄 Processing service doc: ${doc.id}');
+            print('   Data: ${doc.data()}');
+            return ServiceItem.fromMap(doc.data());
+          }).toList();
+
+      print(
+        '🔍 Processing ${services.length} services to fetch trader data...',
+      );
 
       // Process all services in parallel
       await Future.wait(
         services.map((service) async {
-          TradesPerson trader = await getTrader(service.traderId ?? '-');
-          service.tradesPerson = trader;
+          if (service.traderId == null || service.traderId!.isEmpty) {
+            print('⚠️ Service "${service.title}" has no traderId, skipping');
+            return;
+          }
+
+          try {
+            TradesPerson trader = await getTrader(service.traderId!);
+            service.tradesPerson = trader;
+            print('✅ Linked trader ${trader.name} to service ${service.title}');
+          } catch (e) {
+            print('❌ Failed to fetch trader for service ${service.title}: $e');
+          }
         }),
       );
 
+      // Filter out services without traders
+      services = services.where((s) => s.tradesPerson != null).toList();
+
       filteredServices.value = services;
+      print(
+        '✅ Successfully loaded ${services.length} services with trader data',
+      );
     } catch (e) {
-      print('Error fetching services: $e');
+      print('❌ Error fetching services: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Fetch services by category and job type (for largeJob)
+  void fetchServicesByCategory(
+    String categoryId,
+    String jobType, {
+    String? categoryName,
+  }) async {
+    isLoading.value = true;
+    print(
+      '🔍 fetchServicesByCategory called with categoryId: "$categoryId", jobType: "$jobType", categoryName: "$categoryName"',
+    );
+
+    try {
+      if (categoryId.isEmpty) {
+        print('⚠️ Category ID is empty, cannot fetch services');
+        filteredServices.value = [];
+        return;
+      }
+
+      print(
+        '🔍 Querying services_prices where categoryId == "$categoryId" and jobType == "$jobType"',
+      );
+      final query =
+          await FirebaseFirestore.instance
+              .collection('services_prices')
+              .where('categoryId', isEqualTo: categoryId)
+              .where('jobType', isEqualTo: jobType)
+              .get();
+
+      print('📊 Found ${query.docs.length} service prices for category');
+
+      List<ServiceItem> services =
+          query.docs.map((doc) {
+            print('📄 Processing service doc: ${doc.id}');
+            return ServiceItem.fromMap(doc.data());
+          }).toList();
+
+      print(
+        '🔍 Processing ${services.length} services to fetch trader data...',
+      );
+
+      // Process all services in parallel
+      await Future.wait(
+        services.map((service) async {
+          if (service.traderId == null || service.traderId!.isEmpty) {
+            print('⚠️ Service "${service.title}" has no traderId, skipping');
+            return;
+          }
+
+          try {
+            TradesPerson trader = await getTrader(service.traderId!);
+
+            // For large jobs, filter by trader's title field matching category name
+            if (categoryName != null && trader.title != null) {
+              final traderTitle = trader.title!.toLowerCase();
+              final catName = categoryName.toLowerCase();
+
+              // Check if trader's title contains the category name
+              if (traderTitle.contains(catName)) {
+                service.tradesPerson = trader;
+                print(
+                  '✅ Linked trader ${trader.name} (title: ${trader.title}) to service ${service.title}',
+                );
+              } else {
+                print(
+                  '⚠️ Skipping trader ${trader.name} - title "${trader.title}" does not match category "$categoryName"',
+                );
+              }
+            } else {
+              // No category name provided or trader has no title, include the trader
+              service.tradesPerson = trader;
+              print(
+                '✅ Linked trader ${trader.name} to service ${service.title}',
+              );
+            }
+          } catch (e) {
+            print('❌ Failed to fetch trader for service ${service.title}: $e');
+          }
+        }),
+      );
+
+      // Filter out services without traders
+      services = services.where((s) => s.tradesPerson != null).toList();
+
+      filteredServices.value = services;
+      print(
+        '✅ Successfully loaded ${services.length} services with trader data for category',
+      );
+    } catch (e) {
+      print('❌ Error fetching services by category: $e');
     } finally {
       isLoading.value = false;
     }
@@ -153,20 +322,25 @@ class TradesPeopleController extends GetxController {
 
   Future<TradesPerson> getTrader(String traderId) async {
     try {
+      print('👤 Fetching trader with ID: $traderId');
+
       final doc =
           await FirebaseFirestore.instance
               .collection('users')
               .doc(traderId)
               .get();
+
       if (doc.exists) {
+        print('✅ Found trader: ${doc.data()?['name'] ?? 'Unknown'}');
         return await _fetchTraderServices(
           TradesPerson.fromDocumentSnapshot(doc),
         );
       } else {
+        print('❌ Trader not found with ID: $traderId');
         throw Exception('Trader not found');
       }
     } catch (e) {
-      print('Error fetching trader: $e');
+      print('❌ Error fetching trader $traderId: $e');
       rethrow;
     }
   }
@@ -263,13 +437,21 @@ class TradesPeopleController extends GetxController {
   /// Fetch services for a trader from services_prices collection and organize by jobType
   Future<TradesPerson> _fetchTraderServices(TradesPerson tradesPerson) async {
     try {
-      // Fetch all services for this trader
+      print(
+        '🔍 Fetching services for trader: ${tradesPerson.name} (${tradesPerson.id})',
+      );
+
+      // Fetch all services for this trader - using 'traderId' (camelCase)
       final servicesQuery =
           await FirebaseFirestore.instance
               .collection('services_prices')
-              .where('trader_id', isEqualTo: tradesPerson.id)
+              .where('traderId', isEqualTo: tradesPerson.id)
               .where('isEnabled', isEqualTo: true)
               .get();
+
+      print(
+        '📊 Found ${servicesQuery.docs.length} services for trader ${tradesPerson.name}',
+      );
 
       // Organize services by category and jobType
       Map<String, List<ServiceItem>> largeJobsMap = {};
@@ -279,13 +461,29 @@ class TradesPeopleController extends GetxController {
       final serviceItems =
           servicesQuery.docs.map((serviceDoc) {
             final serviceData = serviceDoc.data();
-            final category = serviceData['category'] as String? ?? 'Other';
-            final jobType = serviceData['jobType'] as String? ?? 'smallJob';
+
+            // Use new schema field names
+            final category =
+                serviceData['categoryName'] as String? ??
+                serviceData['category'] as String? ??
+                'Other';
+            final jobType = serviceData['jobType'] as String? ?? 'small';
+
+            print(
+              '  📄 Service: ${serviceData['jobTitle']} - Category: $category, Type: $jobType',
+            );
 
             final serviceItem = ServiceItem(
               id: serviceData['jobId'] ?? serviceDoc.id,
-              title: serviceData['name'] ?? '',
-              description: serviceData['description'] ?? '',
+              title:
+                  serviceData['jobTitle'] ??
+                  serviceData['name'] ??
+                  serviceData['customTitle'] ??
+                  '',
+              description:
+                  serviceData['customDescription'] ??
+                  serviceData['description'] ??
+                  '',
               price: (serviceData['price'] as num?)?.toDouble(),
               isEnabled: serviceData['isEnabled'] ?? false,
               isCustom: serviceData['isCustom'] ?? false,
@@ -304,18 +502,22 @@ class TradesPeopleController extends GetxController {
         final category = item['category'] as String;
         final jobType = item['jobType'] as String;
 
-        if (jobType == 'largeJob') {
+        if (jobType == 'large' || jobType == 'largeJob') {
           if (!largeJobsMap.containsKey(category)) {
             largeJobsMap[category] = [];
           }
           largeJobsMap[category]!.add(serviceItem);
-        } else if (jobType == 'smallJob') {
+        } else if (jobType == 'small' || jobType == 'smallJob') {
           if (!smallJobsMap.containsKey(category)) {
             smallJobsMap[category] = [];
           }
           smallJobsMap[category]!.add(serviceItem);
         }
       }
+
+      print(
+        '✅ Organized services: ${largeJobsMap.length} large job categories, ${smallJobsMap.length} small job categories',
+      );
 
       // Convert maps to ServiceModel lists
       final largeJobs =
@@ -334,6 +536,10 @@ class TradesPeopleController extends GetxController {
               )
               .toList();
 
+      print(
+        '✅ Created ${largeJobs.length} large job categories and ${smallJobs.length} small job categories for ${tradesPerson.name}',
+      );
+
       // Create new TradesPerson with updated services
       return TradesPerson(
         name: tradesPerson.name,
@@ -347,7 +553,7 @@ class TradesPeopleController extends GetxController {
         bio: tradesPerson.bio,
         largeJobs: largeJobs,
         smallJobs: smallJobs,
-
+        phoneNumber: tradesPerson.phoneNumber,
         reviews: tradesPerson.reviews,
         startTime: tradesPerson.startTime,
         endTime: tradesPerson.endTime,

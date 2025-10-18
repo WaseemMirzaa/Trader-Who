@@ -122,7 +122,7 @@ class JobHistoryPageController extends GetxController {
       }
 
       // Convert bookings to JobHistory format for UI compatibility
-      _convertBookingsToJobHistory();
+      await _convertBookingsToJobHistory();
     } catch (e) {
       print('❌ Error fetching bookings: $e');
     } finally {
@@ -321,7 +321,22 @@ class JobHistoryPageController extends GetxController {
 
   /// Format DateTime for display
   String _formatDateTime(DateTime dateTime) {
-    return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+    // Format: DD/MM/YYYY, HH:MM AM/PM
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final month = dateTime.month.toString().padLeft(2, '0');
+    final year = dateTime.year;
+
+    // Convert to 12-hour format
+    final hour =
+        dateTime.hour == 0
+            ? 12
+            : (dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour);
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    final period = dateTime.hour >= 12 ? 'PM' : 'AM';
+
+    final formattedTime = '$day/$month/$year, $hour:$minute $period';
+    print('📅 Formatted DateTime: $dateTime -> $formattedTime');
+    return formattedTime;
   }
 
   /// Filter bookings by status

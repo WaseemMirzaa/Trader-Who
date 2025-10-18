@@ -181,44 +181,67 @@ class NotificationPage extends StatelessWidget {
             spacing: context.responsiveWidth(2),
             children: [
               // Reject Button
-              CustomButton(
-                text: 'REJECT',
-                onTap: () async {
-                  await quoteController.rejectQuote(notification.quote.id!);
-                  Get.snackbar(
-                    'Quote Rejected',
-                    'You have rejected the quote from ${notification.title}',
-                    backgroundColor: Colors.red,
-                    colorText: Colors.white,
-                  );
-                  await notificationController.fetchNotifications();
-                },
-                width: context.responsiveWidth(21),
-                height: context.responsiveHeight(4),
-                color: AppColor.primaryButton,
-                textColor: AppColor.white,
-                radius: 25,
-                fontSize: context.responsiveFontSize(10),
+              Obx(
+                () => CustomButton(
+                  text: 'REJECT',
+                  onTap:
+                      quoteController.isLoading.value
+                          ? null
+                          : () async {
+                            await quoteController.rejectQuote(
+                              notification.quote.id!,
+                            );
+                            Get.snackbar(
+                              'Quote Rejected',
+                              'You have rejected the quote from ${notification.title}',
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                            await notificationController.fetchNotifications();
+                          },
+                  width: context.responsiveWidth(21),
+                  height: context.responsiveHeight(4),
+                  color:
+                      quoteController.isLoading.value
+                          ? Colors.grey
+                          : AppColor.primaryButton,
+                  textColor: AppColor.white,
+                  radius: 25,
+                  fontSize: context.responsiveFontSize(10),
+                ),
               ),
               // Accept Button
-              CustomButton(
-                text: 'ACCEPT',
-                onTap: () async {
-                  await quoteController.acceptQuote(notification.quote.id!);
-                  Get.snackbar(
-                    'Quote Accepted',
-                    'You have accepted the quote from ${notification.title}',
-                    backgroundColor: Colors.green,
-                    colorText: Colors.white,
-                  );
-                  await notificationController.fetchNotifications();
-                },
-                width: context.responsiveWidth(21),
-                height: context.responsiveHeight(4),
-                color: AppColor.darkBlue,
-                textColor: AppColor.white,
-                radius: 25,
-                fontSize: context.responsiveFontSize(10),
+              Obx(
+                () => CustomButton(
+                  text:
+                      quoteController.isLoading.value
+                          ? 'PROCESSING...'
+                          : 'ACCEPT',
+                  onTap:
+                      quoteController.isLoading.value
+                          ? null
+                          : () async {
+                            await quoteController.acceptQuote(
+                              notification.quote.id!,
+                            );
+                            Get.snackbar(
+                              'Quote Accepted',
+                              'You have accepted the quote from ${notification.title}',
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                            );
+                            await notificationController.fetchNotifications();
+                          },
+                  width: context.responsiveWidth(21),
+                  height: context.responsiveHeight(4),
+                  color:
+                      quoteController.isLoading.value
+                          ? Colors.grey
+                          : AppColor.darkBlue,
+                  textColor: AppColor.white,
+                  radius: 25,
+                  fontSize: context.responsiveFontSize(10),
+                ),
               ),
             ],
           ),

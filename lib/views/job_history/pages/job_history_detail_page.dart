@@ -10,6 +10,46 @@ class JobHistoryDetailPage extends StatefulWidget {
 }
 
 class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
+  String? _categoryName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategoryName();
+  }
+
+  String _formatJobType(String jobType) {
+    if (jobType.toLowerCase() == 'smalljob' ||
+        jobType.toLowerCase() == 'small') {
+      return 'Small Job';
+    } else if (jobType.toLowerCase() == 'largejob' ||
+        jobType.toLowerCase() == 'large') {
+      return 'Large Job';
+    }
+    return jobType;
+  }
+
+  Future<void> _loadCategoryName() async {
+    // Check if category is already a readable name or an ID
+    // If it contains underscore or looks like an ID, look it up
+    if (widget.job.category.contains('_') || widget.job.category.length > 30) {
+      // It's likely an ID, fetch the name from categories collection
+      try {
+        final NewServiceController serviceController = Get.find();
+        final category = serviceController.categories.firstWhereOrNull(
+          (c) => c.id == widget.job.category,
+        );
+        if (category != null && mounted) {
+          setState(() {
+            _categoryName = category.name;
+          });
+        }
+      } catch (e) {
+        print('Error loading category name: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isWaitingForProposal = widget.job.status == 'pending';
@@ -50,7 +90,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.job.title,
+                              _categoryName ?? widget.job.category,
                               style: const TextStyle(
                                 color: AppColor.primaryText,
                                 fontSize: 18,
@@ -73,7 +113,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                                       children: [
                                         TextSpan(
                                           text:
-                                              '${widget.job.jobType} - Fixed Price: ',
+                                              '${_formatJobType(widget.job.jobType)} - Fixed Price: ',
                                           style: TextStyle(
                                             fontFamily: 'openSans',
                                             fontSize: 14,
@@ -154,26 +194,28 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Description Section
-                  Text(
-                    'Notes:',
-                    style: TextStyle(
-                      fontFamily: 'openSans',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColor.primaryText,
+                  // Description Section - Only show if notes are not empty
+                  if (widget.job.notes.isNotEmpty) ...[
+                    Text(
+                      'Notes:',
+                      style: TextStyle(
+                        fontFamily: 'openSans',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.primaryText,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.job.notes,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AppColor.secondaryText,
-                      fontFamily: 'openSans',
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.job.notes,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColor.secondaryText,
+                        fontFamily: 'openSans',
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
+                  ],
                   Row(
                     spacing: 8.0,
                     children: [
@@ -309,11 +351,11 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                     ? CustomButton(
                       text: 'Waiting for Accept the Job',
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const FeedbackScreen(),
-                          ),
-                        );
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(
+                        //     builder: (context) => const FeedbackScreen(),
+                        //   ),
+                        // );
                       },
                       height: 45,
                       color: AppColor.primaryButton,

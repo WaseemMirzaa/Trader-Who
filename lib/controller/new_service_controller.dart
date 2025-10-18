@@ -23,6 +23,7 @@ class NewServiceController extends GetxController {
 
   // Selection state
   final RxString selectedCategoryId = RxString('');
+  final RxString selectedJobId = RxString(''); // Selected job/service ID
   final RxString selectedJobType = RxString('small'); // 'small' or 'large'
 
   // Loading states
@@ -412,8 +413,18 @@ class NewServiceController extends GetxController {
   List<JobModel> get selectedCategoryServices =>
       getJobsForCategory(selectedCategoryId.value, selectedJobType.value);
 
-  void selectService(String categoryId) {
-    selectCategory(categoryId);
+  /// Select a service/job by its ID
+  void selectService(String jobId) {
+    selectedJobId(jobId);
+
+    if (kDebugMode) {
+      final job = allJobs.firstWhereOrNull((j) => j.id == jobId);
+      if (job != null) {
+        print('📌 Selected service/job: ${job.title} (ID: $jobId)');
+      } else {
+        print('⚠️ Job not found with ID: $jobId');
+      }
+    }
   }
 
   List<JobModel> getServicesForCategory(String categoryId) {

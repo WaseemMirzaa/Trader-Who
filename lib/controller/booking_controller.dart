@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:traderwho/controller/chat_controller.dart';
+import 'package:traderwho/controller/job_history_page_controller.dart';
 import 'package:traderwho/controller/job_post_controller.dart';
+import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/services/notification_service.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/models/models.dart';
@@ -24,6 +26,10 @@ class BookingController extends GetxController {
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
   Rx<TimeOfDay?> selectedTime = Rx<TimeOfDay?>(null);
   RxString preferredTimeDisplay = ''.obs;
+
+  // Trader's available time range
+  Rx<TimeOfDay?> traderStartTime = Rx<TimeOfDay?>(null);
+  Rx<TimeOfDay?> traderEndTime = Rx<TimeOfDay?>(null);
 
   // Image selection variables
   final ImagePicker _imagePicker = ImagePicker();
@@ -84,10 +90,16 @@ class BookingController extends GetxController {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: AppColor.orangeCustomColor,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: AppColor.primaryText,
+              primary:
+                  AppColor.orangeCustomColor, // Clock circle and selected time
+              onPrimary: Colors.white, // Text on primary color
+              surface: Colors.white, // Dialog background
+              onSurface: AppColor.primaryText, // Unselected text
+              secondary: AppColor.orangeCustomColor, // AM/PM toggle selected
+              onSecondary: Colors.white, // Text on secondary
+              tertiary: AppColor.orangeCustomColor.withValues(
+                alpha: 0.2,
+              ), // AM/PM toggle background
             ),
           ),
           child: child!,
@@ -113,6 +125,29 @@ class BookingController extends GetxController {
           colorText: Colors.white,
         );
         return;
+      }
+
+      // Validate against trader's available hours
+      if (traderStartTime.value != null && traderEndTime.value != null) {
+        final selectedMinutes = pickedTime.hour * 60 + pickedTime.minute;
+        final startMinutes =
+            traderStartTime.value!.hour * 60 + traderStartTime.value!.minute;
+        final endMinutes =
+            traderEndTime.value!.hour * 60 + traderEndTime.value!.minute;
+
+        if (selectedMinutes < startMinutes || selectedMinutes > endMinutes) {
+          final startTimeStr = traderStartTime.value!.format(context);
+          final endTimeStr = traderEndTime.value!.format(context);
+
+          Get.snackbar(
+            'Outside Available Hours',
+            'Trader is only available between $startTimeStr and $endTimeStr',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 4),
+          );
+          return;
+        }
       }
 
       selectedTime.value = pickedTime;
@@ -383,6 +418,7 @@ class BookingController extends GetxController {
             duration: const Duration(seconds: 3),
           );
         });
+
         ChatController chatController = Get.put(ChatController());
         await chatController.createChatIfNotExists(
           FirebaseAuth.instance.currentUser!.uid,
@@ -390,6 +426,37 @@ class BookingController extends GetxController {
           true,
           docRef.id,
         );
+
+        // Navigate to job history tab after successful booking
+        Future.delayed(const Duration(milliseconds: 500), () async {
+          try {
+            final navController = Get.find<NavigationController>();
+
+            // Navigate back to main page with navbar and switch to job history tab (index 1)
+            Get.until((route) => route.isFirst); // Go back to root
+            navController.changePage(1); // Switch to job history tab
+
+            print('✅ Navigated to job history tab');
+
+            // Refresh job history data after navigation
+            await Future.delayed(const Duration(milliseconds: 500));
+            try {
+              // Try to find existing controller, if not found it will be created by the page
+              if (Get.isRegistered<JobHistoryPageController>()) {
+                final jobHistoryController =
+                    Get.find<JobHistoryPageController>();
+                await jobHistoryController.fetchBookings();
+                print('✅ Job history refreshed with new booking');
+              } else {
+                print('ℹ️ Job history controller will load data on page init');
+              }
+            } catch (e) {
+              print('⚠️ Could not refresh job history: $e');
+            }
+          } catch (e) {
+            print('⚠️ Navigation controller not found: $e');
+          }
+        });
 
         return true;
       }
@@ -528,6 +595,8 @@ class BookingController extends GetxController {
     required String service,
     required String jobType,
     required double price,
+    DateTime? traderStartTime,
+    DateTime? traderEndTime,
   }) async {
     // Check if current user is a customer before showing dialog
     final currentUser = _auth.currentUser;
@@ -553,11 +622,27 @@ class BookingController extends GetxController {
       return;
     }
 
+    // Set trader's available time range
+    if (traderStartTime != null) {
+      this.traderStartTime.value = TimeOfDay.fromDateTime(traderStartTime);
+    } else {
+      this.traderStartTime.value = null;
+    }
+
+    if (traderEndTime != null) {
+      this.traderEndTime.value = TimeOfDay.fromDateTime(traderEndTime);
+    } else {
+      this.traderEndTime.value = null;
+    }
+
     // Reset preferred time selection when opening dialog
     resetPreferredTime();
     resetImageSelection();
 
     final TextEditingController notesController = TextEditingController();
+
+    // Format job type for display
+    String formattedJobType = _formatJobType(jobType);
 
     await Get.dialog(
       AlertDialog(
@@ -571,9 +656,46 @@ class BookingController extends GetxController {
               const SizedBox(height: 8),
               Text('Service: $service'),
               const SizedBox(height: 8),
-              Text('Job Type: $jobType'),
+              Text('Job Type: $formattedJobType'),
               const SizedBox(height: 8),
               Text("Price: $price"),
+
+              // Display trader's available hours if available
+              if (this.traderStartTime.value != null &&
+                  this.traderEndTime.value != null) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: Colors.blue.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.access_time,
+                        size: 16,
+                        color: Colors.blue,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'Available: ${this.traderStartTime.value!.format(Get.context!)} - ${this.traderEndTime.value!.format(Get.context!)}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: AppColor.primaryText,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
               const SizedBox(height: 16),
 
               // Preferred Date Selection
@@ -891,6 +1013,23 @@ class BookingController extends GetxController {
       print('❌ Error checking user type: $e');
       // In case of error, assume customer to not block functionality
       return true;
+    }
+  }
+
+  /// Format job type for display
+  String _formatJobType(String jobType) {
+    switch (jobType.toLowerCase()) {
+      case 'small':
+      case 'smalljob':
+        return 'Small Job';
+      case 'large':
+      case 'largejob':
+        return 'Large Job';
+      default:
+        // Capitalize first letter if it's a custom format
+        return jobType.isNotEmpty
+            ? '${jobType[0].toUpperCase()}${jobType.substring(1)}'
+            : jobType;
     }
   }
 

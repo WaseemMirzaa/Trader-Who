@@ -279,6 +279,25 @@ class SignupController extends GetxController {
     final pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary:
+                  AppColor.orangeCustomColor, // Clock circle and selected time
+              onPrimary: Colors.white, // Text on primary color
+              surface: Colors.white, // Dialog background
+              onSurface: AppColor.primaryText, // Unselected text
+              secondary: AppColor.orangeCustomColor, // AM/PM toggle selected
+              onSecondary: Colors.white, // Text on secondary
+              tertiary: AppColor.orangeCustomColor.withValues(
+                alpha: 0.2,
+              ), // AM/PM toggle background
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (pickedTime != null) {
       startTime.value = pickedTime;
@@ -289,6 +308,25 @@ class SignupController extends GetxController {
     final pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary:
+                  AppColor.orangeCustomColor, // Clock circle and selected time
+              onPrimary: Colors.white, // Text on primary color
+              surface: Colors.white, // Dialog background
+              onSurface: AppColor.primaryText, // Unselected text
+              secondary: AppColor.orangeCustomColor, // AM/PM toggle selected
+              onSecondary: Colors.white, // Text on secondary
+              tertiary: AppColor.orangeCustomColor.withValues(
+                alpha: 0.2,
+              ), // AM/PM toggle background
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (pickedTime != null) {
       endTime.value = pickedTime;

@@ -30,7 +30,8 @@ class _MapScreenState extends State<_MapScreenView> {
   @override
   void initState() {
     super.initState();
-    _controller = Get.put(TradesPeopleController());
+    // Find the existing controller instead of creating a new one
+    _controller = Get.find<TradesPeopleController>();
     // Use ever() to listen to changes in the tradesPeople list
     ever(_controller.filteredServices, (_) => _loadMarkersFromController());
     ever(_controller.isLoading, (_) {
@@ -117,6 +118,9 @@ class _MapScreenState extends State<_MapScreenView> {
     );
   }
 
+  // TODO: Custom marker icon loader - currently using default markers
+  // Uncomment and use this method to load custom marker icons for traders
+  // ignore: unused_element
   Future<BitmapDescriptor> _loadIcon(
     BuildContext context,
     String assetPath, {
