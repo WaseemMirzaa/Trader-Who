@@ -48,55 +48,71 @@ class _MapScreenState extends State<_MapScreenView> {
   }
 
   Future<void> _loadMarkersFromController() async {
-    final tradesServices = _controller.filteredServices;
-    print(
-      'Map Screen: Loading markers, tradesServices count: ${tradesServices.length}',
-    );
+    try {
+      final tradesServices = _controller.filteredServices;
+      print(
+        'Map Screen: Loading markers, tradesServices count: ${tradesServices.length}',
+      );
 
-    if (tradesServices.isEmpty) {
+      if (tradesServices.isEmpty) {
+        setState(() {
+          _markers = {};
+        });
+        return;
+      }
+
+      final List<Marker> markers = [];
+      for (int i = 0; i < tradesServices.length; i++) {
+        ServiceItem service = tradesServices[i];
+        print(
+          'Service ${i}: ${service.title}, lat: ${service.tradesPerson?.latitude}, lng: ${service.tradesPerson?.longitude}',
+        );
+
+        // Check if coordinates are valid (not 0.0 or default values)
+        if (service.tradesPerson?.latitude != 0.0 &&
+            service.tradesPerson?.longitude != 0.0) {
+          // Load custom marker icon
+          final markerIcon = await _loadIcon(
+            context,
+            Assets.imagesBricker, // Using location icon as marker
+            isFirstIcon: i == 0, // First marker gets dark blue background
+          );
+
+          markers.add(
+            Marker(
+              markerId: MarkerId('tradesperson_${service.tradesPerson?.id}'),
+              position: LatLng(
+                service.tradesPerson?.latitude ?? 0.0,
+                service.tradesPerson?.longitude ?? 0.0,
+              ),
+              icon: markerIcon, // Use custom icon
+              infoWindow: InfoWindow(
+                title: service.tradesPerson?.name ?? '',
+                snippet: service.tradesPerson?.bio ?? '',
+                onTap:
+                    () => _showCustomBottomSheet(
+                      context,
+                      service.tradesPerson!,
+                      service.price!,
+                      _controller.selectedJobType.value,
+                    ),
+              ),
+            ),
+          );
+        }
+      }
+
+      print('Map Screen: Created ${markers.length} markers');
+      setState(() {
+        _markers = markers.toSet();
+      });
+    } catch (e) {
+      print('❌ Error loading markers: $e');
+      // Set empty markers on error
       setState(() {
         _markers = {};
       });
-      return;
     }
-
-    final List<Marker> markers = [];
-    for (int i = 0; i < tradesServices.length; i++) {
-      ServiceItem service = tradesServices[i];
-      print(
-        'Service ${i}: ${service.title}, lat: ${service.tradesPerson?.latitude}, lng: ${service.tradesPerson?.longitude}',
-      );
-
-      // Check if coordinates are valid (not 0.0 or default values)
-      if (service.tradesPerson?.latitude != 0.0 &&
-          service.tradesPerson?.longitude != 0.0) {
-        markers.add(
-          Marker(
-            markerId: MarkerId('tradesperson_${service.tradesPerson?.id}'),
-            position: LatLng(
-              service.tradesPerson?.latitude ?? 0.0,
-              service.tradesPerson?.longitude ?? 0.0,
-            ),
-            infoWindow: InfoWindow(
-              title: service.tradesPerson?.name ?? '',
-              snippet: service.tradesPerson?.bio ?? '',
-              onTap:
-                  () => _showCustomBottomSheet(
-                    context,
-                    service.tradesPerson!,
-                    service.price!,
-                    _controller.selectedJobType.value,
-                  ),
-            ),
-          ),
-        );
-      }
-    }
-
-    print('Map Screen: Created ${markers.length} markers');
-    setState(() {
-      _markers = markers.toSet();
-    });
   }
 
   void _showCustomBottomSheet(
@@ -118,9 +134,7 @@ class _MapScreenState extends State<_MapScreenView> {
     );
   }
 
-  // TODO: Custom marker icon loader - currently using default markers
-  // Uncomment and use this method to load custom marker icons for traders
-  // ignore: unused_element
+  /// Custom marker icon loader - creates circular markers with icons
   Future<BitmapDescriptor> _loadIcon(
     BuildContext context,
     String assetPath, {
@@ -148,7 +162,7 @@ class _MapScreenState extends State<_MapScreenView> {
       final canvas = ui.Canvas(recorder);
 
       // Determine the background color
-      final backgroundColor = isFirstIcon ? AppColor.darkBlue : AppColor.white;
+      final backgroundColor = AppColor.white;
 
       // Draw circular container with appropriate color
       final paint =

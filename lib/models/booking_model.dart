@@ -18,6 +18,14 @@ class BookingModel {
   final String category;
   final String service;
   final String jobType;
+  final List<String>
+  completionImages; // Images uploaded by trader on completion
+  final String customerComment; // Customer feedback on trader's completion
+  final bool customerApproved; // Whether customer approved the completion
+  final int? traderRating; // Customer's rating for trader
+  final String? traderReview; // Customer's review for trader
+  final int? customerRating; // Trader's rating for customer
+  final String? customerReview; // Trader's review for customer
 
   BookingModel({
     this.id,
@@ -37,6 +45,13 @@ class BookingModel {
     this.category = '',
     this.service = '',
     this.jobType = '',
+    this.completionImages = const [],
+    this.customerComment = '',
+    this.customerApproved = false,
+    this.traderRating,
+    this.traderReview,
+    this.customerRating,
+    this.customerReview,
   });
 
   BookingModel copyWith({
@@ -57,6 +72,13 @@ class BookingModel {
     String? category,
     String? service,
     String? jobType,
+    List<String>? completionImages,
+    String? customerComment,
+    bool? customerApproved,
+    int? traderRating,
+    String? traderReview,
+    int? customerRating,
+    String? customerReview,
   }) {
     return BookingModel(
       id: id ?? this.id,
@@ -76,6 +98,13 @@ class BookingModel {
       category: category ?? this.category,
       service: service ?? this.service,
       jobType: jobType ?? this.jobType,
+      completionImages: completionImages ?? this.completionImages,
+      customerComment: customerComment ?? this.customerComment,
+      customerApproved: customerApproved ?? this.customerApproved,
+      traderRating: traderRating ?? this.traderRating,
+      traderReview: traderReview ?? this.traderReview,
+      customerRating: customerRating ?? this.customerRating,
+      customerReview: customerReview ?? this.customerReview,
     );
   }
 
@@ -124,6 +153,13 @@ class BookingModel {
       'category': category,
       'service': service,
       'jobType': jobType,
+      'completionImages': completionImages,
+      'customerComment': customerComment,
+      'customerApproved': customerApproved,
+      if (traderRating != null) 'traderRating': traderRating,
+      if (traderReview != null) 'traderReview': traderReview,
+      if (customerRating != null) 'customerRating': customerRating,
+      if (customerReview != null) 'customerReview': customerReview,
     };
   }
 
@@ -193,6 +229,16 @@ class BookingModel {
       category: map['category'] as String? ?? '',
       service: map['service'] as String? ?? '',
       jobType: map['jobType'] as String? ?? '',
+      completionImages:
+          map['completionImages'] != null
+              ? List<String>.from(map['completionImages'] as List<dynamic>)
+              : [],
+      customerComment: map['customerComment'] as String? ?? '',
+      customerApproved: map['customerApproved'] as bool? ?? false,
+      traderRating: map['traderRating'] as int?,
+      traderReview: map['traderReview'] as String?,
+      customerRating: map['customerRating'] as int?,
+      customerReview: map['customerReview'] as String?,
     );
   }
 

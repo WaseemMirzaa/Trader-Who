@@ -19,6 +19,7 @@ class JobHistory {
   final String? review;
   final bool showQuoteButtons;
   final String category;
+  final String service;
 
   const JobHistory({
     required this.title,
@@ -39,6 +40,7 @@ class JobHistory {
     this.review,
     this.showQuoteButtons = false, // Default to Reject/Accept
     required this.category,
+    required this.service,
   });
 
   JobHistory copyWith({
@@ -60,6 +62,7 @@ class JobHistory {
     int? rating,
     String? review,
     String? category,
+    String? service,
   }) {
     return JobHistory(
       title: title ?? this.title,
@@ -80,6 +83,7 @@ class JobHistory {
       rating: rating ?? this.rating,
       review: review ?? this.review,
       category: category ?? this.category,
+      service: service ?? this.service,
     );
   }
 }

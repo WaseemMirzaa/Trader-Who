@@ -23,7 +23,7 @@ class TradeJobHistoryBottomSheet extends StatefulWidget {
 
 class _TradeJobHistoryBottomSheetState
     extends State<TradeJobHistoryBottomSheet> {
-  bool _isLoading = false;
+  final JobHistoryPageController _controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -136,21 +136,25 @@ class _TradeJobHistoryBottomSheetState
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              child: CustomButton(
-                text: _isLoading ? 'Submitting...' : 'Submit',
-                onTap:
-                    _isLoading
-                        ? null
-                        : () {
-                          setState(() => _isLoading = true);
-                          widget.onSubmit?.call();
-                        },
-                height: 45,
-                color: _isLoading ? Colors.grey : AppColor.darkBlue,
-                textColor: AppColor.white,
-                fontWeight: FontWeight.bold,
-                radius: 25,
-              ),
+              child: Obx(() {
+                final isLoading = _controller.isLoading.value;
+                return CustomButton(
+                  text: isLoading ? 'Submitting...' : 'Submit',
+                  onTap:
+                      isLoading
+                          ? null
+                          : () {
+                            if (widget.onSubmit != null) {
+                              widget.onSubmit!();
+                            }
+                          },
+                  height: 45,
+                  color: isLoading ? Colors.grey : AppColor.darkBlue,
+                  textColor: AppColor.white,
+                  fontWeight: FontWeight.bold,
+                  radius: 25,
+                );
+              }),
             ),
           ],
         ),
@@ -181,7 +185,7 @@ class TradeJobQuoteBottomSheet extends StatefulWidget {
 }
 
 class _TradeJobQuoteBottomSheetState extends State<TradeJobQuoteBottomSheet> {
-  bool _isLoading = false;
+  final JobHistoryPageController _controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -294,21 +298,25 @@ class _TradeJobQuoteBottomSheetState extends State<TradeJobQuoteBottomSheet> {
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              child: CustomButton(
-                text: _isLoading ? 'Submitting...' : 'Submit',
-                onTap:
-                    _isLoading
-                        ? null
-                        : () {
-                          setState(() => _isLoading = true);
-                          widget.onSubmit?.call();
-                        },
-                height: 45,
-                color: _isLoading ? Colors.grey : AppColor.darkBlue,
-                textColor: AppColor.white,
-                fontWeight: FontWeight.bold,
-                radius: 25,
-              ),
+              child: Obx(() {
+                final isLoading = _controller.isLoading.value;
+                return CustomButton(
+                  text: isLoading ? 'Submitting...' : 'Submit',
+                  onTap:
+                      isLoading
+                          ? null
+                          : () {
+                            if (widget.onSubmit != null) {
+                              widget.onSubmit!();
+                            }
+                          },
+                  height: 45,
+                  color: isLoading ? Colors.grey : AppColor.darkBlue,
+                  textColor: AppColor.white,
+                  fontWeight: FontWeight.bold,
+                  radius: 25,
+                );
+              }),
             ),
           ],
         ),

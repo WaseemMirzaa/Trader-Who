@@ -15,13 +15,14 @@ class CategoryModel {
     this.updatedAt,
   });
 
-  factory CategoryModel.fromMap(Map<String, dynamic> map, String id) {
+  factory CategoryModel.fromDoc(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return CategoryModel(
-      id: id,
-      name: map['name'] ?? '',
-      iconUrl: map['iconUrl'],
-      createdAt: map['createdAt']?.toDate(),
-      updatedAt: map['updatedAt']?.toDate(),
+      id: doc.id,
+      name: data['name'] ?? '',
+      iconUrl: data['iconUrl'],
+      createdAt: data['createdAt']?.toDate(),
+      updatedAt: data['updatedAt']?.toDate(),
     );
   }
 

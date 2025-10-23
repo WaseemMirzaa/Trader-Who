@@ -66,10 +66,12 @@ class TradeHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       InkWell(
                         onTap: () => Get.toNamed(AppRoutes.tradeNotification),
-                        child: SvgPicture.asset(
-                          Assets.svgsNotification,
-                          width: 24,
-                          height: 24,
+                        child: NotificationBadge(
+                          child: SvgPicture.asset(
+                            Assets.svgsNotification,
+                            width: 24,
+                            height: 24,
+                          ),
                         ),
                       ),
                     ],

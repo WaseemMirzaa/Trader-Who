@@ -61,9 +61,7 @@ class SignupController extends GetxController {
           await _firestore.collection('categories').orderBy('name').get();
 
       categories.value =
-          snapshot.docs
-              .map((doc) => CategoryModel.fromMap(doc.data(), doc.id))
-              .toList();
+          snapshot.docs.map((doc) => CategoryModel.fromDoc(doc)).toList();
 
       debugPrint('✅ Loaded ${categories.length} categories');
     } catch (e) {
@@ -204,7 +202,7 @@ class SignupController extends GetxController {
         lon: double.tryParse(longitudeController.text.trim()),
         userType: isTradesperson.value ? 'tradesperson' : 'customer',
         createdAt: DateTime.now(),
-        title: isTradesperson.value ? selectedCategory.value?.name : null,
+        title: isTradesperson.value ? selectedCategory.value?.id : null,
         bio: isTradesperson.value ? bio?.trim() : null,
         status: isTradesperson.value ? 'pending' : null,
         availability: isTradesperson.value ? availability.value : null,

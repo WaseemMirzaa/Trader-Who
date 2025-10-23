@@ -86,6 +86,7 @@ class _TradeChatPageState extends State<TradeChatPage> {
                                     userName: user.name,
                                     avatarImage: user.image ?? '',
                                     receiverId: otherUserId,
+                                    chatModel: chat,
                                   ),
                             ),
                           );
@@ -96,6 +97,10 @@ class _TradeChatPageState extends State<TradeChatPage> {
                           isOnline:
                               false, // You may want to fetch online status from user profile
                           avatarImage: user.image ?? '',
+                          isOrderChat: chat.isOrderChat,
+                          orderId: chat.orderId,
+                          orderCategory: chat.orderCategory,
+                          orderService: chat.orderService,
                         ),
                       );
                     },

@@ -94,6 +94,7 @@ class _BookingInfoWidgetState extends State<BookingInfoWidget> {
       jobType: booking.jobType,
       category: booking.category,
       price: booking.price,
+      service: booking.service,
       preferredTime: _formatDate(booking.preferredTime!),
       address: address,
       status: booking.status,
@@ -141,11 +142,21 @@ class _BookingInfoWidgetState extends State<BookingInfoWidget> {
   String _formatStatus(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return 'Pending';
+        return 'Waiting for Proposal';
+      case 'quoted':
+        return 'Quote Submitted';
       case 'accepted':
         return 'Accepted';
+      case 'inprogress':
+        return 'In Progress';
+      case 'in_progress':
+        return 'In Progress';
+      case 'awaiting_verification':
+        return 'Awaiting Verification';
       case 'rejected':
         return 'Rejected';
+      case 'notinterested':
+        return 'Not Interested';
       case 'completed':
         return 'Completed';
       case 'cancelled':
@@ -159,9 +170,17 @@ class _BookingInfoWidgetState extends State<BookingInfoWidget> {
     switch (status.toLowerCase()) {
       case 'pending':
         return Colors.orange;
+      case 'quoted':
+        return Colors.blue.shade300;
       case 'accepted':
         return Colors.blue;
+      case 'inprogress':
+      case 'in_progress':
+        return Colors.purple;
+      case 'awaiting_verification':
+        return Colors.amber;
       case 'rejected':
+      case 'notinterested':
         return Colors.red;
       case 'completed':
         return Colors.green;

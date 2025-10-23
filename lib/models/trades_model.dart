@@ -77,7 +77,7 @@ class TradesPerson {
       endTime: map['end_time'],
       latitude: map['lat'] ?? 0,
       longitude: map['lon'] ?? 0,
-      title: map['title'] ?? '',
+      title: HelperService.formattedCategoryName(map['title'] ?? ''),
     );
   }
 

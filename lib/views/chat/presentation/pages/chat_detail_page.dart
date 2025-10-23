@@ -49,17 +49,22 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   @override
   void initState() {
     super.initState();
+    // Get the orderId if this is an order-based chat
+    final orderId = widget.chatModel?.orderId;
     chatId = chatController.getChatId(
       FirebaseAuth.instance.currentUser!.uid,
       widget.receiverId,
+      orderId: orderId,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final currentUserId = FirebaseAuth.instance.currentUser!.uid;
       await chatController.createChatIfNotExists(
         currentUserId,
         widget.receiverId,
-        false,
-        null,
+        widget.chatModel?.isOrderChat ?? false,
+        orderId,
+        orderCategory: widget.chatModel?.orderCategory,
+        orderService: widget.chatModel?.orderService,
       );
       if (widget.chatModel != null) {
         bookingModel = await bookingController.getBookingFromId(

@@ -844,6 +844,60 @@ class NotificationService {
     }
   }
 
+  /// Create notification when customer rejects job completion
+  static Future<void> createCompletionRejectedNotification({
+    required String traderId,
+    required String bookingId,
+    required String jobTitle,
+    String? customerComment,
+  }) async {
+    await createNotification(
+      recipientId: traderId,
+      type: 'completion_rejected',
+      title: 'Work Needs Revision',
+      message:
+          customerComment != null && customerComment.isNotEmpty
+              ? 'Customer feedback on "$jobTitle": "$customerComment"'
+              : 'Customer has requested revisions for "$jobTitle". Please check the job details.',
+      data: {
+        'bookingId': bookingId,
+        'jobTitle': jobTitle,
+        'customerComment': customerComment ?? '',
+      },
+    );
+  }
+
+  /// Create notification when customer approves job completion
+  static Future<void> createCompletionApprovedNotification({
+    required String traderId,
+    required String bookingId,
+    required String jobTitle,
+  }) async {
+    await createNotification(
+      recipientId: traderId,
+      type: 'completion_approved',
+      title: 'Work Approved!',
+      message: 'Customer has approved the completion of "$jobTitle"',
+      data: {'bookingId': bookingId, 'jobTitle': jobTitle},
+    );
+  }
+
+  /// Create notification when trader marks work as complete
+  static Future<void> createWorkCompletedNotification({
+    required String customerId,
+    required String bookingId,
+    required String jobTitle,
+  }) async {
+    await createNotification(
+      recipientId: customerId,
+      type: 'work_completed',
+      title: 'Work Completed!',
+      message:
+          'The trader has marked "$jobTitle" as complete. Please review and verify the work.',
+      data: {'bookingId': bookingId, 'jobTitle': jobTitle},
+    );
+  }
+
   // Get Firebase messaging token for debugging
   static Future<String?> getFirebaseToken() async {
     try {

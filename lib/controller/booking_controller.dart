@@ -425,6 +425,8 @@ class BookingController extends GetxController {
           traderId,
           true,
           docRef.id,
+          orderCategory: category,
+          orderService: service,
         );
 
         // Navigate to job history tab after successful booking
@@ -848,11 +850,15 @@ class BookingController extends GetxController {
                     selectedImages.isNotEmpty
                         ? SizedBox(
                           height: 100,
+                          width: Get.width,
                           child: ListView.builder(
+                            shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
                             itemCount: selectedImages.length,
                             itemBuilder: (context, index) {
                               return Container(
+                                height: 80,
+                                width: 80,
                                 margin: const EdgeInsets.only(right: 8),
                                 child: Stack(
                                   children: [

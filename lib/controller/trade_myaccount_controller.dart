@@ -160,9 +160,7 @@ class TradeMyaccountController extends GetxController {
               .get();
 
       categories.value =
-          snapshot.docs
-              .map((doc) => CategoryModel.fromMap(doc.data(), doc.id))
-              .toList();
+          snapshot.docs.map((doc) => CategoryModel.fromDoc(doc)).toList();
 
       debugPrint('✅ Loaded ${categories.length} categories');
     } catch (e) {
@@ -228,7 +226,7 @@ class TradeMyaccountController extends GetxController {
         // Set selected category based on title
         if (userData.title != null && userData.title!.isNotEmpty) {
           selectedCategory.value = categories.firstWhereOrNull(
-            (cat) => cat.name == userData.title,
+            (cat) => cat.id == userData.title,
           );
         }
       } else {
@@ -296,7 +294,7 @@ class TradeMyaccountController extends GetxController {
         'email': emailController.text.trim(),
         'phone': phoneController.text.trim(),
         'address': addressController.text.trim(),
-        'title': selectedCategory.value?.name ?? titleController.text.trim(),
+        'title': selectedCategory.value?.id ?? titleController.text.trim(),
         'bio': bioController.text.trim(),
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
         if (imageUrl != null) 'image': imageUrl,

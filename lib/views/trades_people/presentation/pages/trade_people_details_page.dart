@@ -162,27 +162,14 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                       children: [
                         Image.asset(Assets.imagesStars, width: 16, height: 16),
                         const SizedBox(width: 4),
-                        Builder(
-                          builder: (context) {
-                            final reviews = widget.person.reviews;
-                            double avgRating = 0;
-                            if (reviews != null && reviews.isNotEmpty) {
-                              avgRating =
-                                  reviews
-                                      .map((r) => r.rating)
-                                      .reduce((a, b) => a + b) /
-                                  reviews.length;
-                            }
-                            return Text(
-                              avgRating > 0
-                                  ? avgRating.toStringAsFixed(1)
-                                  : "0.0",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: AppColor.orangeCustomColor,
-                              ),
-                            );
-                          },
+                        Text(
+                          widget.person.rating > 0
+                              ? widget.person.rating.toStringAsFixed(1)
+                              : "0.0",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: AppColor.orangeCustomColor,
+                          ),
                         ),
                       ],
                     ),

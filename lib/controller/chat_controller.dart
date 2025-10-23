@@ -187,8 +187,14 @@ class ChatController extends GetxController {
   }
 
   // Create or get chatId for two users
-  String getChatId(String senderId, String receiverId) {
+  // For order-based chats, includes the orderId to create unique chat per booking
+  String getChatId(String senderId, String receiverId, {String? orderId}) {
     final ids = [senderId, receiverId]..sort();
+    if (orderId != null && orderId.isNotEmpty) {
+      // Order-based chat: include orderId in the chat ID
+      return '${ids[0]}_${ids[1]}_order_$orderId';
+    }
+    // Regular chat: just use user IDs
     return '${ids[0]}_${ids[1]}';
   }
 
@@ -197,9 +203,11 @@ class ChatController extends GetxController {
     String senderId,
     String receiverId,
     bool isOrderChat,
-    String? orderId,
-  ) async {
-    final chatId = getChatId(senderId, receiverId);
+    String? orderId, {
+    String? orderCategory,
+    String? orderService,
+  }) async {
+    final chatId = getChatId(senderId, receiverId, orderId: orderId);
     final chatRef = _firestore.collection('chats').doc(chatId);
     final doc = await chatRef.get();
     if (!doc.exists) {
@@ -214,6 +222,8 @@ class ChatController extends GetxController {
         'receiverUnreadCount': 0,
         'isOrderChat': isOrderChat,
         'orderId': orderId,
+        'orderCategory': orderCategory,
+        'orderService': orderService,
       });
     }
   }

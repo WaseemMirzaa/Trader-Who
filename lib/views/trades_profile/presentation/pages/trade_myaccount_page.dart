@@ -268,75 +268,84 @@ class TradeMyaccountPage extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 16),
-                                  Expanded(
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<CategoryModel>(
-                                        isExpanded: true,
-                                        alignment:
-                                            AlignmentDirectional.centerEnd,
-                                        isDense: false,
-                                        hint: const Text(
-                                          'Select Category',
-                                          style: TextStyle(
-                                            color: AppColor.midGray,
-                                            fontSize: 14,
-                                          ),
-                                          maxLines: null,
-                                          softWrap: true,
-                                        ),
-                                        value:
-                                            controller.selectedCategory.value,
-                                        icon: const Icon(
-                                          Icons.keyboard_arrow_down,
-                                          color: AppColor.midGray,
-                                        ),
-                                        style: const TextStyle(
-                                          color: AppColor.black,
-                                          fontSize: 14,
-                                        ),
-                                        selectedItemBuilder: (
-                                          BuildContext context,
-                                        ) {
-                                          return controller.categories.map((
-                                            category,
-                                          ) {
-                                            return Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Text(
-                                                category.name,
-                                                style: const TextStyle(
-                                                  color: AppColor.black,
-                                                  fontSize: 14,
-                                                ),
-                                                maxLines: null,
-                                                softWrap: true,
-                                                textAlign: TextAlign.right,
-                                              ),
-                                            );
-                                          }).toList();
-                                        },
-                                        items:
-                                            controller.categories.map((
-                                              category,
-                                            ) {
-                                              return DropdownMenuItem<
-                                                CategoryModel
-                                              >(
-                                                value: category,
-                                                child: Text(
-                                                  category.name,
-                                                  maxLines: null,
-                                                  softWrap: true,
-                                                ),
-                                              );
-                                            }).toList(),
-                                        onChanged: (CategoryModel? newValue) {
-                                          controller.selectedCategory.value =
-                                              newValue;
-                                        },
-                                      ),
+                                  Text(
+                                    HelperService.formattedCategoryName(
+                                      controller.titleController.text,
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
+                                  // Expanded(
+                                  //   child: DropdownButtonHideUnderline(
+                                  //     child: DropdownButton<CategoryModel>(
+                                  //       isExpanded: true,
+                                  //       alignment:
+                                  //           AlignmentDirectional.centerEnd,
+                                  //       isDense: false,
+                                  //       hint: const Text(
+                                  //         'Select Category',
+                                  //         style: TextStyle(
+                                  //           color: AppColor.midGray,
+                                  //           fontSize: 14,
+                                  //         ),
+                                  //         maxLines: null,
+                                  //         softWrap: true,
+                                  //       ),
+                                  //       value:
+                                  //           controller.selectedCategory.value,
+                                  //       icon: const Icon(
+                                  //         Icons.keyboard_arrow_down,
+                                  //         color: AppColor.midGray,
+                                  //       ),
+                                  //       style: const TextStyle(
+                                  //         color: AppColor.black,
+                                  //         fontSize: 14,
+                                  //       ),
+                                  //       selectedItemBuilder: (
+                                  //         BuildContext context,
+                                  //       ) {
+                                  //         return controller.categories.map((
+                                  //           category,
+                                  //         ) {
+                                  //           return Align(
+                                  //             alignment: Alignment.centerRight,
+                                  //             child: Text(
+                                  //               category.name,
+                                  //               style: const TextStyle(
+                                  //                 color: AppColor.black,
+                                  //                 fontSize: 14,
+                                  //               ),
+                                  //               maxLines: null,
+                                  //               softWrap: true,
+                                  //               textAlign: TextAlign.right,
+                                  //             ),
+                                  //           );
+                                  //         }).toList();
+                                  //       },
+                                  //       items:
+                                  //           controller.categories.map((
+                                  //             category,
+                                  //           ) {
+                                  //             return DropdownMenuItem<
+                                  //               CategoryModel
+                                  //             >(
+                                  //               value: category,
+                                  //               child: Text(
+                                  //                 category.name,
+                                  //                 maxLines: null,
+                                  //                 softWrap: true,
+                                  //               ),
+                                  //             );
+                                  //           }).toList(),
+                                  //       onChanged: (CategoryModel? newValue) {
+                                  //         controller.selectedCategory.value =
+                                  //             newValue;
+                                  //       },
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),

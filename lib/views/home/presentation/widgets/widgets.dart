@@ -6,6 +6,7 @@ import 'package:traderwho/controller/user_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
 import 'package:traderwho/core/shared_widgets/custom_text.dart';
+import 'package:traderwho/core/shared_widgets/notification_badge.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/core/theme/assets.dart';
 import 'package:traderwho/core/theme/constant.dart';

@@ -120,12 +120,8 @@ class TradesPeopleCard extends StatelessWidget {
                       Image.asset(Assets.imagesStars, width: 16, height: 16),
                       const SizedBox(width: 4),
                       Text(
-                        (person.reviews ?? []).isNotEmpty
-                            ? (person.reviews!
-                                        .map((r) => r.rating)
-                                        .reduce((a, b) => a + b) /
-                                    person.reviews!.length)
-                                .toStringAsFixed(1)
+                        person.rating > 0
+                            ? person.rating.toStringAsFixed(1)
                             : '0.0',
                         style: const TextStyle(
                           fontSize: 12,

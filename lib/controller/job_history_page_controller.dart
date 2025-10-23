@@ -221,28 +221,7 @@ class JobHistoryPageController extends GetxController {
         final traderDoc =
             await _firestore.collection('users').doc(booking.traderId).get();
         if (traderDoc.exists) {
-          // final data = traderDoc.data() as Map<String, dynamic>;
           traderData = TradesPerson.fromDocumentSnapshot(traderDoc);
-          // TradesPerson(
-          //   id: booking.traderId,
-          //   name: data['name'] ?? 'Trader',
-          //   title: data['title'] ?? 'Professional',
-          //   bio: data['bio'] ?? 'Professional service provider',
-          //   expertise: data['expertise'] ?? booking.category,
-          //   description:
-          //       data['description'] ?? booking.notes.isNotEmpty
-          //           ? booking.notes
-          //           : 'Service booking',
-          //   imageUrl: data['imageUrl'] ?? 'assets/images/chat-avatar.png',
-          //   price: data['price'] ?? booking.price.toString(),
-          //   rating: data['rating']?.toDouble() ?? booking.rating,
-          //   largeJobs: data['largeJobs'] ?? [],
-          //   smallJobs: data['smallJobs'] ?? [],
-          //   latitude: data['latitude']?.toDouble() ?? booking.latitude,
-          //   longitude: data['longitude']?.toDouble() ?? booking.longitude,
-          //   startTime: data['start_time'],
-          //   endTime: data['end_time'],
-          // );
         }
       } catch (e) {
         print('❌ Error fetching trader details: $e');
@@ -278,6 +257,7 @@ class JobHistoryPageController extends GetxController {
       svgIcon: _getCategoryIcon(booking.category),
       jobType: booking.jobType,
       category: booking.category,
+      service: booking.service,
       price: booking.price,
       preferredTime: _formatDateTime(booking.preferredTime!),
       address: address,
@@ -337,6 +317,14 @@ class JobHistoryPageController extends GetxController {
     final formattedTime = '$day/$month/$year, $hour:$minute $period';
     print('📅 Formatted DateTime: $dateTime -> $formattedTime');
     return formattedTime;
+  }
+
+  /// Public method for UI to convert booking to job history
+  Future<JobHistory> bookingToJobHistoryForUI(
+    BookingModel booking, {
+    required bool isUserBooking,
+  }) async {
+    return await _bookingToJobHistory(booking, isUserBooking: isUserBooking);
   }
 
   /// Filter bookings by status

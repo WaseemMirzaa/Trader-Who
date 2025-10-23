@@ -8,6 +8,8 @@ class TradeProfileController extends GetxController {
   final Rx<String> name = Rx<String>('');
   final Rx<String> email = Rx<String>('');
   final RxString profileImageUrl = RxString('');
+  final RxDouble rating = 0.0.obs;
+  final RxInt totalRatings = 0.obs;
   final RxBool isLoading = true.obs;
   final RxString error = ''.obs;
 
@@ -42,9 +44,15 @@ class TradeProfileController extends GetxController {
         final data = doc.data();
         name.value = data?['name'] ?? authUser.displayName ?? 'User';
         email.value = data?['email'] ?? authUser.email ?? 'No email';
+
+        // Get rating from Firebase (calculated from bookings)
+        rating.value = (data?['rating'] ?? 0.0).toDouble();
+        totalRatings.value = data?['totalRatings'] ?? 0;
       } else {
         name.value = authUser.displayName ?? 'User';
         email.value = authUser.email ?? 'No email';
+        rating.value = 0.0;
+        totalRatings.value = 0;
       }
     } catch (e) {
       error('Failed to fetch profile: ${e.toString()}');

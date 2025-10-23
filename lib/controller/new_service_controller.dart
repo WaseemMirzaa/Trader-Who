@@ -80,8 +80,9 @@ class NewServiceController extends GetxController {
 
       categories.value =
           snapshot.docs
-              .map((doc) => CategoryModel.fromMap(doc.data(), doc.id))
-              .toList();
+              .map((doc) => CategoryModel.fromDoc(doc))
+              .toList()
+              .cast<CategoryModel>();
 
       if (kDebugMode) {
         print('✅ Loaded ${categories.length} categories');
@@ -444,7 +445,7 @@ class NewServiceController extends GetxController {
       id: id,
       title: 'Custom Service',
       categoryId: selectedCategoryId.value,
-      categoryName: getCategoryById(selectedCategoryId.value)?.name ?? '',
+      categoryName: getCategoryById(selectedCategoryId.value)?.id ?? '',
       jobType: selectedJobType.value,
       isCustom: true,
     );

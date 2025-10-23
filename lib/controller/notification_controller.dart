@@ -2,18 +2,110 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import '../models/models.dart';
+import '../core/services/notification_service.dart';
 
 class NotificationController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   var notifications = <QuoteNotification>[].obs;
+  var systemNotifications = <NotificationModel>[].obs;
   var isLoading = false.obs;
+  var unreadCount = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchNotifications();
+    fetchSystemNotifications();
+    listenToNotifications();
+  }
+
+  /// Listen to real-time notification updates
+  void listenToNotifications() {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) return;
+
+    _firestore
+        .collection('notifications')
+        .where('recipientId', isEqualTo: currentUser.uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .listen((snapshot) {
+          systemNotifications.value =
+              snapshot.docs
+                  .map((doc) => NotificationModel.fromFirestore(doc))
+                  .toList();
+
+          // Update unread count
+          unreadCount.value =
+              systemNotifications
+                  .where((notification) => !notification.isRead)
+                  .length;
+        });
+  }
+
+  /// Fetch system notifications from NotificationService
+  Future<void> fetchSystemNotifications() async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) return;
+
+      final notifications = await NotificationService.getUserNotifications(
+        currentUser.uid,
+      );
+      systemNotifications.value = notifications;
+
+      // Calculate unread count
+      unreadCount.value =
+          notifications.where((notification) => !notification.isRead).length;
+    } catch (e) {
+      print('❌ Error fetching system notifications: $e');
+    }
+  }
+
+  /// Mark a notification as read
+  Future<void> markNotificationAsRead(String notificationId) async {
+    try {
+      await NotificationService.markAsRead(notificationId);
+
+      // Update local state
+      final index = systemNotifications.indexWhere(
+        (n) => n.id == notificationId,
+      );
+      if (index != -1) {
+        systemNotifications[index] = systemNotifications[index].copyWith(
+          isRead: true,
+        );
+        systemNotifications.refresh();
+
+        // Update unread count
+        unreadCount.value =
+            systemNotifications
+                .where((notification) => !notification.isRead)
+                .length;
+      }
+    } catch (e) {
+      print('❌ Error marking notification as read: $e');
+    }
+  }
+
+  /// Mark all notifications as read
+  Future<void> markAllAsRead() async {
+    try {
+      for (var notification in systemNotifications) {
+        if (!notification.isRead && notification.id != null) {
+          await NotificationService.markAsRead(notification.id!);
+        }
+      }
+
+      // Update local state
+      systemNotifications.value =
+          systemNotifications.map((n) => n.copyWith(isRead: true)).toList();
+      unreadCount.value = 0;
+    } catch (e) {
+      print('❌ Error marking all as read: $e');
+    }
   }
 
   Future<void> fetchNotifications() async {

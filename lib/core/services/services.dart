@@ -4,15 +4,29 @@ class HelperService {
   static String formatStatus(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return 'Waiting for proposal';
-      case 'confirmed':
+        return 'Waiting for Proposal';
+      case 'quoted':
+        return 'Quote Submitted';
+      case 'accepted':
         return 'Accepted';
+      case 'confirmed':
+        return 'Confirmed';
+      case 'inprogress':
+        return 'In Progress';
+      case 'in_progress':
+        return 'In Progress';
+      case 'awaiting_verification':
+        return 'Awaiting Verification';
       case 'completed':
         return 'Completed';
       case 'cancelled':
         return 'Cancelled';
-      case 'in_progress':
-        return 'In Progress';
+      case 'rejected':
+        return 'Rejected';
+      case 'notinterested':
+        return 'Not Interested';
+      case 'expired':
+        return 'Expired';
       default:
         return status.capitalize ?? status;
     }
@@ -28,5 +42,13 @@ class HelperService {
       default:
         return jobType.capitalize ?? jobType;
     }
+  }
+
+  static String formattedCategoryName(String category) {
+    return category
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((word) => word.capitalize ?? word)
+        .join(' ');
   }
 }

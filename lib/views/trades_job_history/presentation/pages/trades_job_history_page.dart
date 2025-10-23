@@ -28,6 +28,34 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
     super.dispose();
   }
 
+  Query<Map<String, dynamic>> _getQuery(String tab) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      return FirebaseFirestore.instance.collection('bookings').limit(0);
+    }
+
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+        .collection('bookings')
+        .where('traderId', isEqualTo: currentUser.uid);
+
+    if (tab == 'Completed') {
+      query = query.where('status', isEqualTo: 'completed');
+    } else {
+      query = query.where(
+        'status',
+        whereIn: [
+          'pending',
+          'quoted',
+          'accepted',
+          'inProgress',
+          'awaiting_verification',
+        ],
+      );
+    }
+
+    return query.orderBy('createdAt', descending: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final tradeController = Get.find<TradeJobHistoryController>();
@@ -46,15 +74,14 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
                     : screenSize.width * 0.99,
             minHeight: screenSize.height,
           ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: screenSize.width * 0.03,
-              vertical: 20,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Obx(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenSize.width * 0.03,
+                  vertical: 20,
+                ),
+                child: Obx(
                   () => Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
@@ -96,34 +123,75 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 25),
-                Obx(() {
-                  if (jobHistoryController.isLoading.value) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(50.0),
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
+              ),
+              Expanded(
+                child: Obx(() {
+                  return PaginateFirestore(
+                    key: ValueKey(tradeController.selectedTab.value),
+                    itemBuilder: (context, documentSnapshots, index) {
+                      final booking = BookingModel.fromFirestore(
+                        documentSnapshots[index],
+                      );
 
-                  // Filter jobs based on selected tab
-                  final allJobs = jobHistoryController.jobHistoryItems;
-                  final filteredJobs =
-                      allJobs
-                          .where(
-                            (job) =>
-                                tradeController.selectedTab.value == 'New Jobs'
-                                    ? job.status != 'completed'
-                                    : job.status == 'completed',
-                          )
-                          .toList();
+                      return FutureBuilder<JobHistory>(
+                        future: jobHistoryController.bookingToJobHistoryForUI(
+                          booking,
+                          isUserBooking: false,
+                        ),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const SizedBox(
+                              height: 100,
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
 
-                  if (filteredJobs.isEmpty) {
-                    return Center(
+                          final job = snapshot.data!;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 8,
+                            ),
+                            child: TradeHomeCard(
+                              job: job,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) =>
+                                            TradeJobHistoryDetailPage(job: job),
+                                  ),
+                                );
+                              },
+                              onReject: () async {
+                                final newStatus =
+                                    job.jobType == "largeJob"
+                                        ? 'notInterested'
+                                        : 'rejected';
+
+                                final bookingDoc = booking;
+                                if (bookingDoc.id != null) {
+                                  await jobHistoryController
+                                      .updateBookingStatus(
+                                        bookingDoc.id!,
+                                        newStatus,
+                                      );
+                                }
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    query: _getQuery(tradeController.selectedTab.value),
+                    itemBuilderType: PaginateBuilderType.listView,
+                    isLive: true,
+                    onEmpty: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.work_off_outlined,
@@ -155,111 +223,51 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
                           ],
                         ),
                       ),
-                    );
-                  }
-
-                  return MediaQuery.removePadding(
-                    context: context,
-                    removeTop: true,
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: filteredJobs.length,
-                      itemBuilder: (context, index) {
-                        final job = filteredJobs[index];
-                        return TradeHomeCard(
-                          job: job,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => TradeJobHistoryDetailPage(
-                                      job: filteredJobs[index],
-                                    ),
-                              ),
-                            );
-                          },
-                          onReject: () async {
-                            // Update status in Firebase
-                            final newStatus =
-                                job.jobType == "largeJob"
-                                    ? 'notInterested'
-                                    : 'rejected';
-
-                            // Find the corresponding booking and update it
-                            final booking = _findBookingForJob(
-                              job,
-                              jobHistoryController,
-                            );
-                            if (booking != null) {
-                              await jobHistoryController.updateBookingStatus(
-                                booking.id ?? '',
-                                newStatus,
-                              );
-                            }
-                          },
-                          // onAccept: () async {
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder:
-                          //           (context) => TradeJobHistoryDetailPage(
-                          //             job: filteredJobs[index],
-                          //           ),
-                          //     ),
-                          //   );
-                          //   // Update status in Firebase
-                          //   // final newStatus =
-                          //   //     job.showQuoteButtons ? 'Quoted' : 'Accepted';
-
-                          //   // // Find the corresponding booking and update it
-                          //   // final booking = _findBookingForJob(
-                          //   //   job,
-                          //   //   jobHistoryController,
-                          //   // );
-                          //   // if (booking != null) {
-                          //   //   await jobHistoryController.updateBookingStatus(
-                          //   //     booking.id ?? '',
-                          //   //     newStatus.toLowerCase(),
-                          //   //   );
-                          //   // }
-                          // },
-                        );
-                      },
-                      separatorBuilder:
-                          (context, index) => const SizedBox(height: 16),
                     ),
+                    onError:
+                        (error) => Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  size: 64,
+                                  color: Colors.red,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Error loading jobs',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: AppColor.darkGray,
+                                    fontFamily: 'openSans',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    initialLoader: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    bottomLoader: const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    itemsPerPage: 10,
+                    shrinkWrap: false,
+                    physics: const AlwaysScrollableScrollPhysics(),
                   );
                 }),
-                const SizedBox(height: 30),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
-  }
-
-  /// Helper method to find the corresponding BookingModel for a JobHistory
-  BookingModel? _findBookingForJob(
-    JobHistory job,
-    JobHistoryPageController controller,
-  ) {
-    // Try to find in user bookings first
-    for (final booking in controller.userBookings) {
-      if (booking.category == job.category && booking.price == job.price) {
-        return booking;
-      }
-    }
-
-    // Then try trader bookings
-    for (final booking in controller.traderBookings) {
-      if (booking.category == job.category && booking.price == job.price) {
-        return booking;
-      }
-    }
-
-    return null;
   }
 }

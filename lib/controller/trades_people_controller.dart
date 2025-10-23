@@ -48,7 +48,7 @@ class TradesPeopleController extends GetxController {
     }
 
     // For smallJob, fetch by specific service ID
-    // For largeJob, fetch by category (and filter by trader's title field)
+    // For largeJob, fetch traders directly by title (no service_prices check)
     if (selectedJobType.value == 'smallJob' &&
         selectedServiceId.value.isNotEmpty) {
       print(
@@ -59,13 +59,9 @@ class TradesPeopleController extends GetxController {
         selectedCategory.value.isNotEmpty) {
       final categoryName = arguments?['categoryName'] as String?;
       print(
-        '📍 Fetching services for largeJob with categoryId: ${selectedCategory.value}, categoryName: $categoryName',
+        '📍 Fetching traders for largeJob with categoryName: $categoryName',
       );
-      fetchServicesByCategory(
-        selectedCategory.value,
-        'large',
-        categoryName: categoryName,
-      );
+      fetchTradersForLargeJob(categoryName: categoryName);
     } else {
       print(
         '⚠️ Unable to determine fetch strategy - JobType: ${selectedJobType.value}, ServiceId: ${selectedServiceId.value}, CategoryId: ${selectedCategory.value}',
@@ -192,11 +188,12 @@ class TradesPeopleController extends GetxController {
 
             // For large jobs, filter by trader's title field matching category name
             if (categoryName != null && trader.title != null) {
-              final traderTitle = trader.title!.toLowerCase();
-              final catName = categoryName.toLowerCase();
+              final traderTitle = trader.title!.toLowerCase().trim();
+              final catName = categoryName.toLowerCase().trim();
 
-              // Check if trader's title contains the category name
-              if (traderTitle.contains(catName)) {
+              // Check if trader's title matches the category name (exact match or contains)
+              // This ensures only traders with matching expertise are shown
+              if (traderTitle == catName || traderTitle.contains(catName)) {
                 service.tradesPerson = trader;
                 print(
                   '✅ Linked trader ${trader.name} (title: ${trader.title}) to service ${service.title}',
@@ -206,8 +203,13 @@ class TradesPeopleController extends GetxController {
                   '⚠️ Skipping trader ${trader.name} - title "${trader.title}" does not match category "$categoryName"',
                 );
               }
+            } else if (categoryName != null && trader.title == null) {
+              // If category name is provided but trader has no title, skip this trader
+              print(
+                '⚠️ Skipping trader ${trader.name} - no title set (required for large jobs)',
+              );
             } else {
-              // No category name provided or trader has no title, include the trader
+              // No category name provided, include the trader
               service.tradesPerson = trader;
               print(
                 '✅ Linked trader ${trader.name} to service ${service.title}',
@@ -228,6 +230,85 @@ class TradesPeopleController extends GetxController {
       );
     } catch (e) {
       print('❌ Error fetching services by category: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Fetch traders directly by title for large jobs (no service_prices check)
+  Future<void> fetchTradersForLargeJob({String? categoryName}) async {
+    isLoading.value = true;
+    print(
+      '🔍 fetchTradersForLargeJob called with categoryName: "$categoryName"',
+    );
+
+    try {
+      if (categoryName == null || categoryName.isEmpty) {
+        print('⚠️ Category name is empty, cannot fetch traders');
+        filteredServices.value = [];
+        return;
+      }
+
+      print(
+        '🔍 Querying users where user_type is "tradesperson" and title matches "$categoryName"',
+      );
+
+      // Query users collection where user_type is tradesperson
+      final query =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .where('user_type', isEqualTo: 'tradesperson')
+              .get();
+
+      print(
+        '📊 Found ${query.docs.length} tradesperson users, filtering by title...',
+      );
+
+      List<ServiceItem> traderServices = [];
+
+      for (var doc in query.docs) {
+        try {
+          final data = doc.data();
+          final traderTitle = (data['title'] as String?)?.toLowerCase().trim();
+          final categoryLower = categoryName.toLowerCase().trim();
+
+          // Check if trader's title matches the category
+          if (traderTitle != null &&
+              (traderTitle == categoryLower ||
+                  traderTitle.contains(categoryLower))) {
+            print(
+              '✅ Found matching trader: ${data['name']} (title: ${data['title']})',
+            );
+
+            // Create TradesPerson from the trader data
+            TradesPerson trader = TradesPerson.fromMap({...data, 'id': doc.id});
+
+            // Create a ServiceItem for this trader (without specific service/price)
+            ServiceItem serviceItem = ServiceItem(
+              id: doc.id,
+              traderId: doc.id,
+              title: trader.title ?? categoryName,
+              tradesPerson: trader,
+            );
+
+            traderServices.add(serviceItem);
+          } else {
+            print(
+              '⚠️ Skipping trader ${data['name']} - title "$traderTitle" does not match category "$categoryName"',
+            );
+          }
+        } catch (e) {
+          print('❌ Error processing trader doc ${doc.id}: $e');
+        }
+      }
+
+      filteredServices.value = traderServices;
+      print(
+        '✅ Successfully loaded ${traderServices.length} traders for large job category "$categoryName"',
+      );
+    } catch (e) {
+      print('❌ Error fetching traders for large job: $e');
+      filteredServices.value = [];
     } finally {
       isLoading.value = false;
     }

@@ -65,14 +65,16 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         children: [
                           // Refresh button
                           const SizedBox(width: 12),
-                          // Notification button
+                          // Notification button with badge
                           InkWell(
                             onTap:
                                 () => Get.toNamed(AppRoutes.notificationPage),
-                            child: SvgPicture.asset(
-                              Assets.svgsNotification,
-                              width: 24,
-                              height: 24,
+                            child: NotificationBadge(
+                              child: SvgPicture.asset(
+                                Assets.svgsNotification,
+                                width: 24,
+                                height: 24,
+                              ),
                             ),
                           ),
                         ],

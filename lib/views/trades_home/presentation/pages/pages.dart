@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:paginate_firestore_plus/paginate_firestore.dart';
 import 'package:traderwho/controller/job_history_page_controller.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';

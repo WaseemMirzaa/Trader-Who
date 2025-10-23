@@ -81,6 +81,8 @@ dependencies:
   # Infinite Scroll Pagination
   infinite_scroll_pagination: ^5.0.0
   
+  # Firebase Pagination
+  paginate_firestore_plus: ^1.0.3+4
  
   # Cached Network Image
   cached_network_image: ^3.4.1

@@ -11,6 +11,8 @@ class ChatModel {
   final int receiverUnreadCount;
   final bool isOrderChat;
   final String? orderId;
+  final String? orderCategory;
+  final String? orderService;
 
   ChatModel({
     required this.id,
@@ -23,6 +25,8 @@ class ChatModel {
     required this.receiverUnreadCount,
     required this.isOrderChat,
     this.orderId,
+    this.orderCategory,
+    this.orderService,
   });
 
   factory ChatModel.fromMap(Map<String, dynamic> map, String docId) {
@@ -37,6 +41,8 @@ class ChatModel {
       receiverUnreadCount: map['receiverUnreadCount'] ?? 0,
       isOrderChat: map['isOrderChat'] ?? false,
       orderId: map['orderId'],
+      orderCategory: map['orderCategory'],
+      orderService: map['orderService'],
     );
   }
 
@@ -51,6 +57,8 @@ class ChatModel {
       'receiverUnreadCount': receiverUnreadCount,
       'isOrderChat': isOrderChat,
       'orderId': orderId,
+      'orderCategory': orderCategory,
+      'orderService': orderService,
     };
   }
 }
