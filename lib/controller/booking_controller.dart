@@ -11,6 +11,7 @@ import 'package:traderwho/controller/job_history_page_controller.dart';
 import 'package:traderwho/controller/job_post_controller.dart';
 import 'package:traderwho/controller/navigation_controller.dart';
 import 'package:traderwho/core/services/notification_service.dart';
+import 'package:traderwho/core/services/services.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/models/models.dart';
 
@@ -567,23 +568,9 @@ class BookingController extends GetxController {
         );
       }
 
-      Get.snackbar(
-        'Success',
-        'Booking status updated to $status',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
       return true;
     } catch (e) {
       print('❌ Error updating booking status: $e');
-
-      Get.snackbar(
-        'Error',
-        'Failed to update booking status',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
 
       return false;
     }
@@ -654,7 +641,9 @@ class BookingController extends GetxController {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Category: $category'),
+              Text(
+                'Category: ${HelperService.formattedCategoryName(category)}',
+              ),
               const SizedBox(height: 8),
               Text('Service: $service'),
               const SizedBox(height: 8),

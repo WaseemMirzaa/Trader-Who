@@ -26,6 +26,8 @@ class BookingModel {
   final String? traderReview; // Customer's review for trader
   final int? customerRating; // Trader's rating for customer
   final String? customerReview; // Trader's review for customer
+  final List<String>?
+  notInterestedTraders; // List of trader IDs who marked this job as not interested
 
   BookingModel({
     this.id,
@@ -52,6 +54,7 @@ class BookingModel {
     this.traderReview,
     this.customerRating,
     this.customerReview,
+    this.notInterestedTraders,
   });
 
   BookingModel copyWith({
@@ -79,6 +82,7 @@ class BookingModel {
     String? traderReview,
     int? customerRating,
     String? customerReview,
+    List<String>? notInterestedTraders,
   }) {
     return BookingModel(
       id: id ?? this.id,
@@ -105,6 +109,7 @@ class BookingModel {
       traderReview: traderReview ?? this.traderReview,
       customerRating: customerRating ?? this.customerRating,
       customerReview: customerReview ?? this.customerReview,
+      notInterestedTraders: notInterestedTraders ?? this.notInterestedTraders,
     );
   }
 
@@ -160,6 +165,8 @@ class BookingModel {
       if (traderReview != null) 'traderReview': traderReview,
       if (customerRating != null) 'customerRating': customerRating,
       if (customerReview != null) 'customerReview': customerReview,
+      if (notInterestedTraders != null)
+        'notInterestedTraders': notInterestedTraders,
     };
   }
 
@@ -239,6 +246,10 @@ class BookingModel {
       traderReview: map['traderReview'] as String?,
       customerRating: map['customerRating'] as int?,
       customerReview: map['customerReview'] as String?,
+      notInterestedTraders:
+          map['notInterestedTraders'] != null
+              ? List<String>.from(map['notInterestedTraders'] as List<dynamic>)
+              : null,
     );
   }
 

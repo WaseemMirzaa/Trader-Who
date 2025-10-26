@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -6,9 +7,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:traderwho/controller/booking_controller.dart';
+import 'package:traderwho/controller/custom_job_post_controller.dart';
+import 'package:traderwho/controller/job_post_controller.dart';
 import 'package:traderwho/controller/trades_people_controller.dart';
 import 'package:traderwho/controller/user_controller.dart';
 import 'package:traderwho/core/config/app_routes.dart';
+import 'package:traderwho/core/services/services.dart';
 import 'package:traderwho/core/shared_widgets/custom_bottom_sheet.dart';
 import 'package:traderwho/core/shared_widgets/custom_button.dart';
 import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';

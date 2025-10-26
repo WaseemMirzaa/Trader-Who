@@ -155,19 +155,53 @@ class JobHistoryPageController extends GetxController {
   /// Fetch bookings received by the user (if they are a trader)
   Future<void> _fetchTraderBookings(String traderId) async {
     try {
-      final querySnapshot =
+      // Fetch bookings assigned to this trader
+      final assignedQuery =
           await _firestore
               .collection('bookings')
               .where('traderId', isEqualTo: traderId)
               .orderBy('createdAt', descending: true)
               .get();
 
-      traderBookings.value =
-          querySnapshot.docs
-              .map((doc) => BookingModel.fromFirestore(doc))
-              .toList();
+      // Fetch custom jobs (empty traderId) that are not marked as notInterested by this trader
+      final customJobsQuery =
+          await _firestore
+              .collection('bookings')
+              .where('traderId', isEqualTo: '')
+              .where(
+                'status',
+                whereIn: [
+                  'pending',
+                  'quoted',
+                  'accepted',
+                  'inProgress',
+                  'awaiting_verification',
+                ],
+              )
+              .orderBy('createdAt', descending: true)
+              .get();
 
-      print('📊 Found ${traderBookings.length} trader bookings');
+      // Combine both lists
+      final allDocs = [...assignedQuery.docs, ...customJobsQuery.docs];
+
+      // Convert to BookingModel and filter out jobs marked as notInterested
+      final allBookings =
+          allDocs.map((doc) => BookingModel.fromFirestore(doc)).where((
+            booking,
+          ) {
+            // Filter out jobs this trader marked as not interested
+            if (booking.notInterestedTraders != null &&
+                booking.notInterestedTraders!.contains(traderId)) {
+              return false;
+            }
+            return true;
+          }).toList();
+
+      traderBookings.value = allBookings;
+
+      print(
+        '📊 Found ${traderBookings.length} trader bookings (including custom jobs)',
+      );
     } catch (e) {
       print('❌ Error fetching trader bookings: $e');
       traderBookings.value = [];

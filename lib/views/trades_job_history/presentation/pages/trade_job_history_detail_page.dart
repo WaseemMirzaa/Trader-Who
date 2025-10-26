@@ -157,6 +157,92 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
     }
   }
 
+  /// Widget showing quote submission confirmation
+  Widget _buildQuoteSubmittedInfo(QuoteModel quote) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColor.primaryButton.withAlpha(70),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.green.withOpacity(0.3), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.check_circle, color: AppColor.green, size: 24),
+              const SizedBox(width: 10),
+              Text(
+                'Quote Submitted',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.darkBlue,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Quoted Price:',
+                style: TextStyle(fontSize: 14, color: AppColor.grey),
+              ),
+              Text(
+                '£${quote.quotedPrice.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.darkBlue,
+                ),
+              ),
+            ],
+          ),
+          if (quote.details.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Details:',
+              style: TextStyle(fontSize: 14, color: AppColor.grey),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              quote.details,
+              style: TextStyle(fontSize: 14, color: AppColor.darkBlue),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.schedule, color: Colors.orange, size: 16),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Awaiting customer response',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.orange.shade700,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildNewJobFooter() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -172,17 +258,17 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   child: CustomButton(
                     text:
                         isLoading
-                            ? (widget.job.jobType == "largeJob"
+                            ? (widget.job.jobType != "smallJob"
                                 ? "Submitting..."
                                 : "Processing...")
-                            : (widget.job.jobType == "largeJob"
+                            : (widget.job.jobType != "smallJob"
                                 ? "Quote"
                                 : 'Accept'),
                     onTap:
                         isLoading
                             ? null
                             : () async {
-                              if (widget.job.jobType == "largeJob") {
+                              if (widget.job.jobType != "smallJob") {
                                 _showQuoteBottomSheet();
                               }
 
@@ -191,7 +277,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                                 try {
                                   // Update status in Firebase
                                   final newStatus =
-                                      widget.job.jobType == "largeJob"
+                                      widget.job.jobType != "smallJob"
                                           ? 'Quoted'
                                           : 'Accepted';
 
@@ -271,7 +357,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
               if (booking != null) {
                 await jobHistoryPageController.updateBookingStatus(
                   booking.id ?? '',
-                  widget.job.jobType == "largeJob"
+                  widget.job.jobType != "smallJob"
                       ? "notInterested"
                       : 'rejected',
                 );
@@ -382,7 +468,9 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.job.title,
+                                  HelperService.formattedCategoryName(
+                                    widget.job.title,
+                                  ),
                                   style: const TextStyle(
                                     color: AppColor.primaryText,
                                     fontSize: 18,
@@ -804,25 +892,38 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
               ),
               // Bottom action bar (only for non-completed jobs)
               if (!isCompleted && currentStatus == 'pending')
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
+                FutureBuilder<QuoteModel?>(
+                  future: jobHistoryPageController.getQuoteForJob(
+                    widget.job.bookingId,
                   ),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: Offset(0, -5),
+                  builder: (context, quoteSnapshot) {
+                    final hasSubmittedQuote = quoteSnapshot.data != null;
+                    final existingQuote = quoteSnapshot.data;
+
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 16,
                       ),
-                    ],
-                  ),
-                  child: _buildNewJobFooter(),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 10,
+                            offset: Offset(0, -5),
+                          ),
+                        ],
+                      ),
+                      child:
+                          hasSubmittedQuote
+                              ? _buildQuoteSubmittedInfo(existingQuote!)
+                              : _buildNewJobFooter(),
+                    );
+                  },
                 ),
               if (currentStatus == 'accepted' && currentStatus != "completed")
                 Container(

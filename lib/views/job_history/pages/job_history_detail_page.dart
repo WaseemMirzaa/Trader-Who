@@ -311,35 +311,362 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
     } else if (jobType.toLowerCase() == 'largejob' ||
         jobType.toLowerCase() == 'large') {
       return 'Large Job';
+    } else if (jobType.toLowerCase() == 'customjob' ||
+        jobType.toLowerCase() == 'custom') {
+      return 'Custom Job';
     }
     return jobType;
   }
 
+  Widget _buildStatusBadge() {
+    // For pending jobs (custom/large), check if there are quotes
+    if (widget.job.status.toLowerCase() == 'pending' &&
+        (widget.job.jobType.toLowerCase() == 'custom' ||
+            widget.job.jobType.toLowerCase() == 'customjob' ||
+            widget.job.jobType.toLowerCase() == 'large' ||
+            widget.job.jobType.toLowerCase() == 'largejob')) {
+      // Check for quotes using FutureBuilder
+      return FutureBuilder<int>(
+        future: Get.find<QuoteController>().getQuoteCountForBooking(
+          widget.job.bookingId,
+        ),
+        builder: (context, snapshot) {
+          final quoteCount = snapshot.data ?? 0;
+          final displayStatus =
+              quoteCount > 0
+                  ? 'Quote Submitted'
+                  : HelperService.formatStatus(widget.job.status);
+
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color:
+                  quoteCount > 0
+                      ? Colors.green.withOpacity(0.1)
+                      : AppColor.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: quoteCount > 0 ? Colors.green : AppColor.midGray,
+                width: 1,
+              ),
+            ),
+            child: Text(
+              displayStatus,
+              style: TextStyle(
+                fontFamily: 'openSans',
+                fontSize: 12,
+                color:
+                    quoteCount > 0
+                        ? Colors.green.shade700
+                        : AppColor.primaryText,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    // Default status badge
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColor.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColor.midGray, width: 1),
+      ),
+      child: Text(
+        HelperService.formatStatus(widget.job.status),
+        style: const TextStyle(
+          fontFamily: 'openSans',
+          fontSize: 12,
+          color: AppColor.primaryText,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
   Future<void> _loadCategoryName() async {
-    // Check if category is already a readable name or an ID
-    // If it contains underscore or looks like an ID, look it up
-    if (widget.job.category.contains('_') || widget.job.category.length > 30) {
-      // It's likely an ID, fetch the name from categories collection
-      try {
-        final NewServiceController serviceController = Get.find();
-        final category = serviceController.categories.firstWhereOrNull(
-          (c) => c.id == widget.job.category,
+    // Use category directly
+    _categoryName = widget.job.category;
+    setState(() {});
+  }
+
+  /// Show quotes bottom sheet for customer to view and accept quotes
+  Future<void> _showQuotesBottomSheet() async {
+    final quoteController = Get.find<QuoteController>();
+    final quotes = await quoteController.getQuotesForBooking(
+      widget.job.bookingId,
+    );
+
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColor.primaryButton,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Quotes Received (${quotes.length})',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+              // Quotes list
+              Expanded(
+                child:
+                    quotes.isEmpty
+                        ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.request_quote,
+                                size: 64,
+                                color: AppColor.grey,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No quotes yet',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColor.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: quotes.length,
+                          itemBuilder: (context, index) {
+                            final quote = quotes[index];
+                            return FutureBuilder<DocumentSnapshot>(
+                              future:
+                                  FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(quote.traderId)
+                                      .get(),
+                              builder: (context, snapshot) {
+                                String traderName = 'Trader';
+                                String traderImage =
+                                    'assets/images/chat-avatar.png';
+
+                                if (snapshot.hasData && snapshot.data!.exists) {
+                                  final traderData =
+                                      snapshot.data!.data()
+                                          as Map<String, dynamic>;
+                                  traderName =
+                                      traderData['name'] ?? 'Unknown Trader';
+                                  traderImage =
+                                      traderData['image'] ?? traderImage;
+                                }
+
+                                return Card(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  elevation: 2,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Trader info
+                                        Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 24,
+                                              backgroundImage:
+                                                  traderImage.startsWith('http')
+                                                      ? CachedNetworkImageProvider(
+                                                        traderImage,
+                                                      )
+                                                      : AssetImage(traderImage)
+                                                          as ImageProvider,
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    traderName,
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: AppColor.darkBlue,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Quote #${index + 1}',
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: AppColor.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            // Price badge
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 6,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: AppColor.green
+                                                    .withOpacity(0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                '£${quote.quotedPrice.toStringAsFixed(2)}',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppColor.green,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        // Quote details
+                                        if (quote.details.isNotEmpty) ...[
+                                          const SizedBox(height: 12),
+                                          Text(
+                                            'Details:',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColor.grey,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            quote.details,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: AppColor.darkBlue,
+                                            ),
+                                          ),
+                                        ],
+                                        const SizedBox(height: 12),
+                                        // Accept button
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: CustomButton(
+                                            text: 'Accept Quote',
+                                            onTap: () async {
+                                              Navigator.pop(context);
+                                              await _acceptQuote(quote);
+                                            },
+                                            height: 40,
+                                            color: AppColor.primaryButton,
+                                            textColor: Colors.white,
+                                            radius: 20,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+              ),
+            ],
+          ),
         );
-        if (category != null && mounted) {
-          setState(() {
-            _categoryName = category.name;
-          });
+      },
+    );
+  }
+
+  /// Accept a quote
+  Future<void> _acceptQuote(QuoteModel quote) async {
+    try {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Confirm Quote Acceptance'),
+              content: Text(
+                'Accept quote of £${quote.quotedPrice.toStringAsFixed(2)}?\n\nThis will assign the trader to your booking and update the price.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.primaryButton,
+                  ),
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Accept'),
+                ),
+              ],
+            ),
+      );
+
+      if (confirmed == true) {
+        final quoteController = Get.find<QuoteController>();
+        final success = await quoteController.acceptQuote(quote.id!);
+
+        if (success && mounted) {
+          // Refresh the page
+          await _jobHistoryController.fetchBookings();
+          setState(() {});
         }
-      } catch (e) {
-        print('Error loading category name: $e');
       }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to accept quote: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isWaitingForProposal = widget.job.status == 'pending';
-
     return TraderWhoScaffold(
       appBar: JobHistoryDetailAppBar(
         job: widget.job,
@@ -376,7 +703,9 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              _categoryName ?? widget.job.category,
+                              HelperService.formattedCategoryName(
+                                _categoryName ?? widget.job.category,
+                              ),
                               style: const TextStyle(
                                 color: AppColor.primaryText,
                                 fontSize: 18,
@@ -426,26 +755,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                           ],
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColor.midGray, width: 1),
-                        ),
-                        child: Text(
-                          HelperService.formatStatus(widget.job.status),
-                          style: const TextStyle(
-                            fontFamily: 'openSans',
-                            fontSize: 12,
-                            color: AppColor.primaryText,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+                      _buildStatusBadge(),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -518,101 +828,99 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                     ],
                   ),
                   kGap10,
-                  // Conditionally show Tradesperson, Location, and Map
-                  if (true || !isWaitingForProposal) ...[
-                    // Tradesperson Section
-                    ...[
-                      const SizedBox(height: 12),
-                      TradesPeopleCard(
-                        person: widget.job.tradesPerson,
-                        price: widget.job.price,
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                    CustomText(
-                      text: 'Location',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: AppColor.primaryText,
+                  // Always show location and map, conditionally show trader info
+                  // Tradesperson Section - Only show if trader id is not empty (not a custom job waiting for quotes)
+                  if (widget.job.tradesPerson.id.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    TradesPeopleCard(
+                      person: widget.job.tradesPerson,
+                      price: widget.job.price,
                     ),
-                    kGap10,
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          Assets.svgsLocation,
-                          width: 16,
-                          height: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: RichText(
-                            maxLines: 3,
-                            text: TextSpan(
-                              children: [
-                                const TextSpan(
-                                  text: 'Address: ',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: AppColor.primaryText,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'openSans',
-                                  ),
+                    const SizedBox(height: 20),
+                  ],
+                  CustomText(
+                    text: 'Location',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: AppColor.primaryText,
+                  ),
+                  kGap10,
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        Assets.svgsLocation,
+                        width: 16,
+                        height: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: RichText(
+                          maxLines: 3,
+                          text: TextSpan(
+                            children: [
+                              const TextSpan(
+                                text: 'Address: ',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColor.primaryText,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'openSans',
                                 ),
-                                TextSpan(
-                                  text: widget.job.address,
+                              ),
+                              TextSpan(
+                                text: widget.job.address,
 
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: AppColor.secondaryText,
-                                    fontFamily: 'openSans',
-                                  ),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColor.secondaryText,
+                                  fontFamily: 'openSans',
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  kGap10,
+                  // Map Container
+                  Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.grey.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
-                    kGap10,
-                    // Map Container
-                    Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.grey.withOpacity(0.1),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: GoogleMap(
-                          onMapCreated: (controller) {
-                            // Store controller if needed
-                          },
-                          initialCameraPosition: CameraPosition(
-                            target: widget.job.location,
-                            zoom: 15.0,
-                          ),
-                          markers: {
-                            Marker(
-                              markerId: MarkerId(widget.job.bookingId),
-                              position: widget.job.location,
-                              infoWindow: InfoWindow(title: widget.job.address),
-                            ),
-                          },
-                          myLocationEnabled: false,
-                          zoomControlsEnabled: false,
-                          scrollGesturesEnabled: false,
-                          tiltGesturesEnabled: false,
-                          rotateGesturesEnabled: false,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: GoogleMap(
+                        onMapCreated: (controller) {
+                          // Store controller if needed
+                        },
+                        initialCameraPosition: CameraPosition(
+                          target: widget.job.location,
+                          zoom: 15.0,
                         ),
+                        markers: {
+                          Marker(
+                            markerId: MarkerId(widget.job.bookingId),
+                            position: widget.job.location,
+                            infoWindow: InfoWindow(title: widget.job.address),
+                          ),
+                        },
+                        myLocationEnabled: false,
+                        zoomControlsEnabled: false,
+                        scrollGesturesEnabled: false,
+                        tiltGesturesEnabled: false,
+                        rotateGesturesEnabled: false,
                       ),
                     ),
-                  ],
+                  ),
 
                   // Reviews Section (show after job completion, before StreamBuilder)
                   StreamBuilder<DocumentSnapshot>(
@@ -957,14 +1265,36 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                   ],
                 ),
                 child:
-                    isWaitingForProposal
-                        ? CustomButton(
-                          text: 'Waiting for Accept the Job',
-                          onTap: () {},
-                          height: 45,
-                          color: AppColor.primaryButton,
-                          textColor: Colors.white,
-                          radius: 25,
+                    widget.job.status == 'pending'
+                        ? FutureBuilder<int>(
+                          future: Get.find<QuoteController>()
+                              .getQuoteCountForBooking(widget.job.bookingId),
+                          builder: (context, snapshot) {
+                            final quoteCount = snapshot.data ?? 0;
+
+                            if (quoteCount > 0) {
+                              return CustomButton(
+                                text:
+                                    "View $quoteCount Quote${quoteCount > 1 ? 's' : ''}",
+                                onTap: () {
+                                  _showQuotesBottomSheet();
+                                },
+                                height: 45,
+                                color: AppColor.primaryButton,
+                                textColor: Colors.white,
+                                radius: 25,
+                              );
+                            }
+
+                            return CustomButton(
+                              text: "Waiting for Quotes",
+                              onTap: () {},
+                              height: 45,
+                              color: AppColor.primaryButton,
+                              textColor: Colors.white,
+                              radius: 25,
+                            );
+                          },
                         )
                         : Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

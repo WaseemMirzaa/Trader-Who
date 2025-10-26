@@ -28,9 +28,12 @@ class _TradeHomePageState extends State<TradeHomePage> {
 
     final selectedDate = _jobController.selectedDate.value;
 
+    // Note: Firestore doesn't support OR queries directly with where clauses
+    // So we'll need to fetch bookings with traderId OR empty traderId separately
+    // For now, we'll just show bookings assigned to this trader
+    // Custom jobs (empty traderId) will be handled in a separate section or query
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('bookings')
-        .where('traderId', isEqualTo: currentUser.uid)
         .where(
           'status',
           whereIn: [
@@ -141,6 +144,18 @@ class _TradeHomePageState extends State<TradeHomePage> {
                   documentSnapshots[index],
                 );
 
+                // Get current user ID
+                final currentUser = FirebaseAuth.instance.currentUser;
+
+                // Filter: Show only bookings assigned to this trader OR custom jobs (empty traderId)
+                final shouldShow =
+                    booking.traderId == currentUser?.uid ||
+                    booking.traderId.isEmpty;
+
+                if (!shouldShow) {
+                  return const SizedBox.shrink();
+                }
+
                 return FutureBuilder<JobHistory>(
                   future: _jobController.bookingToJobHistoryForUI(
                     booking,
@@ -170,16 +185,37 @@ class _TradeHomePageState extends State<TradeHomePage> {
                           );
                         },
                         onReject: () async {
-                          final newStatus =
-                              job.jobType == "largeJob"
-                                  ? 'notInterested'
-                                  : 'rejected';
+                          final currentUser = FirebaseAuth.instance.currentUser;
 
-                          if (booking.id != null) {
-                            await _jobController.updateBookingStatus(
-                              booking.id!,
-                              newStatus,
-                            );
+                          if (booking.id != null && currentUser != null) {
+                            // For large jobs and custom jobs, add trader to notInterestedTraders list
+                            if (job.jobType != "smallJob") {
+                              // Get current notInterestedTraders list or create new one
+                              final notInterested =
+                                  booking.notInterestedTraders ?? [];
+                              if (!notInterested.contains(currentUser.uid)) {
+                                notInterested.add(currentUser.uid);
+                              }
+
+                              // Update the booking with the new notInterestedTraders list
+                              await FirebaseFirestore.instance
+                                  .collection('bookings')
+                                  .doc(booking.id)
+                                  .update({
+                                    'notInterestedTraders': notInterested,
+                                    'status':
+                                        'notInterested', // Keep status for backwards compatibility
+                                  });
+                            } else {
+                              // For small jobs, just update status
+                              await _jobController.updateBookingStatus(
+                                booking.id!,
+                                'rejected',
+                              );
+                            }
+
+                            // Refresh the bookings
+                            _jobController.fetchBookings();
                           }
                         },
                       ),

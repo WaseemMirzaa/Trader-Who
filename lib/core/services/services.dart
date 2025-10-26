@@ -45,10 +45,11 @@ class HelperService {
   }
 
   static String formattedCategoryName(String category) {
-    return category
+    String cat = category
         .replaceAll('_', ' ')
         .split(' ')
         .map((word) => word.capitalize ?? word)
         .join(' ');
+    return cat;
   }
 }

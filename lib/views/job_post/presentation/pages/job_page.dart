@@ -277,13 +277,6 @@ class _JobPageState extends State<JobPage> {
                           return;
                         }
 
-                        print('🚀 Navigating to trade container with:');
-                        print('  Category ID: $_categoryId');
-                        print('  Category Name: $_categoryName');
-                        print('  Service ID: ${_selectedService?.id}');
-                        print('  Service Title: ${_selectedService?.title}');
-                        print('  Job Type: $_selectedJobType');
-
                         Get.toNamed(
                           AppRoutes.tradeContainer,
                           arguments: {

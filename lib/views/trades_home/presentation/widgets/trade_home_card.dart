@@ -21,8 +21,8 @@ class TradeHomeCard extends StatelessWidget {
 
     // Determine button text based on showQuoteButtons
     final String rejectText =
-        job.jobType == 'largeJob' ? "Not Interested" : 'REJECT';
-    final String acceptText = job.jobType == 'largeJob' ? 'Quote' : 'ACCEPT';
+        job.jobType != 'smallJob' ? "Not Interested" : 'REJECT';
+    final String acceptText = job.jobType != 'smallJob' ? 'Quote' : 'ACCEPT';
 
     return GestureDetector(
       onTap: onTap,
@@ -119,46 +119,7 @@ class TradeHomeCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Container(
-                  constraints: const BoxConstraints(maxWidth: 100),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.lightCyan,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColor.white, width: 1),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (isCompleted) const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          HelperService.formatStatus(job.status),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: AppColor.green,
-                            fontFamily: 'openSans',
-
-                            fontWeight: FontWeight.w500,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        ),
-                      ),
-                      if (isCompleted)
-                        Icon(
-                          Icons.check_circle_outline,
-                          color: AppColor.green,
-                          size: 15,
-                        ),
-                    ],
-                  ),
-                ),
+                _buildStatusBadge(job, isCompleted),
               ],
             ),
             const SizedBox(height: 12),
@@ -255,45 +216,246 @@ class TradeHomeCard extends StatelessWidget {
             const SizedBox(height: 12),
             // Buttons Row with Intrinsic Width
             if (job.status == 'pending') ...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: IntrinsicWidth(
-                      child: CustomButton(
-                        text: rejectText,
-                        onTap: onReject,
-                        color: AppColor.primaryButton,
-                        textColor: AppColor.white,
-                        enableBorder: true,
-                        height: 32,
-                        radius: 30,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
-                  (job.status != 'accepted')
-                      ? Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: IntrinsicWidth(
-                          child: CustomButton(
-                            text: acceptText,
-                            onTap: onTap,
-                            color: AppColor.darkBlue,
-                            textColor: AppColor.white,
-                            height: 32,
-                            radius: 30,
-                            fontSize: 10,
-                          ),
-                        ),
-                      )
-                      : SizedBox(),
-                ],
-              ),
+              _buildActionButtons(job, rejectText, acceptText),
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(
+    JobHistory job,
+    String rejectText,
+    String acceptText,
+  ) {
+    // For custom/large jobs, check if trader has submitted a quote
+    if (job.jobType.toLowerCase() == 'custom' ||
+        job.jobType.toLowerCase() == 'customjob' ||
+        job.jobType.toLowerCase() == 'large' ||
+        job.jobType.toLowerCase() == 'largejob') {
+      // Use StreamBuilder for real-time updates
+      return StreamBuilder<QuerySnapshot>(
+        stream:
+            FirebaseFirestore.instance
+                .collection('quotes')
+                .where('bookingId', isEqualTo: job.bookingId)
+                .where(
+                  'traderId',
+                  isEqualTo: FirebaseAuth.instance.currentUser?.uid ?? '',
+                )
+                .limit(1)
+                .snapshots(),
+        builder: (context, snapshot) {
+          final hasQuote = snapshot.hasData && snapshot.data!.docs.isNotEmpty;
+
+          // If quote submitted, show message instead of buttons
+          if (hasQuote) {
+            return Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green, width: 1),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Quote Submitted - Awaiting Response',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.green.shade700,
+                      fontFamily: 'openSans',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // Show action buttons if no quote submitted
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: IntrinsicWidth(
+                  child: CustomButton(
+                    text: rejectText,
+                    onTap: onReject,
+                    color: AppColor.primaryButton,
+                    textColor: AppColor.white,
+                    enableBorder: true,
+                    height: 32,
+                    radius: 30,
+                    fontSize: 10,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: IntrinsicWidth(
+                  child: CustomButton(
+                    text: acceptText,
+                    onTap: onTap,
+                    color: AppColor.darkBlue,
+                    textColor: AppColor.white,
+                    height: 32,
+                    radius: 30,
+                    fontSize: 10,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    // For small jobs, always show buttons
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: IntrinsicWidth(
+            child: CustomButton(
+              text: rejectText,
+              onTap: onReject,
+              color: AppColor.primaryButton,
+              textColor: AppColor.white,
+              enableBorder: true,
+              height: 32,
+              radius: 30,
+              fontSize: 10,
+            ),
+          ),
+        ),
+        if (job.status != 'accepted')
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: IntrinsicWidth(
+              child: CustomButton(
+                text: acceptText,
+                onTap: onTap,
+                color: AppColor.darkBlue,
+                textColor: AppColor.white,
+                height: 32,
+                radius: 30,
+                fontSize: 10,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge(JobHistory job, bool isCompleted) {
+    // For pending jobs (custom/large), check if this trader has submitted a quote
+    if (job.status.toLowerCase() == 'pending' &&
+        (job.jobType.toLowerCase() == 'custom' ||
+            job.jobType.toLowerCase() == 'customjob' ||
+            job.jobType.toLowerCase() == 'large' ||
+            job.jobType.toLowerCase() == 'largejob')) {
+      // Use StreamBuilder for real-time updates
+      return StreamBuilder<QuerySnapshot>(
+        stream:
+            FirebaseFirestore.instance
+                .collection('quotes')
+                .where('bookingId', isEqualTo: job.bookingId)
+                .where(
+                  'traderId',
+                  isEqualTo: FirebaseAuth.instance.currentUser?.uid ?? '',
+                )
+                .limit(1)
+                .snapshots(),
+        builder: (context, snapshot) {
+          final hasQuote = snapshot.hasData && snapshot.data!.docs.isNotEmpty;
+          final displayStatus =
+              hasQuote
+                  ? 'Quote Submitted'
+                  : HelperService.formatStatus(job.status);
+          final statusColor = hasQuote ? Colors.green : AppColor.green;
+
+          return Container(
+            constraints: const BoxConstraints(maxWidth: 100),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color:
+                  hasQuote ? Colors.green.withOpacity(0.1) : AppColor.lightCyan,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: hasQuote ? Colors.green : AppColor.white,
+                width: 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (hasQuote) const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    displayStatus,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: statusColor,
+                      fontFamily: 'openSans',
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ),
+                if (hasQuote)
+                  Icon(
+                    Icons.check_circle_outline,
+                    color: Colors.green,
+                    size: 15,
+                  ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
+    // Default status badge
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 100),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColor.lightCyan,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColor.white, width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (isCompleted) const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              HelperService.formatStatus(job.status),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColor.green,
+                fontFamily: 'openSans',
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          ),
+          if (isCompleted)
+            Icon(Icons.check_circle_outline, color: AppColor.green, size: 15),
+        ],
       ),
     );
   }

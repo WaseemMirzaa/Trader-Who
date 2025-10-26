@@ -166,7 +166,7 @@ class _TradesJobHistoryPageState extends State<TradesJobHistoryPage> {
                               },
                               onReject: () async {
                                 final newStatus =
-                                    job.jobType == "largeJob"
+                                    job.jobType != "smallJob"
                                         ? 'notInterested'
                                         : 'rejected';
 

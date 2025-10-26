@@ -46,17 +46,11 @@ class QuoteController extends GetxController {
       // Update quote with generated ID
       await docRef.update({'id': docRef.id});
 
-      // Update booking status to 'quoted' after quote submission
-      try {
-        await _firestore.collection('bookings').doc(bookingId).update({
-          'status': 'quoted',
-          'updatedAt': DateTime.now().millisecondsSinceEpoch,
-        });
-        print('✅ Updated booking $bookingId status to quoted');
-      } catch (e) {
-        print('❌ Error updating booking status: $e');
-        // Continue with the process even if booking update fails
-      }
+      // DO NOT update booking status - keep it as 'pending' to allow multiple quotes
+      // Booking status will be updated to 'accepted' only when customer accepts a quote
+      print(
+        '✅ Quote submitted for booking $bookingId, booking remains open for other quotes',
+      );
 
       // Get booking info for job title
       String jobTitle = 'Job';
@@ -106,24 +100,65 @@ class QuoteController extends GetxController {
 
       final quote = QuoteModel.fromFirestore(quoteDoc);
 
-      // Update quote status
+      // Update accepted quote status
       await _firestore.collection('quotes').doc(quoteId).update({
         'status': 'accepted',
         'updatedAt': DateTime.now(),
       });
 
-      // Update booking price with the quoted price
+      // Reject all other quotes for this booking
+      try {
+        final otherQuotesQuery =
+            await _firestore
+                .collection('quotes')
+                .where('bookingId', isEqualTo: quote.bookingId)
+                .where('status', isEqualTo: 'pending')
+                .get();
+
+        // Batch update all other pending quotes to rejected
+        final batch = _firestore.batch();
+        for (var doc in otherQuotesQuery.docs) {
+          if (doc.id != quoteId) {
+            // Don't reject the accepted quote
+            batch.update(doc.reference, {
+              'status': 'rejected',
+              'updatedAt': DateTime.now(),
+            });
+
+            // Create rejection notification for other traders
+            final otherQuote = QuoteModel.fromFirestore(doc);
+            try {
+              await NotificationService.createQuoteRejectedNotification(
+                traderId: otherQuote.traderId,
+                bookingId: otherQuote.bookingId,
+                quoteId: doc.id,
+                jobTitle: quote.details.isNotEmpty ? quote.details : 'Job',
+              );
+            } catch (e) {
+              print('⚠️ Warning: Could not send rejection notification: $e');
+            }
+          }
+        }
+        await batch.commit();
+        print('✅ Rejected ${otherQuotesQuery.docs.length - 1} other quotes');
+      } catch (e) {
+        print('❌ Error rejecting other quotes: $e');
+        // Continue even if other quotes rejection fails
+      }
+
+      // Update booking with quoted price, assign trader, and mark as accepted
       try {
         await _firestore.collection('bookings').doc(quote.bookingId).update({
           'price': quote.quotedPrice,
           'status': 'accepted',
+          'traderId': quote.traderId, // Assign the trader to the booking
           'updatedAt': DateTime.now().millisecondsSinceEpoch,
         });
         print(
-          '✅ Updated booking ${quote.bookingId} price to £${quote.quotedPrice} and status to accepted',
+          '✅ Updated booking ${quote.bookingId}: price=£${quote.quotedPrice}, status=accepted, traderId=${quote.traderId}',
         );
       } catch (e) {
-        print('❌ Error updating booking price: $e');
+        print('❌ Error updating booking: $e');
         // Continue with the process even if booking update fails
       }
 
@@ -141,7 +176,7 @@ class QuoteController extends GetxController {
         print('⚠️ Warning: Could not fetch booking details for notification');
       }
 
-      // Create notification
+      // Create notification for accepted trader
       await NotificationService.createQuoteAcceptedNotification(
         traderId: quote.traderId,
         bookingId: quote.bookingId,
@@ -265,6 +300,43 @@ class QuoteController extends GetxController {
       print('❌ Error fetching quotes: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// Get all quotes for a specific booking (for customer to view)
+  Future<List<QuoteModel>> getQuotesForBooking(String bookingId) async {
+    try {
+      final querySnapshot =
+          await _firestore
+              .collection('quotes')
+              .where('bookingId', isEqualTo: bookingId)
+              .where('status', isEqualTo: 'pending') // Only show pending quotes
+              .orderBy('createdAt', descending: false) // Oldest first
+              .get();
+
+      return querySnapshot.docs
+          .map((doc) => QuoteModel.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('❌ Error getting quotes for booking: $e');
+      return [];
+    }
+  }
+
+  /// Get count of pending quotes for a booking
+  Future<int> getQuoteCountForBooking(String bookingId) async {
+    try {
+      final querySnapshot =
+          await _firestore
+              .collection('quotes')
+              .where('bookingId', isEqualTo: bookingId)
+              .where('status', isEqualTo: 'pending')
+              .get();
+
+      return querySnapshot.docs.length;
+    } catch (e) {
+      print('❌ Error getting quote count: $e');
+      return 0;
     }
   }
 }

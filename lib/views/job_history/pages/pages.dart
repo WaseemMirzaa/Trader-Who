@@ -9,6 +9,7 @@ import 'package:paginate_firestore_plus/paginate_firestore.dart';
 import 'package:traderwho/controller/chat_controller.dart';
 import 'package:traderwho/controller/job_history_page_controller.dart';
 import 'package:traderwho/controller/new_service_controller.dart';
+import 'package:traderwho/controller/quote_controller.dart';
 import 'package:traderwho/core/services/notification_service.dart';
 import 'package:traderwho/core/services/rating_service.dart';
 import 'package:traderwho/core/services/services.dart';

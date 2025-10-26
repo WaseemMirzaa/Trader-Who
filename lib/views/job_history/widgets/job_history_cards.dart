@@ -41,8 +41,11 @@ class JobHistoryCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Show "Custom Job" for jobs without trader, otherwise show trader name
                       Text(
-                        job.tradesPerson.name,
+                        job.tradesPerson.id.isEmpty
+                            ? 'Custom Job'
+                            : job.tradesPerson.name,
                         style: const TextStyle(
                           color: AppColor.primaryText,
                           fontFamily: 'openSans',
@@ -52,6 +55,19 @@ class JobHistoryCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis, // Truncate long titles
                         maxLines: 1, // Limit to one line
                       ),
+                      // Show "Awaiting Quotes" subtitle for custom jobs
+                      if (job.tradesPerson.id.isEmpty) ...[
+                        const SizedBox(height: 2),
+                        const Text(
+                          'Awaiting Trader Quotes',
+                          style: TextStyle(
+                            color: AppColor.secondaryText,
+                            fontFamily: 'openSans',
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 2),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,32 +120,7 @@ class JobHistoryCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Container(
-                  constraints: const BoxConstraints(
-                    maxWidth: 100,
-                  ), // Limit status width
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.lightCyan,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColor.midGray, width: 1),
-                  ),
-                  child: Text(
-                    HelperService.formatStatus(job.status),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: AppColor.primaryText,
-                      fontFamily: 'openSans',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    overflow: TextOverflow.ellipsis, // Truncate long status
-                    maxLines: 2, // Limit to two lines
-                  ),
-                ),
+                _buildStatusBadge(job),
               ],
             ),
             const SizedBox(height: 12),
@@ -211,7 +202,86 @@ class JobHistoryCard extends StatelessWidget {
     } else if (jobType.toLowerCase() == 'largejob' ||
         jobType.toLowerCase() == 'large') {
       return 'Large Job';
+    } else if (jobType.toLowerCase() == 'custom') {
+      return 'Custom Job';
     }
     return jobType;
+  }
+
+  Widget _buildStatusBadge(JobHistory job) {
+    // For pending jobs (custom/large), check if there are quotes
+    if (job.status.toLowerCase() == 'pending' &&
+        (job.jobType.toLowerCase() == 'custom' ||
+            job.jobType.toLowerCase() == 'customjob' ||
+            job.jobType.toLowerCase() == 'large' ||
+            job.jobType.toLowerCase() == 'largejob')) {
+      // Check for quotes using FutureBuilder
+      return FutureBuilder<int>(
+        future: Get.find<QuoteController>().getQuoteCountForBooking(
+          job.bookingId,
+        ),
+        builder: (context, snapshot) {
+          final quoteCount = snapshot.data ?? 0;
+          final displayStatus =
+              quoteCount > 0
+                  ? 'Quote Submitted'
+                  : HelperService.formatStatus(job.status);
+
+          return Container(
+            constraints: const BoxConstraints(maxWidth: 100),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color:
+                  quoteCount > 0
+                      ? Colors.green.withOpacity(0.1)
+                      : AppColor.lightCyan,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: quoteCount > 0 ? Colors.green : AppColor.midGray,
+                width: 1,
+              ),
+            ),
+            child: Text(
+              displayStatus,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color:
+                    quoteCount > 0
+                        ? Colors.green.shade700
+                        : AppColor.primaryText,
+                fontFamily: 'openSans',
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          );
+        },
+      );
+    }
+
+    // Default status badge
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 100),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColor.lightCyan,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColor.midGray, width: 1),
+      ),
+      child: Text(
+        HelperService.formatStatus(job.status),
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: AppColor.primaryText,
+          fontFamily: 'openSans',
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        ),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+      ),
+    );
   }
 }
