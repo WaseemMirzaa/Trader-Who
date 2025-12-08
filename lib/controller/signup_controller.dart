@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:traderwho/core/config/app_routes.dart';
 import 'package:traderwho/core/shared_widgets/map_picker_screen.dart';
@@ -38,9 +41,15 @@ class SignupController extends GetxController {
   var isLoadingCategories = false.obs;
   var selectedCategory = Rx<CategoryModel?>(null);
 
+  // Certificates/Credentials
+  var certificates = <XFile>[].obs;
+  var isUploadingCertificates = false.obs;
+  final ImagePicker _picker = ImagePicker();
+
   // Firebase instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   @override
   void onInit() {
@@ -49,6 +58,99 @@ class SignupController extends GetxController {
     if (isTradesperson.value) {
       loadCategories();
     }
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    bioController.dispose();
+    titleController.dispose();
+    latitudeController.dispose();
+    longitudeController.dispose();
+    super.onClose();
+  }
+
+  /// Pick certificates/qualifications
+  Future<void> pickCertificates() async {
+    try {
+      final List<XFile> pickedFiles = await _picker.pickMultiImage(
+        imageQuality: 80,
+      );
+
+      if (pickedFiles.isNotEmpty) {
+        certificates.addAll(pickedFiles);
+        Get.snackbar(
+          'Success',
+          '${pickedFiles.length} certificate(s) added',
+          backgroundColor: AppColor.orangeCustomColor,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error picking certificates: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to pick certificates. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  /// Remove a certificate from the list
+  void removeCertificate(int index) {
+    if (index >= 0 && index < certificates.length) {
+      certificates.removeAt(index);
+      Get.snackbar(
+        'Removed',
+        'Certificate removed',
+        backgroundColor: AppColor.orangeCustomColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  /// Upload certificates to Firebase Storage
+  Future<List<String>> uploadCertificates(String userId) async {
+    List<String> certificateUrls = [];
+
+    try {
+      isUploadingCertificates.value = true;
+
+      for (int i = 0; i < certificates.length; i++) {
+        final file = File(certificates[i].path);
+        final fileName =
+            'certificate_${DateTime.now().millisecondsSinceEpoch}_$i.jpg';
+        final ref = _storage.ref().child('credentials/$userId/$fileName');
+
+        debugPrint(
+          '📤 Uploading certificate ${i + 1}/${certificates.length}...',
+        );
+        await ref.putFile(file);
+        final url = await ref.getDownloadURL();
+        certificateUrls.add(url);
+        debugPrint('✅ Certificate uploaded: $url');
+      }
+
+      debugPrint('✅ All certificates uploaded successfully');
+    } catch (e) {
+      debugPrint('❌ Error uploading certificates: $e');
+      Get.snackbar(
+        'Warning',
+        'Some certificates failed to upload',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    } finally {
+      isUploadingCertificates.value = false;
+    }
+
+    return certificateUrls;
   }
 
   /// Load categories from Firebase
@@ -170,6 +272,14 @@ class SignupController extends GetxController {
       await userCredential.user?.updateDisplayName(name.trim());
       debugPrint('Display name updated');
 
+      // Upload certificates if any for tradesperson
+      List<String>? certificateUrls;
+      if (isTradesperson.value && certificates.isNotEmpty) {
+        debugPrint('Uploading ${certificates.length} certificates...');
+        certificateUrls = await uploadCertificates(userCredential.user!.uid);
+        debugPrint('Certificates uploaded: ${certificateUrls.length}');
+      }
+
       // Create user model with role-specific fields
       final now = DateTime.now();
       final startDateTime =
@@ -208,6 +318,7 @@ class SignupController extends GetxController {
         availability: isTradesperson.value ? availability.value : null,
         startTime: isTradesperson.value ? startDateTime : null,
         endTime: isTradesperson.value ? endDateTime : null,
+        certificates: isTradesperson.value ? certificateUrls : null,
         username: !isTradesperson.value ? name.trim() : null,
       );
 
@@ -494,18 +605,5 @@ class SignupController extends GetxController {
       debugPrint("Apple signup error: $e");
       Get.snackbar("Error", "Apple sign-up failed.");
     }
-  }
-
-  @override
-  void onClose() {
-    nameController.dispose();
-    emailController.dispose();
-    phoneController.dispose();
-    addressController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    bioController.dispose();
-    titleController.dispose();
-    super.onClose();
   }
 }

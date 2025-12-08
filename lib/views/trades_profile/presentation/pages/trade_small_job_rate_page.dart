@@ -18,16 +18,89 @@ class TradeRatePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomText(
-                          text: 'Set Your Prices',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.primaryText,
+                        Row(
+                          children: [
+                            CustomText(
+                              text: 'SET YOUR QUICK JOB RATES',
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.primaryText,
+                            ),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder:
+                                      (context) => AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                        ),
+                                        title: const Text(
+                                          'Quick Job Rates',
+                                          style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColor.primaryText,
+                                          ),
+                                        ),
+                                        content: const Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Add set prices for quick jobs you\'re comfortable charging upfront. These jobs can be booked instantly by customers — you\'ll still quote for anything bigger or custom.',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                height: 1.5,
+                                                color: AppColor.secondaryText,
+                                              ),
+                                            ),
+                                            SizedBox(height: 16),
+                                            Text(
+                                              'Don\'t want to set prices? You can skip this step and quote for all jobs as they come in.',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                height: 1.5,
+                                                color: AppColor.secondaryText,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () =>
+                                                    Navigator.of(context).pop(),
+                                            child: const Text(
+                                              'Got it',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color:
+                                                    AppColor.orangeCustomColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                );
+                              },
+                              child: const Icon(
+                                Icons.info_outline,
+                                color: AppColor.orangeCustomColor,
+                                size: 24,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 8),
                         CustomText(
                           text:
-                              'Configure your small job services and set fixed prices for instant bookings.',
+                              'Save time by adding fixed prices for jobs you are comfortable with setting pre-made prices for. These jobs can be booked instantly by customers.',
                           fontSize: 13,
                           maxLines: 2,
                           color: AppColor.secondaryText,

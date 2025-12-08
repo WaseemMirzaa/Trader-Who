@@ -160,7 +160,7 @@ class TradeMyaccountPage extends StatelessWidget {
                   TextFieldCustom(
                     prefixLabel: 'First Name',
                     controller: controller.firstNameController,
-                    textColor: AppColor.black,
+                    textColor: AppColor.primaryText,
                     fillColor: Colors.white,
                     borderColor: AppColor.white,
                     contentPadding: const EdgeInsets.symmetric(
@@ -176,7 +176,7 @@ class TradeMyaccountPage extends StatelessWidget {
                     controller: controller.lastNameController,
                     fillColor: Colors.white,
                     borderColor: AppColor.white,
-                    textColor: AppColor.black,
+                    textColor: AppColor.primaryText,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
@@ -188,7 +188,7 @@ class TradeMyaccountPage extends StatelessWidget {
                   TextFieldCustom(
                     prefixLabel: 'Email',
                     controller: controller.emailController,
-                    textColor: AppColor.black,
+                    textColor: AppColor.primaryText,
                     fillColor: Colors.white,
                     borderColor: AppColor.white,
                     contentPadding: const EdgeInsets.symmetric(
@@ -203,7 +203,7 @@ class TradeMyaccountPage extends StatelessWidget {
                   TextFieldCustom(
                     prefixLabel: 'Phone',
                     controller: controller.phoneController,
-                    textColor: AppColor.black,
+                    textColor: AppColor.primaryText,
                     fillColor: Colors.white,
                     borderColor: AppColor.white,
                     contentPadding: const EdgeInsets.symmetric(
@@ -218,7 +218,7 @@ class TradeMyaccountPage extends StatelessWidget {
                   TextFieldCustom(
                     prefixLabel: 'Address',
                     controller: controller.addressController,
-                    textColor: AppColor.black,
+                    textColor: AppColor.primaryText,
                     fillColor: Colors.white,
                     borderColor: AppColor.white,
                     contentPadding: const EdgeInsets.symmetric(
@@ -359,7 +359,7 @@ class TradeMyaccountPage extends StatelessWidget {
                   TextFieldCustom(
                     prefixLabel: 'Bio',
                     controller: controller.bioController,
-                    textColor: AppColor.black,
+                    textColor: AppColor.primaryText,
                     fillColor: Colors.white,
                     borderColor: AppColor.white,
                     contentPadding: const EdgeInsets.symmetric(

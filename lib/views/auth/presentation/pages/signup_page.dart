@@ -62,7 +62,7 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: 'Full Name',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.name,
-                      textColor: AppColor.midGray,
+                      textColor: AppColor.primaryText,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your full name';
@@ -79,7 +79,7 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: 'Email',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.emailAddress,
-                      textColor: AppColor.midGray,
+                      textColor: AppColor.primaryText,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
@@ -99,7 +99,7 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: 'Phone',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.phone,
-                      textColor: AppColor.midGray,
+                      textColor: AppColor.primaryText,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your phone number';
@@ -119,7 +119,7 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: 'Address (auto-location/manual)',
                       hintStyle: const TextStyle(color: AppColor.midGray),
                       keyboardType: TextInputType.streetAddress,
-                      textColor: AppColor.midGray,
+                      textColor: AppColor.primaryText,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your address';
@@ -133,38 +133,38 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     const Gap(20),
 
-                    CustomTextField(
-                      controller: controller.latitudeController,
-                      borderColor: Colors.transparent,
-                      hintText: 'Latitude',
-                      hintStyle: const TextStyle(color: AppColor.midGray),
-                      keyboardType: TextInputType.number,
-                      textColor: AppColor.midGray,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your latitude';
-                        }
-                        return null;
-                      },
-                    ),
-                    const Gap(20),
+                    // CustomTextField(
+                    //   controller: controller.latitudeController,
+                    //   borderColor: Colors.transparent,
+                    //   hintText: 'Latitude',
+                    //   hintStyle: const TextStyle(color: AppColor.midGray),
+                    //   keyboardType: TextInputType.number,
+                    //   textColor: AppColor.midGray,
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Please enter your latitude';
+                    //     }
+                    //     return null;
+                    //   },
+                    // ),
+                    // const Gap(20),
 
-                    CustomTextField(
-                      controller: controller.longitudeController,
-                      borderColor: Colors.transparent,
-                      hintText: 'Longitude',
-                      hintStyle: const TextStyle(color: AppColor.midGray),
-                      keyboardType: TextInputType.number,
-                      textColor: AppColor.midGray,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your longitude';
-                        }
-                        return null;
-                      },
-                    ),
+                    // CustomTextField(
+                    //   controller: controller.longitudeController,
+                    //   borderColor: Colors.transparent,
+                    //   hintText: 'Longitude',
+                    //   hintStyle: const TextStyle(color: AppColor.midGray),
+                    //   keyboardType: TextInputType.number,
+                    //   textColor: AppColor.midGray,
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Please enter your longitude';
+                    //     }
+                    //     return null;
+                    //   },
+                    // ),
 
-                    const Gap(20),
+                    // const Gap(20),
 
                     // Tradesperson-specific fields
                     if (widget.isTradesperson) ...[
@@ -208,7 +208,7 @@ class _SignupPageState extends State<SignupPage> {
                                               child: Text(
                                                 category.name,
                                                 style: const TextStyle(
-                                                  color: AppColor.midGray,
+                                                  color: AppColor.primaryText,
                                                   fontStyle: FontStyle.italic,
                                                   fontSize: 16,
                                                 ),
@@ -229,56 +229,180 @@ class _SignupPageState extends State<SignupPage> {
                       CustomTextField(
                         controller: controller.bioController,
                         borderColor: Colors.transparent,
-                        hintText: 'Bio (Describe your services)',
+                        hintText:
+                            'Bio (This will be your business card that customers see)',
                         hintStyle: const TextStyle(color: AppColor.midGray),
                         keyboardType: TextInputType.multiline,
                         maxLines: 4,
-                        textColor: AppColor.midGray,
+                        textColor: AppColor.primaryText,
                       ),
                       const Gap(20),
 
                       // Working Hours Selection
-                      Obx(
-                        () => Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // Obx(
+                      //   () => Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Expanded(
+                      //         child: CustomButton(
+                      //           text:
+                      //               controller.startTime.value == null
+                      //                   ? 'Job Start Time'
+                      //                   : controller.startTime.value!.format(
+                      //                     context,
+                      //                   ),
+                      //           onTap:
+                      //               () => controller.selectStartTime(context),
+                      //           color: Colors.white,
+                      //           textColor: AppColor.midGray,
+                      //           borderColor:
+                      //               controller.startTime.value == null
+                      //                   ? Colors.red
+                      //                   : AppColor.midGray,
+                      //           radius: 10,
+                      //         ),
+                      //       ),
+                      //       const SizedBox(width: 10),
+                      //       Expanded(
+                      //         child: CustomButton(
+                      //           text:
+                      //               controller.endTime.value == null
+                      //                   ? 'Job End Time'
+                      //                   : controller.endTime.value!.format(
+                      //                     context,
+                      //                   ),
+                      //           onTap: () => controller.selectEndTime(context),
+                      //           color: Colors.white,
+                      //           textColor: AppColor.midGray,
+                      //           borderColor:
+                      //               controller.endTime.value == null
+                      //                   ? Colors.red
+                      //                   : AppColor.midGray,
+                      //           radius: 10,
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // const Gap(20),
+
+                      // Credentials/Certificates Upload Section
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: AppColor.midGray.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: CustomButton(
-                                text:
-                                    controller.startTime.value == null
-                                        ? 'Job Start Time'
-                                        : controller.startTime.value!.format(
-                                          context,
-                                        ),
-                                onTap:
-                                    () => controller.selectStartTime(context),
-                                color: Colors.white,
-                                textColor: AppColor.midGray,
-                                borderColor:
-                                    controller.startTime.value == null
-                                        ? Colors.red
-                                        : AppColor.midGray,
-                                radius: 10,
-                              ),
+                            const CustomText(
+                              text: 'Credentials & Qualifications',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.midGray,
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: CustomButton(
-                                text:
-                                    controller.endTime.value == null
-                                        ? 'Job End Time'
-                                        : controller.endTime.value!.format(
-                                          context,
-                                        ),
-                                onTap: () => controller.selectEndTime(context),
-                                color: Colors.white,
-                                textColor: AppColor.midGray,
-                                borderColor:
-                                    controller.endTime.value == null
-                                        ? Colors.red
-                                        : AppColor.midGray,
-                                radius: 10,
+                            const Gap(8),
+                            const CustomText(
+                              text:
+                                  'Upload your certificates, licenses, or qualifications',
+                              fontSize: 12,
+                              color: AppColor.darkGrayText,
+                            ),
+                            const Gap(12),
+
+                            // Upload Button
+                            CustomButton(
+                              text: 'Add Certificate',
+                              icon: const Icon(
+                                Icons.upload_file,
+                                color: AppColor.orangeCustomColor,
+                                size: 20,
                               ),
+                              enableIcon: true,
+                              onTap: () => controller.pickCertificates(),
+                              color: Colors.white,
+                              textColor: AppColor.orangeCustomColor,
+                              borderColor: AppColor.orangeCustomColor,
+                              radius: 8,
+                              height: 40,
+                            ),
+
+                            // Display selected certificates
+                            Obx(
+                              () =>
+                                  controller.certificates.isEmpty
+                                      ? const SizedBox.shrink()
+                                      : Column(
+                                        children: [
+                                          const Gap(12),
+                                          ...List.generate(
+                                            controller.certificates.length,
+                                            (index) => Padding(
+                                              padding: const EdgeInsets.only(
+                                                bottom: 8,
+                                              ),
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 8,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColor
+                                                      .orangeCustomColor
+                                                      .withOpacity(0.1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.description,
+                                                      color:
+                                                          AppColor
+                                                              .orangeCustomColor,
+                                                      size: 20,
+                                                    ),
+                                                    const Gap(8),
+                                                    Expanded(
+                                                      child: CustomText(
+                                                        text:
+                                                            controller
+                                                                .certificates[index]
+                                                                .name,
+                                                        fontSize: 12,
+                                                        color: AppColor.midGray,
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                        Icons.close,
+                                                        color: Colors.red,
+                                                        size: 18,
+                                                      ),
+                                                      onPressed:
+                                                          () => controller
+                                                              .removeCertificate(
+                                                                index,
+                                                              ),
+                                                      padding: EdgeInsets.zero,
+                                                      constraints:
+                                                          const BoxConstraints(),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                             ),
                           ],
                         ),
@@ -292,7 +416,7 @@ class _SignupPageState extends State<SignupPage> {
 
                       controller: controller.passwordController,
                       borderColor: Colors.transparent,
-                      textColor: AppColor.midGray,
+                      textColor: AppColor.primaryText,
                       hintText: 'Password',
                       obscureText: true,
                       showPasswordToggle: true,
@@ -314,7 +438,7 @@ class _SignupPageState extends State<SignupPage> {
 
                       controller: controller.confirmPasswordController,
                       borderColor: Colors.transparent,
-                      textColor: AppColor.midGray,
+                      textColor: AppColor.primaryText,
                       hintText: 'Confirm Password',
                       obscureText: true,
                       showPasswordToggle: true,

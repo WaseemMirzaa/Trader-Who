@@ -14,45 +14,33 @@ class _TraderOnboardingPageState extends State<TraderOnboardingPage> {
   final List<OnboardingItem> _onboardingItems = [
     OnboardingItem(
       icon: Icons.work_outline,
-      title: "Welcome to the Platform!",
+      title: "You’re all set!",
       description:
-          "Get ready to connect with customers and grow your business with our on-demand service platform.",
+          "You’re ready to start getting job alerts, connect with customers in real-time, and get paid instantly - no more chasing leads, quotes or late payments!",
       color: Colors.blue,
     ),
     OnboardingItem(
       icon: Icons.category_outlined,
       title: "Job Categories & Pricing",
-      description:
-          "Set fixed prices for common, straightforward jobs – these let customers book you instantly without messaging or quoting.",
+      description: "There are two ways to price your jobs on Traderou:",
       color: Colors.green,
       details: [
-        "Fixed prices for instant booking",
-        "Custom quotes for complex jobs",
-        "Flexible pricing options",
+        "1. Quick Job Rates\nSet fixed prices for small, straightforward jobs that you're comfortable having pre-set prices for. When you're online, your prices show instantly to nearby customers - no need for you to quote. If they're happy they can book you straight away. You accept their booking, complete the job, get paid.\n• Same day jobs\n• Faster work opportunities, less admin",
+        "2. Custom Job Rates\nCreate quotes for bigger or more complex work that needs a site visit or more information.\n• Full control over pricing\n• Great for larger or bespoke jobs",
+        "You can utilise both pricing options - it's your call. Use quick rates for speed and more opportunity, and use custom quotes for flexibility.",
       ],
     ),
-    OnboardingItem(
-      icon: Icons.flash_on,
-      title: "Speed is Key",
-      description:
-          "The app is designed for fast, on-demand work, so the quicker you quote, the more likely you are to win the job.",
-      color: Colors.orange,
-      details: [
-        "Quick response = more jobs",
-        "Quote based on text, photos, or video",
-        "Beat the competition with speed",
-      ],
-    ),
+
     OnboardingItem(
       icon: Icons.handshake_outlined,
       title: "Complete the Job",
       description:
-          "Once accepted, you can chat, video call, and go do the job — all hassle-free.",
+          "Once a customer accepts, everything stays in-app: chat, video calls, job updates and payments. No chasing, no confusion.",
       color: Colors.purple,
       details: [
-        "Built-in chat system",
-        "Video calling feature",
-        "Seamless job completion",
+        "In-app chat and video call features",
+        "Keep everything in one place",
+        "Receive automated invoices",
       ],
     ),
   ];

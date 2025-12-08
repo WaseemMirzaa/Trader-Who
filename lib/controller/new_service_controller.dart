@@ -54,6 +54,11 @@ class NewServiceController extends GetxController {
     try {
       await Future.wait([loadCategories(), loadJobs(), loadTraderServices()]);
 
+      // Auto-select user's category if not coming from profile
+      if (!fromProfile.value) {
+        await _autoSelectUserCategory();
+      }
+
       if (kDebugMode) {
         print('✅ All data loaded successfully');
       }
@@ -64,6 +69,30 @@ class NewServiceController extends GetxController {
       Get.snackbar('Error', 'Failed to load data: ${e.toString()}');
     } finally {
       isLoading(false);
+    }
+  }
+
+  /// Auto-select the user's category from their profile
+  Future<void> _autoSelectUserCategory() async {
+    try {
+      final userDoc = await _firestore.collection('users').doc(userId).get();
+      if (userDoc.exists) {
+        final userCategoryId = userDoc.data()?['title'] as String?;
+        if (userCategoryId != null && userCategoryId.isNotEmpty) {
+          // Check if this category has small jobs available
+          if (smallJobsByCategory.containsKey(userCategoryId)) {
+            selectedCategoryId(userCategoryId);
+            selectedCategory(userCategoryId); // legacy compatibility
+            if (kDebugMode) {
+              print('✅ Auto-selected user category: $userCategoryId');
+            }
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error auto-selecting user category: $e');
+      }
     }
   }
 

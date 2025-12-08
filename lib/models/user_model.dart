@@ -27,6 +27,8 @@ class UserModel {
   final DateTime? endTime;
   final double? latitude;
   final double? longitude;
+  final List<String>?
+  certificates; // URLs of uploaded credentials/qualifications
 
   // Customer specific fields
   final String? username;
@@ -55,6 +57,7 @@ class UserModel {
     this.endTime,
     this.latitude,
     this.longitude,
+    this.certificates,
     // Customer fields
     this.username,
   });
@@ -81,6 +84,7 @@ class UserModel {
     bool? availability,
     DateTime? startTime,
     DateTime? endTime,
+    List<String>? certificates,
     // Customer fields
     String? username,
   }) {
@@ -106,6 +110,7 @@ class UserModel {
       availability: availability ?? this.availability,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
+      certificates: certificates ?? this.certificates,
       // Customer fields
       username: username ?? this.username,
     );
@@ -134,6 +139,7 @@ class UserModel {
       if (availability != null) 'availability': availability,
       if (startTime != null) 'start_time': startTime?.millisecondsSinceEpoch,
       if (endTime != null) 'end_time': endTime?.millisecondsSinceEpoch,
+      if (certificates != null) 'certificates': certificates,
       // Customer fields (only include if not null)
       if (username != null) 'username': username,
     };
@@ -173,6 +179,10 @@ class UserModel {
       endTime:
           map['end_time'] != null
               ? DateTime.fromMillisecondsSinceEpoch(map['end_time'] as int)
+              : null,
+      certificates:
+          map['certificates'] != null
+              ? List<String>.from(map['certificates'] as List<dynamic>)
               : null,
       // Customer fields
       username: map['username'] as String?,
@@ -226,6 +236,10 @@ class UserModel {
                   : DateTime.fromMillisecondsSinceEpoch(
                     data['end_time'] as int,
                   ))
+              : null,
+      certificates:
+          data['certificates'] != null
+              ? List<String>.from(data['certificates'] as List<dynamic>)
               : null,
       // Customer fields
       username: data['username'],
