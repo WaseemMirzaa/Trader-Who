@@ -6,6 +6,7 @@ import 'package:traderwho/models/category_model.dart';
 import 'package:traderwho/models/models.dart';
 import 'package:traderwho/models/trader_service_model.dart';
 import 'package:flutter/material.dart';
+import 'package:traderwho/views/trade_onboarding/presentation/pages/pages.dart';
 
 /// New Service Controller using the efficient database structure
 class NewServiceController extends GetxController {
@@ -20,6 +21,7 @@ class NewServiceController extends GetxController {
   final RxMap<String, List<JobModel>> largeJobsByCategory =
       <String, List<JobModel>>{}.obs;
   final RxList<TraderServiceModel> traderServices = <TraderServiceModel>[].obs;
+  final RxString userCategoryId = RxString(''); // Trader's category from signup
 
   // Selection state
   final RxString selectedCategoryId = RxString('');
@@ -52,11 +54,16 @@ class NewServiceController extends GetxController {
   Future<void> loadAllData() async {
     isLoading(true);
     try {
+      // Load user's category first
+      await _loadUserCategory();
+
+      // Then load other data
       await Future.wait([loadCategories(), loadJobs(), loadTraderServices()]);
 
       // Auto-select user's category if not coming from profile
-      if (!fromProfile.value) {
-        await _autoSelectUserCategory();
+      if (!fromProfile.value && userCategoryId.isNotEmpty) {
+        selectedCategoryId(userCategoryId.value);
+        selectedCategory(userCategoryId.value); // legacy compatibility
       }
 
       if (kDebugMode) {
@@ -72,26 +79,22 @@ class NewServiceController extends GetxController {
     }
   }
 
-  /// Auto-select the user's category from their profile
-  Future<void> _autoSelectUserCategory() async {
+  /// Load user's category from their profile
+  Future<void> _loadUserCategory() async {
     try {
       final userDoc = await _firestore.collection('users').doc(userId).get();
       if (userDoc.exists) {
-        final userCategoryId = userDoc.data()?['title'] as String?;
-        if (userCategoryId != null && userCategoryId.isNotEmpty) {
-          // Check if this category has small jobs available
-          if (smallJobsByCategory.containsKey(userCategoryId)) {
-            selectedCategoryId(userCategoryId);
-            selectedCategory(userCategoryId); // legacy compatibility
-            if (kDebugMode) {
-              print('✅ Auto-selected user category: $userCategoryId');
-            }
+        final categoryId = userDoc.data()?['title'] as String?;
+        if (categoryId != null && categoryId.isNotEmpty) {
+          userCategoryId(categoryId);
+          if (kDebugMode) {
+            print('✅ Loaded user category: $categoryId');
           }
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error auto-selecting user category: $e');
+        print('❌ Error loading user category: $e');
       }
     }
   }
@@ -167,6 +170,12 @@ class NewServiceController extends GetxController {
     largeJobsByCategory.clear();
 
     for (var job in allJobs) {
+      // Only include jobs from trader's category (if userCategoryId is set)
+      // If userCategoryId is empty, show all categories (for flexibility)
+      if (userCategoryId.isNotEmpty && job.categoryId != userCategoryId.value) {
+        continue; // Skip jobs not in trader's category
+      }
+
       if (job.jobType == 'small') {
         if (!smallJobsByCategory.containsKey(job.categoryId)) {
           smallJobsByCategory[job.categoryId] = [];
@@ -223,11 +232,16 @@ class NewServiceController extends GetxController {
 
   /// Get jobs for a specific category and type
   List<JobModel> getJobsForCategory(String categoryId, String jobType) {
+    List<JobModel> jobs;
     if (jobType == 'small') {
-      return smallJobsByCategory[categoryId] ?? [];
+      jobs = smallJobsByCategory[categoryId] ?? [];
     } else {
-      return largeJobsByCategory[categoryId] ?? [];
+      jobs = largeJobsByCategory[categoryId] ?? [];
     }
+
+    // Sort jobs alphabetically by title
+    jobs.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+    return jobs;
   }
 
   /// Get category by ID
@@ -589,5 +603,15 @@ class NewServiceController extends GetxController {
   void onClose() {
     // Clean up if needed
     super.onClose();
+  }
+
+  void skipSettingServices({required bool isFromLargeJob}) {
+    if (fromProfile.value) {
+      // If coming from profile, just go back
+      Get.back();
+    } else {
+      // If from onboarding flow, navigate to onboarding screen
+      Get.to(() => const TraderOnboardingPage());
+    }
   }
 }

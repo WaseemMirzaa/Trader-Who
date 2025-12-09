@@ -23,11 +23,32 @@ class _TraderOnboardingPageState extends State<TraderOnboardingPage> {
       icon: Icons.category_outlined,
       title: "Job Categories & Pricing",
       description: "There are two ways to price your jobs on Traderou:",
-      color: Colors.green,
       details: [
-        "1. Quick Job Rates\nSet fixed prices for small, straightforward jobs that you're comfortable having pre-set prices for. When you're online, your prices show instantly to nearby customers - no need for you to quote. If they're happy they can book you straight away. You accept their booking, complete the job, get paid.\n• Same day jobs\n• Faster work opportunities, less admin",
-        "2. Custom Job Rates\nCreate quotes for bigger or more complex work that needs a site visit or more information.\n• Full control over pricing\n• Great for larger or bespoke jobs",
-        "You can utilise both pricing options - it's your call. Use quick rates for speed and more opportunity, and use custom quotes for flexibility.",
+        "• Quick Job Rates",
+        "• Custom Job Rates",
+        "You can utilise both pricing options - it’s your call.\nUse quick rates for speed and more opportunity, and use custom quotes for flexibility.",
+      ],
+      color: Colors.green,
+    ),
+
+    OnboardingItem(
+      icon: Icons.flash_on,
+      title: "Quick Job Rates",
+      description:
+          "Set fixed prices for small, straigtforward jobs that you’re comfortable having pre-set prices for. When you’re online, your prices show instantly to nearby customers - no need for you to quote. If they’re happy they can book you straight away. You accept their booking, complete the job, get paid.",
+      color: Colors.orange,
+      details: ["• Same day jobs", "• Faster work opportunitues, less admin"],
+    ),
+
+    OnboardingItem(
+      icon: Icons.request_quote,
+      title: "Custom Job Rates",
+      description:
+          "Create quotes for bigger or more complex work that needs a site visit or more information",
+      color: Colors.blueGrey,
+      details: [
+        "• Full control over pricing",
+        "• Great for larger or bespoke jobs",
       ],
     ),
 
@@ -184,16 +205,16 @@ class _TraderOnboardingPageState extends State<TraderOnboardingPage> {
         children: [
           // Icon
           Container(
-            width: 120,
-            height: 120,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
               color: item.color.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(item.icon, size: 60, color: item.color),
+            child: Icon(item.icon, size: 40, color: item.color),
           ),
 
-          SizedBox(height: 40),
+          SizedBox(height: 20),
 
           // Title
           Text(
@@ -224,43 +245,48 @@ class _TraderOnboardingPageState extends State<TraderOnboardingPage> {
           // Details (if any)
           if (item.details != null) ...[
             SizedBox(height: 30),
-            Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: item.color.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: item.color.withOpacity(0.2),
-                  width: 1,
+            Flexible(
+              child: Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: item.color.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: item.color.withOpacity(0.2),
+                    width: 1,
+                  ),
                 ),
-              ),
-              child: Column(
-                children:
-                    item.details!.map((detail) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              color: item.color,
-                              size: 20,
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                detail,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'openSans',
-                                  color: AppColor.secondaryText,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children:
+                        item.details!.map((detail) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.check_circle,
+                                  color: item.color,
+                                  size: 20,
                                 ),
-                              ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    detail,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'openSans',
+                                      color: AppColor.secondaryText,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                          );
+                        }).toList(),
+                  ),
+                ),
               ),
             ),
           ],

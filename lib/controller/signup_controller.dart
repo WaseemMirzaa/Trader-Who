@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:traderwho/core/config/app_routes.dart';
+import 'package:traderwho/core/shared_widgets/custom_time_picker.dart';
 import 'package:traderwho/core/shared_widgets/map_picker_screen.dart';
 import 'package:traderwho/core/theme/app_color.dart';
 import 'package:traderwho/models/user_model.dart';
@@ -385,28 +386,9 @@ class SignupController extends GetxController {
   }
 
   Future<void> selectStartTime(BuildContext context) async {
-    final pickedTime = await showTimePicker(
+    final pickedTime = await showCustomTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary:
-                  AppColor.orangeCustomColor, // Clock circle and selected time
-              onPrimary: Colors.white, // Text on primary color
-              surface: Colors.white, // Dialog background
-              onSurface: AppColor.primaryText, // Unselected text
-              secondary: AppColor.orangeCustomColor, // AM/PM toggle selected
-              onSecondary: Colors.white, // Text on secondary
-              tertiary: AppColor.orangeCustomColor.withValues(
-                alpha: 0.2,
-              ), // AM/PM toggle background
-            ),
-          ),
-          child: child!,
-        );
-      },
+      initialTime: startTime.value ?? TimeOfDay.now(),
     );
     if (pickedTime != null) {
       startTime.value = pickedTime;
@@ -414,30 +396,27 @@ class SignupController extends GetxController {
   }
 
   Future<void> selectEndTime(BuildContext context) async {
-    final pickedTime = await showTimePicker(
+    final pickedTime = await showCustomTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary:
-                  AppColor.orangeCustomColor, // Clock circle and selected time
-              onPrimary: Colors.white, // Text on primary color
-              surface: Colors.white, // Dialog background
-              onSurface: AppColor.primaryText, // Unselected text
-              secondary: AppColor.orangeCustomColor, // AM/PM toggle selected
-              onSecondary: Colors.white, // Text on secondary
-              tertiary: AppColor.orangeCustomColor.withValues(
-                alpha: 0.2,
-              ), // AM/PM toggle background
-            ),
-          ),
-          child: child!,
-        );
-      },
+      initialTime: endTime.value ?? TimeOfDay.now(),
     );
     if (pickedTime != null) {
+      // If start time is already selected, ensure end is after start
+      if (startTime.value != null) {
+        final startMinutes =
+            startTime.value!.hour * 60 + startTime.value!.minute;
+        final pickedMinutes = pickedTime.hour * 60 + pickedTime.minute;
+        if (pickedMinutes <= startMinutes) {
+          Get.snackbar(
+            'Invalid time',
+            'End time must be after start time',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+      }
+
       endTime.value = pickedTime;
     }
   }

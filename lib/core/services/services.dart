@@ -4,7 +4,7 @@ class HelperService {
   static String formatStatus(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return 'Waiting for Proposal';
+        return 'Customer awaiting quote';
       case 'quoted':
         return 'Quote Submitted';
       case 'accepted':

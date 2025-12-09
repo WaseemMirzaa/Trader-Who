@@ -239,52 +239,52 @@ class _SignupPageState extends State<SignupPage> {
                       const Gap(20),
 
                       // Working Hours Selection
-                      // Obx(
-                      //   () => Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: [
-                      //       Expanded(
-                      //         child: CustomButton(
-                      //           text:
-                      //               controller.startTime.value == null
-                      //                   ? 'Job Start Time'
-                      //                   : controller.startTime.value!.format(
-                      //                     context,
-                      //                   ),
-                      //           onTap:
-                      //               () => controller.selectStartTime(context),
-                      //           color: Colors.white,
-                      //           textColor: AppColor.midGray,
-                      //           borderColor:
-                      //               controller.startTime.value == null
-                      //                   ? Colors.red
-                      //                   : AppColor.midGray,
-                      //           radius: 10,
-                      //         ),
-                      //       ),
-                      //       const SizedBox(width: 10),
-                      //       Expanded(
-                      //         child: CustomButton(
-                      //           text:
-                      //               controller.endTime.value == null
-                      //                   ? 'Job End Time'
-                      //                   : controller.endTime.value!.format(
-                      //                     context,
-                      //                   ),
-                      //           onTap: () => controller.selectEndTime(context),
-                      //           color: Colors.white,
-                      //           textColor: AppColor.midGray,
-                      //           borderColor:
-                      //               controller.endTime.value == null
-                      //                   ? Colors.red
-                      //                   : AppColor.midGray,
-                      //           radius: 10,
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // const Gap(20),
+                      Obx(
+                        () => Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: CustomButton(
+                                text:
+                                    controller.startTime.value == null
+                                        ? 'Job Start Time'
+                                        : controller.startTime.value!.format(
+                                          context,
+                                        ),
+                                onTap:
+                                    () => controller.selectStartTime(context),
+                                color: Colors.white,
+                                textColor: AppColor.primaryText,
+                                borderColor:
+                                    controller.startTime.value == null
+                                        ? Colors.red
+                                        : AppColor.midGray,
+                                radius: 10,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: CustomButton(
+                                text:
+                                    controller.endTime.value == null
+                                        ? 'Job End Time'
+                                        : controller.endTime.value!.format(
+                                          context,
+                                        ),
+                                onTap: () => controller.selectEndTime(context),
+                                color: Colors.white,
+                                textColor: AppColor.primaryText,
+                                borderColor:
+                                    controller.endTime.value == null
+                                        ? Colors.red
+                                        : AppColor.midGray,
+                                radius: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Gap(20),
 
                       // Credentials/Certificates Upload Section
                       Container(

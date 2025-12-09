@@ -171,18 +171,18 @@ class TradeMyaccountPage extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   // Last Name Field
-                  TextFieldCustom(
-                    prefixLabel: 'Last Name',
-                    controller: controller.lastNameController,
-                    fillColor: Colors.white,
-                    borderColor: AppColor.white,
-                    textColor: AppColor.primaryText,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
+                  // TextFieldCustom(
+                  //   prefixLabel: 'Last Name',
+                  //   controller: controller.lastNameController,
+                  //   fillColor: Colors.white,
+                  //   borderColor: AppColor.white,
+                  //   textColor: AppColor.primaryText,
+                  //   contentPadding: const EdgeInsets.symmetric(
+                  //     horizontal: 16,
+                  //     vertical: 12,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 10),
 
                   // Email Field
                   TextFieldCustom(

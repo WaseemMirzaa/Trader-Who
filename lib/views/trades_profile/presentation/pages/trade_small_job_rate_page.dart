@@ -291,8 +291,20 @@ class TradeRatePage extends StatelessWidget {
                               );
                             },
                             color: AppColor.primaryButton,
-                            text: 'Save Configuration',
+                            text: 'Save & Go Live',
                             textColor: AppColor.white,
+                          ),
+                          const SizedBox(height: 10),
+                          // skip for now
+                          CustomButton(
+                            onTap: () {
+                              controller.skipSettingServices(
+                                isFromLargeJob: false,
+                              );
+                            },
+                            color: Colors.transparent,
+                            text: 'Skip for now',
+                            textColor: AppColor.primaryText,
                           ),
                         ],
                       ],

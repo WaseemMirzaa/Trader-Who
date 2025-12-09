@@ -142,7 +142,7 @@ class _BookingInfoWidgetState extends State<BookingInfoWidget> {
   String _formatStatus(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return 'Waiting for Proposal';
+        return 'Customer awaiting quote';
       case 'quoted':
         return 'Quote Submitted';
       case 'accepted':
@@ -169,25 +169,14 @@ class _BookingInfoWidgetState extends State<BookingInfoWidget> {
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return Colors.orange;
-      case 'quoted':
-        return Colors.blue.shade300;
+        return AppColor.lightGray;
+
       case 'accepted':
-        return Colors.blue;
-      case 'inprogress':
-      case 'in_progress':
-        return Colors.purple;
-      case 'awaiting_verification':
-        return Colors.amber;
-      case 'rejected':
-      case 'notinterested':
-        return Colors.red;
-      case 'completed':
         return Colors.green;
       case 'cancelled':
-        return Colors.grey;
+        return AppColor.lightGray;
       default:
-        return Colors.grey;
+        return AppColor.lightGray;
     }
   }
 
