@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/controller/navigation_controller.dart';
-import 'package:traderwho/core/shared_widgets/custom_nav_bar.dart';
-import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
+import 'package:traderou/core/shared_widgets/custom_sccfold.dart';
+import 'package:traderou/controller/navigation_controller.dart';
+import 'package:traderou/core/shared_widgets/custom_nav_bar.dart';
+import 'package:traderou/core/shared_widgets/custom_sccfold.dart';
 
 class MainPageWithNavbar extends StatefulWidget {
   const MainPageWithNavbar({super.key});
@@ -52,7 +53,7 @@ class _MainPageWithNavbarState extends State<MainPageWithNavbar> {
           'MAIN PAGE GETBUILDER: isTradesperson = ${controller.isTradesPerson.value}',
         );
 
-        return TraderWhoScaffold(
+        return TraderouScaffold(
           body: Obx(() {
             final currentIndex = controller.currentIndex.value;
             final isTradesperson = controller.isTradesPerson.value;

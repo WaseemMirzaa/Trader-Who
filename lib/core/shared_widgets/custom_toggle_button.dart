@@ -1,6 +1,6 @@
 // Add this custom toggle button widget
 import 'package:flutter/material.dart';
-import 'package:traderwho/core/theme/app_color.dart';
+import 'package:traderou/core/theme/app_color.dart';
 
 class CustomToggleButton extends StatelessWidget {
   final String text;

@@ -108,7 +108,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: ChatPageDetailAppBar(
         userName: widget.userName,
         avatarImage: widget.avatarImage,

@@ -234,7 +234,7 @@ class _MapScreenState extends State<_MapScreenView> {
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       body: Obx(() {
         if (_controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());

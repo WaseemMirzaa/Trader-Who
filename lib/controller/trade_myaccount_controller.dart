@@ -6,8 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:traderwho/models/user_model.dart';
-import 'package:traderwho/models/category_model.dart';
+import 'package:traderou/models/user_model.dart';
+import 'package:traderou/models/category_model.dart';
 
 class TradeMyaccountController extends GetxController {
   // Text controllers for input fields

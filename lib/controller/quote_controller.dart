@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/services/notification_service.dart';
-import 'package:traderwho/models/models.dart';
+import 'package:traderou/core/services/notification_service.dart';
+import 'package:traderou/models/models.dart';
 
 class QuoteController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -48,9 +48,6 @@ class QuoteController extends GetxController {
 
       // DO NOT update booking status - keep it as 'pending' to allow multiple quotes
       // Booking status will be updated to 'accepted' only when customer accepts a quote
-      print(
-        '✅ Quote submitted for booking $bookingId, booking remains open for other quotes',
-      );
 
       // Get booking info for job title
       String jobTitle = 'Job';
@@ -62,9 +59,7 @@ class QuoteController extends GetxController {
           jobTitle =
               bookingData?['service'] ?? bookingData?['category'] ?? 'Job';
         }
-      } catch (e) {
-        print('⚠️ Warning: Could not fetch booking details for notification');
-      }
+      } catch (e) {}
 
       // Create notification for quote submission
       await NotificationService.createQuoteSubmittedNotification(
@@ -78,7 +73,6 @@ class QuoteController extends GetxController {
       Get.snackbar('Success', 'Quote submitted successfully');
       return true;
     } catch (e) {
-      print('❌ Error submitting quote: $e');
       Get.snackbar('Error', 'Failed to submit quote');
       return false;
     } finally {
@@ -102,7 +96,7 @@ class QuoteController extends GetxController {
 
       // Update accepted quote status
       await _firestore.collection('quotes').doc(quoteId).update({
-        'status': 'accepted',
+        'status': 'quote_accepted',
         'updatedAt': DateTime.now(),
       });
 
@@ -134,15 +128,11 @@ class QuoteController extends GetxController {
                 quoteId: doc.id,
                 jobTitle: quote.details.isNotEmpty ? quote.details : 'Job',
               );
-            } catch (e) {
-              print('⚠️ Warning: Could not send rejection notification: $e');
-            }
+            } catch (e) {}
           }
         }
         await batch.commit();
-        print('✅ Rejected ${otherQuotesQuery.docs.length - 1} other quotes');
       } catch (e) {
-        print('❌ Error rejecting other quotes: $e');
         // Continue even if other quotes rejection fails
       }
 
@@ -154,11 +144,7 @@ class QuoteController extends GetxController {
           'traderId': quote.traderId, // Assign the trader to the booking
           'updatedAt': DateTime.now().millisecondsSinceEpoch,
         });
-        print(
-          '✅ Updated booking ${quote.bookingId}: price=£${quote.quotedPrice}, status=accepted, traderId=${quote.traderId}',
-        );
       } catch (e) {
-        print('❌ Error updating booking: $e');
         // Continue with the process even if booking update fails
       }
 
@@ -172,9 +158,7 @@ class QuoteController extends GetxController {
           jobTitle =
               bookingData?['service'] ?? bookingData?['category'] ?? 'Job';
         }
-      } catch (e) {
-        print('⚠️ Warning: Could not fetch booking details for notification');
-      }
+      } catch (e) {}
 
       // Create notification for accepted trader
       await NotificationService.createQuoteAcceptedNotification(
@@ -190,7 +174,6 @@ class QuoteController extends GetxController {
       );
       return true;
     } catch (e) {
-      print('❌ Error accepting quote: $e');
       Get.snackbar('Error', 'Failed to accept quote');
       return false;
     } finally {
@@ -228,9 +211,7 @@ class QuoteController extends GetxController {
           jobTitle =
               bookingData?['service'] ?? bookingData?['category'] ?? 'Job';
         }
-      } catch (e) {
-        print('⚠️ Warning: Could not fetch booking details for notification');
-      }
+      } catch (e) {}
 
       // Create notification
       await NotificationService.createQuoteRejectedNotification(
@@ -243,7 +224,6 @@ class QuoteController extends GetxController {
       Get.snackbar('Success', 'Quote rejected');
       return true;
     } catch (e) {
-      print('❌ Error rejecting quote: $e');
       Get.snackbar('Error', 'Failed to reject quote');
       return false;
     } finally {
@@ -271,7 +251,6 @@ class QuoteController extends GetxController {
 
       return null;
     } catch (e) {
-      print('❌ Error getting existing quote: $e');
       return null;
     }
   }
@@ -297,7 +276,6 @@ class QuoteController extends GetxController {
               .map((doc) => QuoteModel.fromFirestore(doc))
               .toList();
     } catch (e) {
-      print('❌ Error fetching quotes: $e');
     } finally {
       isLoading.value = false;
     }
@@ -318,7 +296,6 @@ class QuoteController extends GetxController {
           .map((doc) => QuoteModel.fromFirestore(doc))
           .toList();
     } catch (e) {
-      print('❌ Error getting quotes for booking: $e');
       return [];
     }
   }
@@ -335,7 +312,6 @@ class QuoteController extends GetxController {
 
       return querySnapshot.docs.length;
     } catch (e) {
-      print('❌ Error getting quote count: $e');
       return 0;
     }
   }

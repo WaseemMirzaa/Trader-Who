@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:traderwho/core/theme/app_color.dart';
+import 'package:traderou/core/theme/app_color.dart';
 
 class CustomTextField extends StatefulWidget {
   final bool enabled;

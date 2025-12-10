@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:traderwho/models/models.dart';
+import 'package:traderou/models/models.dart';
 
 class CustomJobPostController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

@@ -5,10 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:traderwho/controller/navigation_controller.dart';
-import 'package:traderwho/core/shared_widgets/custom_button.dart';
-import 'package:traderwho/core/shared_widgets/custom_text.dart';
-import 'package:traderwho/core/theme/app_color.dart';
+import 'package:traderou/controller/navigation_controller.dart';
+import 'package:traderou/core/shared_widgets/custom_button.dart';
+import 'package:traderou/core/shared_widgets/custom_text.dart';
+import 'package:traderou/core/theme/app_color.dart';
 import '../../models/models.dart';
 
 class NotificationService {
@@ -260,7 +260,7 @@ class NotificationService {
               SizedBox(height: 12),
               CustomText(
                 text:
-                    "Get notified about new events, special offers, and important updates from NSB.",
+                    "Get notified about new events, special offers, and important updates from Traderou.",
                 fontSize: 14,
                 textAlign: TextAlign.center,
                 color: Colors.grey.shade600,

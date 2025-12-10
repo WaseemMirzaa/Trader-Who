@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // Note: Individual model parts are included via `part` directives below.
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:traderwho/core/services/services.dart';
-import 'package:traderwho/models/review_model.dart';
-import 'package:traderwho/models/user_model.dart';
+import 'package:traderou/core/services/services.dart';
+import 'package:traderou/models/review_model.dart';
+import 'package:traderou/models/user_model.dart';
 
 part 'job_history_model.dart';
 part 'notification_model.dart';

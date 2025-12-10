@@ -74,7 +74,7 @@ class _TraderOnboardingPageState extends State<TraderOnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       body: SafeArea(
         child: Column(
           children: [

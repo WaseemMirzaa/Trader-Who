@@ -12,7 +12,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const HomeAppBar(),
       body: Stack(
         children: [

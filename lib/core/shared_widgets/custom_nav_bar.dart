@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/controller/navigation_controller.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/core/theme/assets.dart';
+import 'package:traderou/controller/navigation_controller.dart';
+import 'package:traderou/core/theme/app_color.dart';
+import 'package:traderou/core/theme/assets.dart';
 
 class CustomNavBar extends StatelessWidget {
   const CustomNavBar({super.key});

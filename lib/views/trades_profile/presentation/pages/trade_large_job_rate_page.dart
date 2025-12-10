@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:traderwho/controller/new_service_controller.dart';
+import 'package:traderou/controller/new_service_controller.dart';
 // legacy imports removed - using NewServiceController
-import 'package:traderwho/core/shared_widgets/custom_button.dart';
-import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
-import 'package:traderwho/core/shared_widgets/custom_text.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/models/models.dart';
-import 'package:traderwho/views/trade_onboarding/presentation/pages/pages.dart';
-import 'package:traderwho/views/trades_profile/presentation/widgets/widgets.dart';
+import 'package:traderou/core/shared_widgets/custom_button.dart';
+import 'package:traderou/core/shared_widgets/custom_sccfold.dart';
+import 'package:traderou/core/shared_widgets/custom_text.dart';
+import 'package:traderou/core/theme/app_color.dart';
+import 'package:traderou/models/models.dart';
+import 'package:traderou/views/trade_onboarding/presentation/pages/pages.dart';
+import 'package:traderou/views/trades_profile/presentation/widgets/widgets.dart';
 
 class TradeLargerRatePage extends StatelessWidget {
   const TradeLargerRatePage({super.key});
@@ -20,8 +18,8 @@ class TradeLargerRatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final NewServiceController controller = Get.put(NewServiceController());
 
-    return TraderWhoScaffold(
-      appBar: TradeRatesAppbar(title: "Set Fixed Prices for large Jobs"),
+    return TraderouScaffold(
+      appBar: TradeRatesAppbar(title: "Set Fixed Prices for Custom Jobs"),
       body: SafeArea(
         child: Obx(
           () =>
@@ -33,7 +31,7 @@ class TradeLargerRatePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomText(
-                          text: 'Set Your Prices',
+                          text: 'SET YOUR CUSTOM JOB RATES',
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: AppColor.primaryText,
@@ -41,7 +39,7 @@ class TradeLargerRatePage extends StatelessWidget {
                         const SizedBox(height: 8),
                         CustomText(
                           text:
-                              'Configure your large job services and set fixed prices for instant bookings.',
+                              'Configure your custom job services and set prices.',
                           fontSize: 13,
                           maxLines: 2,
                           color: AppColor.secondaryText,
@@ -228,7 +226,9 @@ class TradeLargerRatePage extends StatelessWidget {
                           const SizedBox(height: 32),
                           CustomButton(
                             onTap: () {
-                              controller.saveUserServices(isFromLargeJob: true);
+                              controller.saveUserServices(
+                                shouldGoBack: Get.arguments == true,
+                              );
                             },
                             color: AppColor.primaryButton,
                             text: 'Save Configuration',

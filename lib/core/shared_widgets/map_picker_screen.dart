@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/core/utils/location_utils.dart';
+import 'package:traderou/core/theme/app_color.dart';
+import 'package:traderou/core/utils/location_utils.dart';
 
 class MapPickerScreen extends StatefulWidget {
   final LatLng? initialLocation;

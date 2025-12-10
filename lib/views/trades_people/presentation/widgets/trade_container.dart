@@ -11,7 +11,7 @@ class TradeContainer extends StatelessWidget {
 
     return GetBuilder<TradeController>(
       builder:
-          (controller) => TraderWhoScaffold(
+          (controller) => TraderouScaffold(
             appBar: TradesPeopleAppbar(
               onListPressed: controller.switchToList,
               onMapPressed: controller.switchToMap,

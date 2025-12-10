@@ -25,12 +25,12 @@ class _TradeProfilePageState extends State<TradeProfilePage> {
       'route': AppRoutes.notificationPage,
     },
     {
-      'title': 'Selected Large Jobs',
+      'title': 'Custom Jobs Prices',
       'icon': Assets.svgsProvider,
       'route': AppRoutes.tradeLargeJobServices,
     },
     {
-      'title': 'Selected Small Jobs',
+      'title': 'Quick Jobs Prices',
       'icon': Assets.svgsPound,
       'route': AppRoutes.tradeRate,
     },
@@ -1900,13 +1900,13 @@ class _TradeProfilePageState extends State<TradeProfilePage> {
 
     final String? route = option['route'];
     if (route != null) {
-      Get.toNamed(route);
+      Get.toNamed(route, arguments: true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const TradeProfileAppbar(),
       body: Column(
         children: [

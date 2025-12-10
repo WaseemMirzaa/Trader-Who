@@ -7,7 +7,7 @@ class TradeMyaccountPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final TradeMyaccountController controller =
         Get.find<TradeMyaccountController>();
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const MyAccountAppBar(),
       body: Obx(() {
         // Full page shimmer when loading

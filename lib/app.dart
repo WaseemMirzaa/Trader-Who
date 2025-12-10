@@ -1,9 +1,9 @@
 // app.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/controller/navigation_controller.dart';
-import 'package:traderwho/core/binding/binding.dart';
-import 'package:traderwho/core/config/config.dart';
+import 'package:traderou/controller/navigation_controller.dart';
+import 'package:traderou/core/binding/binding.dart';
+import 'package:traderou/core/config/config.dart';
 
 import 'core/config/app_routes.dart';
 import 'core/theme/app_color.dart';
@@ -21,7 +21,7 @@ class App extends StatelessWidget {
     return SizerUtils(
       builder: (BuildContext context, Orientation orientation) {
         return GetMaterialApp(
-          title: 'traderWho',
+          title: 'Traderou',
           theme: lightTheme,
           darkTheme: darkTheme,
 

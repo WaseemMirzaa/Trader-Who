@@ -39,7 +39,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const ChatAppbar(),
       body: Column(
         children: [

@@ -52,7 +52,7 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const JobHistoryAppbar(),
       body: SafeArea(
         child: Center(

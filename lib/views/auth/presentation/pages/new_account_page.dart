@@ -11,7 +11,7 @@ class _NewAccountState extends State<NewAccountPage> {
   @override
   Widget build(BuildContext context) {
     final navController = NavigationController.to;
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

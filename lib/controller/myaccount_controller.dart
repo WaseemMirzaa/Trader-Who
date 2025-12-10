@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/models/user_model.dart';
+import 'package:traderou/core/theme/app_color.dart';
+import 'package:traderou/models/user_model.dart';
 
 class MyaccountController extends GetxController {
   // Text controllers for input fields

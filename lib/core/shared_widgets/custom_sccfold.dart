@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:traderwho/core/theme/app_color.dart';
+import 'package:traderou/core/theme/app_color.dart';
 
-class TraderWhoScaffold extends StatelessWidget {
+class TraderouScaffold extends StatelessWidget {
   final Widget body;
   final bool isAppBar;
   final AppBar? appBarSecond;
@@ -9,7 +9,7 @@ class TraderWhoScaffold extends StatelessWidget {
   final Widget? drawer;
   final Widget? bottomNavigationBar;
 
-  const TraderWhoScaffold({
+  const TraderouScaffold({
     super.key,
     required this.body,
     this.appBar,

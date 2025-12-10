@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:traderwho/controller/chat_controller.dart';
-import 'package:traderwho/controller/job_history_page_controller.dart';
-import 'package:traderwho/controller/job_post_controller.dart';
-import 'package:traderwho/controller/navigation_controller.dart';
-import 'package:traderwho/core/services/notification_service.dart';
-import 'package:traderwho/core/services/services.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/models/models.dart';
+import 'package:traderou/controller/chat_controller.dart';
+import 'package:traderou/controller/job_history_page_controller.dart';
+import 'package:traderou/controller/job_post_controller.dart';
+import 'package:traderou/controller/navigation_controller.dart';
+import 'package:traderou/core/services/notification_service.dart';
+import 'package:traderou/core/services/services.dart';
+import 'package:traderou/core/theme/app_color.dart';
+import 'package:traderou/models/models.dart';
 
 class BookingController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

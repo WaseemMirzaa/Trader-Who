@@ -80,7 +80,7 @@ class _TradeHomePageState extends State<TradeHomePage> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => TraderWhoScaffold(
+      () => TraderouScaffold(
         appBar: TradeHomeAppBar(
           selectedDate: _jobController.selectedDate.value,
           onDateSelected: (DateTime selectedDate) {

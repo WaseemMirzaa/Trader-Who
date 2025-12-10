@@ -24,7 +24,7 @@ class _TradeNotificationPageState extends State<TradeNotificationPage> {
   Widget build(BuildContext context) {
     final notificationController = Get.put(NotificationController());
 
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const NotificationAppbar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),

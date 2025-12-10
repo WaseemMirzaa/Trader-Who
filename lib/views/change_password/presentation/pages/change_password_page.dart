@@ -18,7 +18,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const ChangePasswordAppbar(),
       body: SingleChildScrollView(
         child: Padding(

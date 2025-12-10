@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/models/category_model.dart';
-import 'package:traderwho/models/models.dart';
-import 'package:traderwho/models/trader_service_model.dart';
+import 'package:traderou/models/category_model.dart';
+import 'package:traderou/models/models.dart';
+import 'package:traderou/models/trader_service_model.dart';
 import 'package:flutter/material.dart';
-import 'package:traderwho/views/trade_onboarding/presentation/pages/pages.dart';
+import 'package:traderou/views/trade_onboarding/presentation/pages/pages.dart';
 
 /// New Service Controller using the efficient database structure
 class NewServiceController extends GetxController {
@@ -553,12 +553,14 @@ class NewServiceController extends GetxController {
 
   final RxBool fromProfile = false.obs;
 
-  Future<void> saveUserServices({bool isFromLargeJob = false}) async {
+  Future<void> saveUserServices({bool shouldGoBack = true}) async {
     await loadTraderServices();
-    Get.snackbar('Success', 'Services saved successfully');
-    if (Get.arguments == true) {
+    if (shouldGoBack == true) {
       Get.back();
+    } else {
+      Get.to(() => const TraderOnboardingPage());
     }
+    Get.snackbar('Success', 'Services saved successfully');
   }
 
   /// Refresh all data

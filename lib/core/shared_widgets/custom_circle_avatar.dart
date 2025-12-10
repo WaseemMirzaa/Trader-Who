@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:traderwho/core/theme/assets.dart';
+import 'package:traderou/core/theme/assets.dart';
 
 import '../theme/app_color.dart';
 import 'custom_circular_indicator.dart';

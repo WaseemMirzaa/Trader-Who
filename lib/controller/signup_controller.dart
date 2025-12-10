@@ -7,12 +7,12 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:traderwho/core/config/app_routes.dart';
-import 'package:traderwho/core/shared_widgets/custom_time_picker.dart';
-import 'package:traderwho/core/shared_widgets/map_picker_screen.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/models/user_model.dart';
-import 'package:traderwho/models/category_model.dart';
+import 'package:traderou/core/config/app_routes.dart';
+import 'package:traderou/core/shared_widgets/custom_time_picker.dart';
+import 'package:traderou/core/shared_widgets/map_picker_screen.dart';
+import 'package:traderou/core/theme/app_color.dart';
+import 'package:traderou/models/user_model.dart';
+import 'package:traderou/models/category_model.dart';
 
 class SignupController extends GetxController {
   // Text controllers for input fields

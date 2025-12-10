@@ -5,9 +5,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:traderwho/controller/navigation_controller.dart';
-import 'package:traderwho/core/config/app_routes.dart';
-import 'package:traderwho/core/theme/theme.dart';
+import 'package:traderou/controller/navigation_controller.dart';
+import 'package:traderou/core/config/app_routes.dart';
+import 'package:traderou/core/theme/theme.dart';
 
 import '../core/theme/assets.dart';
 

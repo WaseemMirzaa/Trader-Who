@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:traderwho/models/models.dart';
+import 'package:traderou/models/models.dart';
 
 class MainServiceModel {
   final DateTime createdAt;

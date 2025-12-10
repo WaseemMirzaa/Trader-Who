@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/controller/booking_controller.dart';
-import 'package:traderwho/controller/new_service_controller.dart';
-import 'package:traderwho/core/extensions/extensions.dart';
-import 'package:traderwho/core/shared_widgets/custom_button.dart';
-import 'package:traderwho/core/shared_widgets/custom_circle_avatar.dart';
-import 'package:traderwho/core/theme/theme.dart';
-import 'package:traderwho/models/models.dart';
-import 'package:traderwho/views/chat/presentation/pages/pages.dart';
+import 'package:traderou/controller/booking_controller.dart';
+import 'package:traderou/controller/new_service_controller.dart';
+import 'package:traderou/core/extensions/extensions.dart';
+import 'package:traderou/core/shared_widgets/custom_button.dart';
+import 'package:traderou/core/shared_widgets/custom_circle_avatar.dart';
+import 'package:traderou/core/theme/theme.dart';
+import 'package:traderou/models/models.dart';
+import 'package:traderou/views/chat/presentation/pages/pages.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomBottomSheet extends StatelessWidget {

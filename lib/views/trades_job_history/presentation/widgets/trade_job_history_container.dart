@@ -10,7 +10,7 @@ class JobHistoryContainer extends StatelessWidget {
 
     return GetBuilder<TradeJobHistoryController>(
       builder:
-          (controller) => TraderWhoScaffold(
+          (controller) => TraderouScaffold(
             appBar: TradesJobHistoryAppbar(
               onListPressed: controller.switchToList,
               onMapPressed: controller.switchToMap,

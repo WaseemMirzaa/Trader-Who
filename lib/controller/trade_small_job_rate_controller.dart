@@ -2,8 +2,8 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:traderwho/models/models.dart';
-// import 'package:traderwho/views/trades_profile/presentation/pages/pages.dart';
+// import 'package:traderou/models/models.dart';
+// import 'package:traderou/views/trades_profile/presentation/pages/pages.dart';
 
 // class TradeRateController extends GetxController {
 //   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

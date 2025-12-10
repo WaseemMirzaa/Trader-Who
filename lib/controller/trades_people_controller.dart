@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/models/models.dart';
-import 'package:traderwho/models/review_model.dart';
-import 'package:traderwho/models/trades_people_model.dart';
+import 'package:traderou/models/models.dart';
+import 'package:traderou/models/review_model.dart';
+import 'package:traderou/models/trades_people_model.dart';
 
 class TradesPeopleController extends GetxController {
   static const int pageSize = 20;

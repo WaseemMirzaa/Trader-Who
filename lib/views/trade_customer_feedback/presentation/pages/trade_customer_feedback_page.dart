@@ -14,7 +14,7 @@ class _TradeCustomerFeedbackPageState extends State<TradeCustomerFeedbackPage> {
   @override
   Widget build(BuildContext context) {
     if (currentUserId == null) {
-      return TraderWhoScaffold(
+      return TraderouScaffold(
         appBar: TradeCustomerFeedbackAppbar(),
         body: const Center(
           child: Text(
@@ -25,7 +25,7 @@ class _TradeCustomerFeedbackPageState extends State<TradeCustomerFeedbackPage> {
       );
     }
 
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: TradeCustomerFeedbackAppbar(),
       body: StreamBuilder<QuerySnapshot>(
         stream:

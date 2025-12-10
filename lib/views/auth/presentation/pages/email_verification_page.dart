@@ -22,7 +22,7 @@ class EmailVerificationScreen extends StatelessWidget {
       ),
     );
 
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

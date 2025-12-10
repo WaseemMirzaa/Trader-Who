@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/controller/booking_controller.dart';
-import 'package:traderwho/controller/new_service_controller.dart';
+import 'package:traderou/controller/booking_controller.dart';
+import 'package:traderou/controller/new_service_controller.dart';
 // legacy ServiceController imports removed; using NewServiceController for service lookups
-import 'package:traderwho/core/extensions/media_query_extension.dart';
-import 'package:traderwho/core/shared_widgets/custom_sccfold.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/core/theme/assets.dart';
-import 'package:traderwho/core/theme/constant.dart';
-import 'package:traderwho/models/models.dart';
-import 'package:traderwho/views/trades_people/presentation/widgets/widgets.dart';
+import 'package:traderou/core/extensions/media_query_extension.dart';
+import 'package:traderou/core/shared_widgets/custom_sccfold.dart';
+import 'package:traderou/core/theme/app_color.dart';
+import 'package:traderou/core/theme/assets.dart';
+import 'package:traderou/core/theme/constant.dart';
+import 'package:traderou/models/models.dart';
+import 'package:traderou/views/trades_people/presentation/widgets/widgets.dart';
 
 class TradePersonDetailsPage extends StatefulWidget {
   final TradesPerson person;
@@ -110,7 +110,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: TradePersonDetailsAppBar(
         person: widget.person,
         price: widget.price,

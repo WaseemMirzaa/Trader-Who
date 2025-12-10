@@ -3,11 +3,11 @@
 // import 'package:flutter/foundation.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:traderwho/models/category_model.dart';
-// import 'package:traderwho/models/job_model.dart';
-// import 'package:traderwho/models/trader_service_model.dart';
-// import 'package:traderwho/views/trades_profile/presentation/pages/pages.dart';
-// import 'package:traderwho/views/trades_profile/presentation/pages/trade_large_job_rate_page.dart';
+// import 'package:traderou/models/category_model.dart';
+// import 'package:traderou/models/job_model.dart';
+// import 'package:traderou/models/trader_service_model.dart';
+// import 'package:traderou/views/trades_profile/presentation/pages/pages.dart';
+// import 'package:traderou/views/trades_profile/presentation/pages/trade_large_job_rate_page.dart';
 
 // class ServiceController extends GetxController {
 //   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

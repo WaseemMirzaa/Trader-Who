@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/models/chat_model.dart';
-import 'package:traderwho/models/message_model.dart';
-import 'package:traderwho/models/user_model.dart';
+import 'package:traderou/models/chat_model.dart';
+import 'package:traderou/models/message_model.dart';
+import 'package:traderou/models/user_model.dart';
 
 class ChatController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
   ServiceController controller = Get.put(ServiceController());
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const HomeAppBar(),
       body: Stack(
         children: [

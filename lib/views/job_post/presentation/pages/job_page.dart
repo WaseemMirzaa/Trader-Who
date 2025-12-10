@@ -18,18 +18,13 @@ class _JobPageState extends State<JobPage> {
   late final JobPostController _jobController;
   final NewServiceController _serviceController = Get.find();
 
-  String? _selectedJobType;
+  String? _selectedJobType = 'smallJob';
   JobModel? _selectedService;
 
   String? _categoryId;
   String? _categoryName;
 
   Future<List<MapEntry<JobModel, (double?, double?)>>>? _jobsWithPricesFuture;
-
-  final List<Map<String, String>> _jobTypes = [
-    {'value': 'smallJob', 'label': 'Instant Book-Fixed Price'},
-    {'value': 'largeJob', 'label': 'Custom Quote-Flexible Price'},
-  ];
 
   @override
   void initState() {
@@ -74,6 +69,11 @@ class _JobPageState extends State<JobPage> {
       }
     }
 
+    // default job type: Instant Book (smallJob)
+    _selectedJobType = 'smallJob';
+    _jobController.loadServicesForJobType('smallJob');
+    _jobsWithPricesFuture = _loadJobsWithPrices();
+
     print(
       '📋 JobPage: Selected category services: ${_serviceController.selectedCategoryServices.length}',
     );
@@ -108,12 +108,124 @@ class _JobPageState extends State<JobPage> {
     );
   }
 
+  Widget _buildJobTypeCard({
+    required String value,
+    required String title,
+    required String subtitle,
+    required bool selected,
+    String? popupInfo,
+    required VoidCallback onTap,
+    bool showInfoIcon = true,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColor.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[300]!, width: 1.0),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Selection circle
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: selected ? AppColor.primaryButton : Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selected ? AppColor.primaryButton : Colors.grey[300]!,
+                  width: 2,
+                ),
+              ),
+              child:
+                  selected
+                      ? const Icon(Icons.check, size: 16, color: Colors.white)
+                      : const SizedBox.shrink(),
+            ),
+            const SizedBox(width: 12),
+            // Texts
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'openSans',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontFamily: 'openSans',
+                      fontSize: 12,
+                      color: AppColor.secondaryText,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Info icon
+            if (showInfoIcon && popupInfo != null)
+              GestureDetector(
+                onTap: () {
+                  Get.dialog(
+                    AlertDialog(
+                      title: Text(
+                        title,
+                        style: TextStyle(
+                          fontFamily: 'openSans',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      content: Text(
+                        popupInfo,
+                        style: TextStyle(
+                          fontFamily: 'openSans',
+                          fontSize: 16,
+                          color: AppColor.primaryText,
+                        ),
+                      ),
+                      actions: [
+                        CustomButton(
+                          text: 'Okay',
+                          onTap: () {
+                            Get.back();
+                          },
+                          height: 45,
+                          width: 100,
+                          color: AppColor.primaryButton,
+                          textColor: AppColor.white,
+                          radius: 20,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: const Icon(Icons.info_outline, size: 20),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const JobAppBar(),
       body: SafeArea(
         child: Center(
@@ -169,43 +281,68 @@ class _JobPageState extends State<JobPage> {
                       color: Colors.black,
                     ),
                     const Gap(10),
-                    CustomDropdown<String>(
-                      value: _selectedJobType,
-                      hintText: 'Select job type',
-                      fieldHeading: null,
-                      items:
-                          _jobTypes.map((jobType) {
-                            return DropdownMenuItem<String>(
-                              value: jobType['value'],
-                              child: Text(jobType['label']!),
-                            );
-                          }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedJobType = newValue;
-                          _selectedService = null;
-                          if (newValue == 'largeJob') {
-                            _titleController.clear();
-                            _descriptionController.clear();
-                          }
-                          // Load the jobs with prices when job type is selected
-                          if (newValue == 'smallJob') {
-                            _jobsWithPricesFuture = _loadJobsWithPrices();
-                          }
-                        });
-                        // Load services for the selected job type
-                        if (newValue != null) {
-                          _jobController.loadServicesForJobType(newValue);
-                        }
-                      },
-                      fillColor: AppColor.white,
-                      borderRadius: 10,
+                    // Job Type Cards (Instant Book, Custom Quote, Both)
+                    Column(
+                      children: [
+                        _buildJobTypeCard(
+                          value: 'smallJob',
+                          title: 'Instant Book',
+                          subtitle:
+                              'Select from traders available to book immediately',
+                          popupInfo:
+                              "For smaller jobs, some tradespeople set fixed prices. If they’re available, you can book them straight away with complete price transparency - often jobs can be completed on the same day here.",
+                          selected: _selectedJobType == 'smallJob',
+                          onTap: () {
+                            setState(() {
+                              _selectedJobType = 'smallJob';
+                              _selectedService = null;
+                              // _jobsWithPricesFuture = _loadJobsWithPrices();
+                            });
+                            // _jobController.loadServicesForJobType('smallJob');
+                          },
+                        ),
+                        const Gap(10),
+                        _buildJobTypeCard(
+                          value: 'largeJob',
+                          title: 'Custom Quote',
+                          subtitle: 'Request a quote and receive responses',
+                          popupInfo:
+                              "For bigger or more complicated jobs, tradespeople will review what you post and send a quote. They will often ask for more information via our in-app chat or video-call feature.",
+                          selected: _selectedJobType == 'largeJob',
+                          onTap: () {
+                            setState(() {
+                              _selectedJobType = 'largeJob';
+                              _selectedService = null;
+                              _titleController.clear();
+                              _descriptionController.clear();
+                            });
+                            // _jobController.loadServicesForJobType('largeJob');
+                          },
+                        ),
+                        const Gap(10),
+                        _buildJobTypeCard(
+                          value: 'both',
+                          title: 'Both',
+                          subtitle: 'Show job to all traders',
+                          selected: _selectedJobType == 'both',
+                          onTap: () {
+                            setState(() {
+                              _selectedJobType = 'both';
+                              _selectedService = null;
+                              // _jobsWithPricesFuture = _loadJobsWithPrices();
+                              _titleController.clear();
+                              _descriptionController.clear();
+                            });
+                            // _jobController.loadServicesForJobType('both');
+                          },
+                        ),
+                      ],
                     ),
                     const Gap(20),
 
                     // Selected Category (Read-only - from home page selection)
                     CustomText(
-                      text: 'Selected Category',
+                      text: 'Category',
                       fontSize: screenWidth > 600 ? 18 : 16,
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
@@ -217,23 +354,14 @@ class _JobPageState extends State<JobPage> {
                         color: AppColor.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.check_circle,
-                            color: AppColor.primaryButton,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            _categoryName ?? widget.selectedCategory,
-                            style: TextStyle(
-                              color: AppColor.secondaryText,
-                              fontFamily: 'openSans',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        _categoryName ?? widget.selectedCategory,
+                        style: TextStyle(
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     const Gap(20),
@@ -245,13 +373,15 @@ class _JobPageState extends State<JobPage> {
                     ],
 
                     // Conditional Sections Based on Job Type
-                    if (!_jobController.isLoading.value &&
-                        _selectedJobType == 'smallJob') ...[
-                      _buildQuickJobSelection(screenWidth, screenHeight),
-                    ] else if (_selectedJobType == 'largeJob') ...[
-                      _buildLargeJobSelection(screenWidth, screenHeight),
-                      _buildBudgetField(screenWidth, screenHeight),
-                    ],
+                    // if (!_jobController.isLoading.value &&
+                    //     (_selectedJobType == 'smallJob' ||
+                    //         _selectedJobType == 'both')) ...[
+                    //   _buildQuickJobSelection(screenWidth, screenHeight),
+                    // ] else if (_selectedJobType == 'largeJob' ||
+                    //     _selectedJobType == 'both') ...[
+                    //   _buildLargeJobSelection(screenWidth, screenHeight),
+                    //   _buildBudgetField(screenWidth, screenHeight),
+                    // ],
 
                     // Location
                     _buildLocationField(screenWidth, screenHeight),
@@ -271,11 +401,11 @@ class _JobPageState extends State<JobPage> {
                         }
 
                         // For smallJob, service_id is required
-                        if (_selectedJobType == 'smallJob' &&
-                            _selectedService?.id == null) {
-                          Get.snackbar('Error', 'Please select a service');
-                          return;
-                        }
+                        // if (_selectedJobType == 'smallJob' &&
+                        //     _selectedService?.id == null) {
+                        //   Get.snackbar('Error', 'Please select a service');
+                        //   return;
+                        // }
 
                         Get.toNamed(
                           AppRoutes.tradeContainer,
@@ -284,10 +414,10 @@ class _JobPageState extends State<JobPage> {
                                 _categoryId, // Pass category ID, not name
                             'categoryName':
                                 _categoryName, // Also pass name for display
-                            'selectedService': _selectedService?.title,
+                            // 'selectedService': _selectedService?.title,
                             'jobType': _selectedJobType,
-                            'servicePrice': _selectedService?.price,
-                            'service_id': _selectedService?.id ?? '',
+                            // 'servicePrice': _selectedService?.price,
+                            // 'service_id': _selectedService?.id ?? '',
                           },
                         );
                       },

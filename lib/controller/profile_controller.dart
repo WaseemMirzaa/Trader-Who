@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/config/app_routes.dart';
+import 'package:traderou/core/config/app_routes.dart';
 
 import 'login_controller.dart';
 
@@ -76,7 +76,4 @@ class ProfileController extends GetxController {
       Get.snackbar('Logout Failed', 'Something went wrong while logging out.');
     }
   }
-
-
-
 }

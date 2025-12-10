@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/services/notification_service.dart';
+import 'package:traderou/core/services/notification_service.dart';
 import '../../core/config/app_routes.dart';
 
 class SplashController extends GetxController {

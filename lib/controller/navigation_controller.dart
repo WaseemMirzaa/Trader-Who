@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/config/app_routes.dart';
-import 'package:traderwho/views/chat/presentation/pages/pages.dart';
-import 'package:traderwho/views/home/presentation/pages/pages.dart';
-import 'package:traderwho/views/job_history/pages/pages.dart';
-import 'package:traderwho/views/main_page_with_navbar.dart';
-import 'package:traderwho/views/profile/presentation/pages/pages.dart';
-import 'package:traderwho/views/trades_chat/presentation/pages/pages.dart';
-import 'package:traderwho/views/trades_home/presentation/pages/pages.dart';
-import 'package:traderwho/views/trades_job_history/presentation/widgets/widgets.dart';
-import 'package:traderwho/views/trades_profile/presentation/pages/pages.dart';
+import 'package:traderou/core/config/app_routes.dart';
+import 'package:traderou/views/chat/presentation/pages/pages.dart';
+import 'package:traderou/views/home/presentation/pages/pages.dart';
+import 'package:traderou/views/job_history/pages/pages.dart';
+import 'package:traderou/views/main_page_with_navbar.dart';
+import 'package:traderou/views/profile/presentation/pages/pages.dart';
+import 'package:traderou/views/trades_chat/presentation/pages/pages.dart';
+import 'package:traderou/views/trades_home/presentation/pages/pages.dart';
+import 'package:traderou/views/trades_job_history/presentation/widgets/widgets.dart';
+import 'package:traderou/views/trades_profile/presentation/pages/pages.dart';
 
 class NavigationController extends GetxController {
   static NavigationController get to => Get.find();

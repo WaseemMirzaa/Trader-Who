@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/shared_widgets/custom_button.dart';
-import 'package:traderwho/core/shared_widgets/custom_text.dart';
-import 'package:traderwho/core/shared_widgets/custom_textfield.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/views/trades_profile/presentation/widgets/widgets.dart';
+import 'package:traderou/core/shared_widgets/custom_button.dart';
+import 'package:traderou/core/shared_widgets/custom_text.dart';
+import 'package:traderou/core/shared_widgets/custom_textfield.dart';
+import 'package:traderou/core/theme/app_color.dart';
+import 'package:traderou/views/trades_profile/presentation/widgets/widgets.dart';
 
 class CustomDialogs {
   static Widget addService({required Function(Service?) onSave}) {

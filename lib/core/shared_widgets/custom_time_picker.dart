@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:traderwho/core/theme/app_color.dart';
+import 'package:traderou/core/theme/app_color.dart';
 
 class CustomTimePicker extends StatefulWidget {
   final TimeOfDay? initialTime;

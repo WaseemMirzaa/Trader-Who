@@ -5,8 +5,8 @@
 // import 'package:get/get_core/src/get_main.dart';
 // import 'package:get/get_rx/src/rx_types/rx_types.dart';
 // import 'package:get/get_state_manager/src/simple/get_controllers.dart';
-// import 'package:traderwho/models/models.dart';
-// import 'package:traderwho/views/trade_onboarding/presentation/pages/pages.dart';
+// import 'package:traderou/models/models.dart';
+// import 'package:traderou/views/trade_onboarding/presentation/pages/pages.dart';
 
 // class TradeRateLargeJobController extends GetxController {
 //   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

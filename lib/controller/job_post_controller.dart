@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/shared_widgets/map_picker_screen.dart';
-import 'package:traderwho/models/main_service_model.dart';
-import 'package:traderwho/models/models.dart';
+import 'package:traderou/core/shared_widgets/map_picker_screen.dart';
+import 'package:traderou/models/main_service_model.dart';
+import 'package:traderou/models/models.dart';
 
 class JobPostController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

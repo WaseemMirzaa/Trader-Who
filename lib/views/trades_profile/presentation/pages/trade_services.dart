@@ -49,7 +49,7 @@ class _TradeServicesPageState extends State<TradeServicesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: const TradeServicesAppbar(),
       body: SingleChildScrollView(
         child: Padding(

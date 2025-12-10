@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:traderwho/controller/job_history_page_controller.dart';
-import 'package:traderwho/models/models.dart';
+import 'package:traderou/controller/job_history_page_controller.dart';
+import 'package:traderou/models/models.dart';
 
 class TradeHomeController extends GetxController {
   late JobHistoryPageController _jobHistoryController;

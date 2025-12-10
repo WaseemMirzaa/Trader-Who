@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:traderwho/controller/job_history_page_controller.dart';
+import 'package:traderou/controller/job_history_page_controller.dart';
 
 class TradeJobHistoryController extends GetxController {
   var selectedIndex =

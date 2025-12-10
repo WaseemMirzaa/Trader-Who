@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/controller/navigation_controller.dart';
-import 'package:traderwho/core/config/app_routes.dart';
-import 'package:traderwho/core/theme/app_color.dart';
-import 'package:traderwho/models/user_model.dart';
+import 'package:traderou/controller/navigation_controller.dart';
+import 'package:traderou/core/config/app_routes.dart';
+import 'package:traderou/core/theme/app_color.dart';
+import 'package:traderou/models/user_model.dart';
 
 class EmailVerificationController extends GetxController {
   final String userEmail;
@@ -78,7 +78,7 @@ class EmailVerificationController extends GetxController {
 
       // Navigate to appropriate screen
       if (isTradesperson) {
-        Get.offAllNamed(AppRoutes.tradeRate);
+        Get.offAllNamed(AppRoutes.tradeRate, arguments: false);
       } else {
         Get.offAllNamed(AppRoutes.mainPageWithNavBar);
       }

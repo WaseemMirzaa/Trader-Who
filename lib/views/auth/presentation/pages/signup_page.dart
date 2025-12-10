@@ -17,7 +17,7 @@ class _SignupPageState extends State<SignupPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(

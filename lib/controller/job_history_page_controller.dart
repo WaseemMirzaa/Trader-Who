@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:traderwho/controller/quote_controller.dart';
-import 'package:traderwho/core/services/notification_service.dart';
-import 'package:traderwho/core/utils/location_utils.dart';
-import 'package:traderwho/models/models.dart';
-import 'package:traderwho/models/user_model.dart';
+import 'package:traderou/controller/quote_controller.dart';
+import 'package:traderou/core/services/notification_service.dart';
+import 'package:traderou/core/utils/location_utils.dart';
+import 'package:traderou/models/models.dart';
+import 'package:traderou/models/user_model.dart';
 
 class JobHistoryPageController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

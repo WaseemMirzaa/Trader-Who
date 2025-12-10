@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/services/notification_service.dart';
+import 'package:traderou/core/services/notification_service.dart';
 
 class UserController extends GetxController {
   final Rx<User?> user = Rx<User?>(null);

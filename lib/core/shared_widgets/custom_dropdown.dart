@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:traderwho/core/theme/assets.dart';
+import 'package:traderou/core/theme/assets.dart';
 
 import '../theme/app_color.dart';
 import 'custom_text.dart';

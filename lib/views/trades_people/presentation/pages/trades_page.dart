@@ -33,7 +33,7 @@ class _TradesPageState extends State<TradesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       body: SafeArea(
         child: Center(
           child: Obx(() {

@@ -3,10 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/models/main_service_model.dart';
-import 'package:traderwho/models/models.dart';
-import 'package:traderwho/views/trades_profile/presentation/pages/pages.dart';
-import 'package:traderwho/views/trades_profile/presentation/pages/trade_large_job_rate_page.dart';
+import 'package:traderou/models/main_service_model.dart';
+import 'package:traderou/models/models.dart';
+import 'package:traderou/views/trades_profile/presentation/pages/pages.dart';
+import 'package:traderou/views/trades_profile/presentation/pages/trade_large_job_rate_page.dart';
 
 class ServiceController extends GetxController {
   MainServiceModel? predefinedSmallJobs;

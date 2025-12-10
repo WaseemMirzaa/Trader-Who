@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:traderwho/core/theme/app_color.dart';
+import 'package:traderou/core/theme/app_color.dart';
 
 class ChangePasswordController extends GetxController {
   // Text controllers for input fields

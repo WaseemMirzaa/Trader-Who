@@ -432,7 +432,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
           }
         }
 
-        return TraderWhoScaffold(
+        return TraderouScaffold(
           appBar: TradeJobHistoryDetailAppbar(status: currentStatus),
           body: Column(
             children: [
@@ -1124,7 +1124,7 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                   ),
             ],
           ),
-        ); // Close TraderWhoScaffold
+        ); // Close TraderouScaffold
       }, // Close StreamBuilder builder
     ); // Close StreamBuilder
   }

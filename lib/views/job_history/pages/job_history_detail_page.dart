@@ -667,7 +667,7 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: JobHistoryDetailAppBar(
         job: widget.job,
         onBackPressed: () => Navigator.pop(context),

@@ -6,7 +6,7 @@ class TradeRatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NewServiceController controller = Get.put(NewServiceController());
-    return TraderWhoScaffold(
+    return TraderouScaffold(
       appBar: TradeRatesAppbar(title: "Set Fixed Prices for Small Jobs"),
       body: SafeArea(
         child: Obx(
@@ -287,25 +287,29 @@ class TradeRatePage extends StatelessWidget {
                           CustomButton(
                             onTap: () {
                               controller.saveUserServices(
-                                isFromLargeJob: false,
+                                shouldGoBack: Get.arguments == true,
                               );
                             },
                             color: AppColor.primaryButton,
-                            text: 'Save & Go Live',
+                            text:
+                                Get.arguments == true
+                                    ? "Save"
+                                    : 'Save & Go Live',
                             textColor: AppColor.white,
                           ),
                           const SizedBox(height: 10),
                           // skip for now
-                          CustomButton(
-                            onTap: () {
-                              controller.skipSettingServices(
-                                isFromLargeJob: false,
-                              );
-                            },
-                            color: Colors.transparent,
-                            text: 'Skip for now',
-                            textColor: AppColor.primaryText,
-                          ),
+                          if (Get.arguments != true)
+                            CustomButton(
+                              onTap: () {
+                                controller.skipSettingServices(
+                                  isFromLargeJob: false,
+                                );
+                              },
+                              color: Colors.transparent,
+                              text: 'Skip for now',
+                              textColor: AppColor.primaryText,
+                            ),
                         ],
                       ],
                     ),
