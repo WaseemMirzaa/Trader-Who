@@ -51,20 +51,20 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyArhr-ZW_JFutiFAMzoSzVNnZv6w9S-x3o',
-    appId: '1:371566690832:android:cb115f9069295fe3b34095',
-    messagingSenderId: '371566690832',
-    projectId: 'traderwho-7a1f9',
-    storageBucket: 'traderwho-7a1f9.firebasestorage.app',
+    apiKey: 'AIzaSyDUdTyUZ6Jb2lL00TWKZcVFwPjOnnzV2Qo',
+    appId: '1:857236342029:android:d4f7779899f90a1754dc44',
+    messagingSenderId: '857236342029',
+    projectId: 'traderou-app-13cda',
+    storageBucket: 'traderou-app-13cda.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCazHDQ9aKArx70hJkcG5FCS9x1ZiRgY9E',
-    appId: '1:371566690832:ios:b037b7d58cf45f3db34095',
-    messagingSenderId: '371566690832',
-    projectId: 'traderwho-7a1f9',
-    storageBucket: 'traderwho-7a1f9.firebasestorage.app',
-    iosBundleId: 'com.example.traderwho',
+    apiKey: 'AIzaSyCt0W8-enNYZ0LIuUJFTyvkvOkhgp6Qg_8',
+    appId: '1:857236342029:ios:0c5e1fe51d63bc5354dc44',
+    messagingSenderId: '857236342029',
+    projectId: 'traderou-app-13cda',
+    storageBucket: 'traderou-app-13cda.firebasestorage.app',
+    iosBundleId: 'com.example.traderou',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '371566690832',
     projectId: 'traderwho-7a1f9',
     storageBucket: 'traderwho-7a1f9.firebasestorage.app',
-    iosBundleId: 'com.example.traderwho',
+    iosBundleId: 'com.example.traderou',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

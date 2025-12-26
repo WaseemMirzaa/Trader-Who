@@ -1,4 +1,4 @@
-package com.example.traderwho
+package com.example.traderou
 
 import io.flutter.embedding.android.FlutterActivity
 

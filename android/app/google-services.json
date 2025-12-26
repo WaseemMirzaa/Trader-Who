@@ -1,51 +1,45 @@
 {
   "project_info": {
-    "project_number": "371566690832",
-    "project_id": "traderwho-7a1f9",
-    "storage_bucket": "traderwho-7a1f9.firebasestorage.app"
+    "project_number": "857236342029",
+    "project_id": "traderou-app-13cda",
+    "storage_bucket": "traderou-app-13cda.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:371566690832:android:cb115f9069295fe3b34095",
+        "mobilesdk_app_id": "1:857236342029:android:d4f7779899f90a1754dc44",
         "android_client_info": {
-          "package_name": "com.example.traderwho"
+          "package_name": "com.example.traderou"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "371566690832-00c86di4mlognfqf66ts59t6ecki3m03.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.traderwho",
-            "certificate_hash": "745245c5cf3fb226519a8a2a7978b37c5f9ec3d7"
-          }
-        },
-        {
-          "client_id": "371566690832-duq06sm7gf9rpni3ahe2jes8203srhdd.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyArhr-ZW_JFutiFAMzoSzVNnZv6w9S-x3o"
+          "current_key": "AIzaSyDUdTyUZ6Jb2lL00TWKZcVFwPjOnnzV2Qo"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "371566690832-duq06sm7gf9rpni3ahe2jes8203srhdd.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "371566690832-ob6bfq003vaje00hvs1gsfu5026aas2q.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.traderwho"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857236342029:android:96e3d24e86c0062454dc44",
+        "android_client_info": {
+          "package_name": "com.example.traderwho"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUdTyUZ6Jb2lL00TWKZcVFwPjOnnzV2Qo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
         }
       }
     }
