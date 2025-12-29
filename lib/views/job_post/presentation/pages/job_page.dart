@@ -296,9 +296,9 @@ class _JobPageState extends State<JobPage> {
                             setState(() {
                               _selectedJobType = 'smallJob';
                               _selectedService = null;
-                              // _jobsWithPricesFuture = _loadJobsWithPrices();
+                              _jobsWithPricesFuture = _loadJobsWithPrices();
                             });
-                            // _jobController.loadServicesForJobType('smallJob');
+                            _jobController.loadServicesForJobType('smallJob');
                           },
                         ),
                         const Gap(10),
@@ -316,7 +316,7 @@ class _JobPageState extends State<JobPage> {
                               _titleController.clear();
                               _descriptionController.clear();
                             });
-                            // _jobController.loadServicesForJobType('largeJob');
+                            _jobController.loadServicesForJobType('largeJob');
                           },
                         ),
                         const Gap(10),
@@ -329,11 +329,11 @@ class _JobPageState extends State<JobPage> {
                             setState(() {
                               _selectedJobType = 'both';
                               _selectedService = null;
-                              // _jobsWithPricesFuture = _loadJobsWithPrices();
+                              _jobsWithPricesFuture = _loadJobsWithPrices();
                               _titleController.clear();
                               _descriptionController.clear();
                             });
-                            // _jobController.loadServicesForJobType('both');
+                            _jobController.loadServicesForJobType('both');
                           },
                         ),
                       ],
@@ -373,15 +373,15 @@ class _JobPageState extends State<JobPage> {
                     ],
 
                     // Conditional Sections Based on Job Type
-                    // if (!_jobController.isLoading.value &&
-                    //     (_selectedJobType == 'smallJob' ||
-                    //         _selectedJobType == 'both')) ...[
-                    //   _buildQuickJobSelection(screenWidth, screenHeight),
-                    // ] else if (_selectedJobType == 'largeJob' ||
-                    //     _selectedJobType == 'both') ...[
-                    //   _buildLargeJobSelection(screenWidth, screenHeight),
-                    //   _buildBudgetField(screenWidth, screenHeight),
-                    // ],
+                    if (!_jobController.isLoading.value &&
+                        (_selectedJobType == 'smallJob' ||
+                            _selectedJobType == 'both')) ...[
+                      _buildQuickJobSelection(screenWidth, screenHeight),
+                    ] else if (_selectedJobType == 'largeJob' ||
+                        _selectedJobType == 'both') ...[
+                      _buildLargeJobSelection(screenWidth, screenHeight),
+                      _buildBudgetField(screenWidth, screenHeight),
+                    ],
 
                     // Location
                     _buildLocationField(screenWidth, screenHeight),
@@ -401,11 +401,11 @@ class _JobPageState extends State<JobPage> {
                         }
 
                         // For smallJob, service_id is required
-                        // if (_selectedJobType == 'smallJob' &&
-                        //     _selectedService?.id == null) {
-                        //   Get.snackbar('Error', 'Please select a service');
-                        //   return;
-                        // }
+                        if (_selectedJobType == 'smallJob' &&
+                            _selectedService?.id == null) {
+                          Get.snackbar('Error', 'Please select a service');
+                          return;
+                        }
 
                         Get.toNamed(
                           AppRoutes.tradeContainer,
@@ -414,10 +414,10 @@ class _JobPageState extends State<JobPage> {
                                 _categoryId, // Pass category ID, not name
                             'categoryName':
                                 _categoryName, // Also pass name for display
-                            // 'selectedService': _selectedService?.title,
+                            'selectedService': _selectedService?.title,
                             'jobType': _selectedJobType,
-                            // 'servicePrice': _selectedService?.price,
-                            // 'service_id': _selectedService?.id ?? '',
+                            'servicePrice': _selectedService?.price,
+                            'service_id': _selectedService?.id ?? '',
                           },
                         );
                       },

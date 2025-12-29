@@ -29,6 +29,30 @@ class TradePersonDetailsPage extends StatefulWidget {
 }
 
 class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
+  Map<String, Map<String, ServiceModel>> _groupServicesByCategory() {
+    final Map<String, Map<String, ServiceModel>> grouped = {};
+
+    for (var service in widget.person.largeJobs) {
+      if (service.services.isNotEmpty) {
+        if (!grouped.containsKey(service.category)) {
+          grouped[service.category] = {};
+        }
+        grouped[service.category]!['large'] = service;
+      }
+    }
+
+    for (var service in widget.person.smallJobs) {
+      if (service.services.isNotEmpty) {
+        if (!grouped.containsKey(service.category)) {
+          grouped[service.category] = {};
+        }
+        grouped[service.category]!['small'] = service;
+      }
+    }
+
+    return grouped;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -177,8 +201,6 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 ],
               ),
 
-              const SizedBox(height: 10),
-
               // Reviews List
               if (widget.person.reviews != null &&
                   widget.person.reviews!.isNotEmpty)
@@ -227,7 +249,7 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                 }).toList()
               else
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
                     "No reviews",
                     style: TextStyle(
@@ -251,90 +273,124 @@ class _TradePersonDetailsPageState extends State<TradePersonDetailsPage> {
                     ),
                   ),
                 ),
-              if (widget.person.largeJobs.isNotEmpty)
-                _buildSectionTitle("Large Jobs"),
+              ...() {
+                final grouped = _groupServicesByCategory();
+                return grouped.entries.map((entry) {
+                  final category = entry.key;
+                  final services = entry.value;
 
-              for (ServiceModel service in widget.person.largeJobs) ...[
-                if (service.services.isNotEmpty)
-                  Text(
-                    service.category,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: AppColor.primaryText,
-                      fontFamily: 'openSans',
-                    ),
-                  ),
-                kGap5,
-                if (service.services.isNotEmpty)
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children:
-                        service.services.map((service) {
-                          return Chip(
-                            label: Text(
-                              service.title,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColor.white,
-                                fontFamily: 'openSans',
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      Text(
+                        category,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
+                        ),
+                      ),
+                      if (services.containsKey('large'))
+                        ExpansionTile(
+                          tilePadding: EdgeInsets.zero,
+                          shape: const Border(),
+                          dense: true,
+                          collapsedShape: const Border(),
+                          iconColor: AppColor.primaryText,
+                          collapsedIconColor: AppColor.primaryText,
+                          title: const Text(
+                            'Custom Quote Job',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: AppColor.primaryText,
+                              fontFamily: 'openSans',
+                            ),
+                          ),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children:
+                                    services['large']!.services.map((service) {
+                                      return Chip(
+                                        label: Text(
+                                          service.title,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: AppColor.white,
+                                            fontFamily: 'openSans',
+                                          ),
+                                        ),
+                                        backgroundColor: AppColor.mediumGray,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
+                                        ),
+                                      );
+                                    }).toList(),
                               ),
                             ),
-                            backgroundColor: AppColor.mediumGray,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                          ],
+                        ),
+                      if (services.containsKey('small'))
+                        ExpansionTile(
+                          tilePadding: EdgeInsets.zero,
+                          shape: const Border(),
+                          collapsedShape: const Border(),
+                          iconColor: AppColor.primaryText,
+                          collapsedIconColor: AppColor.primaryText,
+                          dense: true,
+                          title: const Text(
+                            'Instant Book Job',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: AppColor.primaryText,
+                              fontFamily: 'openSans',
                             ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
+                          ),
+                          children: [
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children:
+                                  services['small']!.services.map((service) {
+                                    return Chip(
+                                      label: Text(
+                                        service.title,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.white,
+                                          fontFamily: 'openSans',
+                                        ),
+                                      ),
+                                      backgroundColor: AppColor.mediumGray,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                    );
+                                  }).toList(),
                             ),
-                          );
-                        }).toList(),
-                  ),
-              ],
-              if ((widget.person.smallJobs).isNotEmpty)
-                _buildSectionTitle("Small Jobs"),
-
-              for (ServiceModel service in widget.person.smallJobs) ...[
-                if (service.services.isNotEmpty)
-                  Text(
-                    service.category,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: AppColor.primaryText,
-                      fontFamily: 'openSans',
-                    ),
-                  ),
-                kGap5,
-                if (service.services.isNotEmpty)
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children:
-                        service.services.map((service) {
-                          return Chip(
-                            label: Text(
-                              service.title,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColor.white,
-                                fontFamily: 'openSans',
-                              ),
-                            ),
-                            backgroundColor: AppColor.mediumGray,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                          );
-                        }).toList(),
-                  ),
-              ],
+                          ],
+                        ),
+                    ],
+                  );
+                }).toList();
+              }(),
             ],
           ),
         ),

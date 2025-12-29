@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:traderou/core/shared_widgets/custom_time_picker.dart';
 import 'package:traderou/models/models.dart';
 
 class CustomJobPostController extends GetxController {
@@ -103,11 +104,7 @@ class CustomJobPostController extends GetxController {
 
   /// Select preferred time for custom job
   Future<void> _selectPreferredTime(BuildContext context) async {
-    final pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
+    final pickedTime = await showCustomTimePicker(context: context);
     if (pickedTime != null) {
       selectedTime.value = pickedTime;
       _updatePreferredTimeDisplay();

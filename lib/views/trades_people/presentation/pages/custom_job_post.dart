@@ -160,6 +160,15 @@ class _CustomJobPostState extends State<CustomJobPost> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    "Custom Job Summary",
+                    style: TextStyle(
+                      fontSize: screenWidth > 600 ? 22 : 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColor.primaryText,
+                    ),
+                  ),
+                  const Gap(16),
                   // Selected Category and Service Display
                   if (selectedCategory != null && selectedService != null)
                     Container(
@@ -178,18 +187,52 @@ class _CustomJobPostState extends State<CustomJobPost> {
                         children: [
                           Row(
                             children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: AppColor.primaryButton,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Custom Job Request',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                              Expanded(
+                                child: const Text(
+                                  'Custom Job Request',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
                                 ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: Text(
+                                        "What is a Custom Job?",
+                                        style: TextStyle(
+                                          fontFamily: 'openSans',
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      content: Text(
+                                        "Post your job to get quotes from tradespeople. Add a clear description, budget (optional), preferred date and time and images. You’ll be notified as the quotes come in and you can use the in-app chat or video call feature with the tradesperson before accepting a quote.",
+                                        style: TextStyle(
+                                          fontFamily: 'openSans',
+                                          fontSize: 16,
+                                          color: AppColor.primaryText,
+                                        ),
+                                      ),
+                                      actions: [
+                                        CustomButton(
+                                          text: 'Okay',
+                                          onTap: () {
+                                            Get.back();
+                                          },
+                                          height: 45,
+                                          width: 100,
+                                          color: AppColor.primaryButton,
+                                          textColor: AppColor.white,
+                                          radius: 20,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                icon: Icon(Icons.info_outline),
                               ),
                             ],
                           ),
@@ -280,30 +323,30 @@ class _CustomJobPostState extends State<CustomJobPost> {
                     ),
 
                   // How to post your job instructions
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(
-                        text: 'How to post your Custom job:',
-                        fontSize: screenWidth > 600 ? 18 : 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.primaryText,
-                      ),
-                      const Gap(8),
-                      _buildBulletPoint(
-                        'If you cant found the Tradeperson then you post custom job',
-                      ),
-                      _buildBulletPoint('Write your Job Title'),
-                      _buildBulletPoint('Write your Job Description'),
-                      _buildBulletPoint(
-                        'Then send quote to Tradeperson then he will accept or reject according to your job',
-                      ),
-                      _buildBulletPoint(
-                        'Upload photos to help traders quote faster',
-                      ),
-                      const Gap(16),
-                    ],
-                  ),
+                  // Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     CustomText(
+                  //       text: 'How to post your Custom job:',
+                  //       fontSize: screenWidth > 600 ? 18 : 16,
+                  //       fontWeight: FontWeight.w700,
+                  //       color: AppColor.primaryText,
+                  //     ),
+                  //     const Gap(8),
+                  //     _buildBulletPoint(
+                  //       'If you cant found the Tradeperson then you post custom job',
+                  //     ),
+                  //     _buildBulletPoint('Write your Job Title'),
+                  //     _buildBulletPoint('Write your Job Description'),
+                  //     _buildBulletPoint(
+                  //       'Then send quote to Tradeperson then he will accept or reject according to your job',
+                  //     ),
+                  //     _buildBulletPoint(
+                  //       'Upload photos to help traders quote faster',
+                  //     ),
+                  //     const Gap(16),
+                  //   ],
+                  // ),
 
                   // Job Type Selection
                   CustomText(
@@ -323,7 +366,7 @@ class _CustomJobPostState extends State<CustomJobPost> {
                     controller: _titleController,
                     borderColor: AppColor.white,
                     fontStyle: FontStyle.normal,
-                    hintText: 'Job Title',
+                    hintText: 'Enter job title',
                     hintStyle: const TextStyle(
                       color: AppColor.grayHintText,
                       fontSize: 15,
@@ -350,7 +393,7 @@ class _CustomJobPostState extends State<CustomJobPost> {
                     fillColor: AppColor.white,
                     controller: _descriptionController,
                     borderColor: AppColor.white,
-                    hintText: 'Describe what needs fixing...',
+                    hintText: 'Describe what needs doing...',
                     hintStyle: const TextStyle(
                       color: AppColor.grayHintText,
                       fontSize: 15,
@@ -409,7 +452,7 @@ class _CustomJobPostState extends State<CustomJobPost> {
                   ),
                   Gap(20),
                   CustomText(
-                    text: 'Upload Photos',
+                    text: 'Attach up to 8 Images ',
                     fontSize: screenWidth > 600 ? 18 : 16,
                     fontWeight: FontWeight.w400,
                     color: Colors.black,
@@ -510,7 +553,7 @@ class _CustomJobPostState extends State<CustomJobPost> {
                       text:
                           controller.isCreatingPost.value
                               ? 'Submitting...'
-                              : 'Submit',
+                              : 'Submit Job Request',
                       onTap:
                           controller.isCreatingPost.value
                               ? null

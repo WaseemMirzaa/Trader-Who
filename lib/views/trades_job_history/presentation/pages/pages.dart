@@ -19,6 +19,7 @@ import 'package:traderou/core/shared_widgets/custom_sccfold.dart';
 import 'package:traderou/core/shared_widgets/custom_text.dart';
 import 'package:traderou/core/shared_widgets/custom_textfield.dart';
 import 'package:traderou/core/shared_widgets/custom_toggle_button.dart';
+import 'package:traderou/core/shared_widgets/image_preview_screen.dart';
 import 'package:traderou/core/theme/app_color.dart';
 import 'package:traderou/core/theme/assets.dart';
 import 'package:traderou/core/theme/constant.dart';

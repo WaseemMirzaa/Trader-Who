@@ -100,7 +100,7 @@ class _TradeJobHistoryBottomSheetState
 
                   // Reason label
                   const Text(
-                    'Reason/Explanation:',
+                    'Reason for price reassessment:',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -113,7 +113,7 @@ class _TradeJobHistoryBottomSheetState
                   CustomTextField(
                     borderColor: AppColor.white,
                     controller: widget.reasonController,
-                    hintText: 'Briefly explain',
+                    hintText: 'Please explain here',
                     hintStyle: const TextStyle(color: AppColor.midGray),
                     keyboardType: TextInputType.multiline,
                     maxLines: 5,

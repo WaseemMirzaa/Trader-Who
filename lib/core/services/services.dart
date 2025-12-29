@@ -4,7 +4,7 @@ class HelperService {
   static String formatStatus(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return 'Customer awaiting quote';
+        return 'Awaiting quote';
       case 'quoted':
         return 'Quote Submitted';
       case 'accepted':
@@ -35,9 +35,9 @@ class HelperService {
   static String formattedJobType(String jobType) {
     switch (jobType) {
       case 'smallJob':
-        return 'Small Job';
+        return 'Instant Book';
       case 'largeJob':
-        return 'Large Job';
+        return 'Custom Quote';
 
       default:
         return jobType.capitalize ?? jobType;

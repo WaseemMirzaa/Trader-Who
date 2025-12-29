@@ -604,14 +604,35 @@ class _TradeJobHistoryDetailPageState extends State<TradeJobHistoryDetailPage> {
                         const SizedBox(height: 20),
                       Row(
                         children: [
-                          for (var image in widget.job.images)
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: CachedNetworkImage(
-                                imageUrl: image,
-                                width: 70,
-                                height: 60,
-                                fit: BoxFit.cover,
+                          for (var i = 0; i < widget.job.images.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ImagePreviewScreen(
+                                            imageUrls: widget.job.images,
+                                            initialIndex: i,
+                                            heroTag: 'job_image',
+                                          ),
+                                    ),
+                                  );
+                                },
+                                child: Hero(
+                                  tag: 'job_image_$i',
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: CachedNetworkImage(
+                                      imageUrl: widget.job.images[i],
+                                      width: 70,
+                                      height: 60,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                         ],

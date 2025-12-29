@@ -110,14 +110,21 @@ class NewServiceController extends GetxController {
       final snapshot =
           await _firestore.collection('categories').orderBy('order').get();
 
-      categories.value =
+      final loadedCategories =
           snapshot.docs
               .map((doc) => CategoryModel.fromDoc(doc))
               .toList()
               .cast<CategoryModel>();
 
+      // Sort categories by name
+      loadedCategories.sort(
+        (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+      );
+
+      categories.value = loadedCategories;
+
       if (kDebugMode) {
-        print('✅ Loaded ${categories.length} categories');
+        print('✅ Loaded ${categories.length} categories (sorted by name)');
       }
     } catch (e) {
       if (kDebugMode) {

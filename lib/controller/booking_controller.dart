@@ -12,6 +12,7 @@ import 'package:traderou/controller/job_post_controller.dart';
 import 'package:traderou/controller/navigation_controller.dart';
 import 'package:traderou/core/services/notification_service.dart';
 import 'package:traderou/core/services/services.dart';
+import 'package:traderou/core/shared_widgets/custom_time_picker.dart';
 import 'package:traderou/core/theme/app_color.dart';
 import 'package:traderou/models/models.dart';
 
@@ -84,29 +85,7 @@ class BookingController extends GetxController {
       return;
     }
 
-    final pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary:
-                  AppColor.orangeCustomColor, // Clock circle and selected time
-              onPrimary: Colors.white, // Text on primary color
-              surface: Colors.white, // Dialog background
-              onSurface: AppColor.primaryText, // Unselected text
-              secondary: AppColor.orangeCustomColor, // AM/PM toggle selected
-              onSecondary: Colors.white, // Text on secondary
-              tertiary: AppColor.orangeCustomColor.withValues(
-                alpha: 0.2,
-              ), // AM/PM toggle background
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
+    final pickedTime = await showCustomTimePicker(context: context);
 
     if (pickedTime != null) {
       // Validate that the selected time is in the future
@@ -634,356 +613,390 @@ class BookingController extends GetxController {
     String formattedJobType = _formatJobType(jobType);
 
     await Get.dialog(
-      AlertDialog(
-        title: Text('Book $traderName'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Category: ${HelperService.formattedCategoryName(category)}',
-              ),
-              const SizedBox(height: 8),
-              Text('Service: $service'),
-              const SizedBox(height: 8),
-              Text('Job Type: $formattedJobType'),
-              const SizedBox(height: 8),
-              Text("Price: $price"),
-
-              // Display trader's available hours if available
-              if (this.traderStartTime.value != null &&
-                  this.traderEndTime.value != null) ...[
+      Dialog(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Book $traderName',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Job Summary:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: Colors.blue.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.access_time,
-                        size: 16,
-                        color: Colors.blue,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          'Available: ${this.traderStartTime.value!.format(Get.context!)} - ${this.traderEndTime.value!.format(Get.context!)}',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColor.primaryText,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                Text(
+                  'Category: ${HelperService.formattedCategoryName(category)}',
                 ),
-              ],
+                const SizedBox(height: 8),
+                Text('Service: $service'),
+                const SizedBox(height: 8),
+                Text('Job Type: $formattedJobType'),
+                const SizedBox(height: 8),
+                Text("Price: $price"),
 
-              const SizedBox(height: 16),
-
-              // Preferred Date Selection
-              const Text(
-                'Preferred Date & Time*',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.primaryText,
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: Obx(
-                      () => OutlinedButton.icon(
-                        onPressed: () => selectPreferredDate(Get.context!),
-                        icon: const Icon(Icons.calendar_today, size: 18),
-                        label: Text(
-                          selectedDate.value != null
-                              ? DateFormat(
-                                'MMM dd, yyyy',
-                              ).format(selectedDate.value!)
-                              : 'Select Date',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColor.primaryText,
-                          side: BorderSide(
-                            color:
-                                selectedDate.value == null
-                                    ? Colors.red
-                                    : AppColor.primaryText,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 8,
-                          ),
-                        ),
+                // Display trader's available hours if available
+                if (this.traderStartTime.value != null &&
+                    this.traderEndTime.value != null) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Colors.blue.withValues(alpha: 0.3),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Obx(
-                      () => OutlinedButton.icon(
-                        onPressed: () => selectPreferredTime(Get.context!),
-                        icon: const Icon(Icons.access_time, size: 18),
-                        label: Text(
-                          selectedTime.value != null
-                              ? selectedTime.value!.format(Get.context!)
-                              : 'Select Time',
-                          style: const TextStyle(fontSize: 14),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          size: 16,
+                          color: Colors.blue,
                         ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColor.primaryText,
-                          side: BorderSide(
-                            color:
-                                selectedTime.value == null
-                                    ? Colors.red
-                                    : AppColor.primaryText,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 8,
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Available: ${this.traderStartTime.value!.format(Get.context!)} - ${this.traderEndTime.value!.format(Get.context!)}',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColor.primaryText,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ],
-              ),
 
-              const SizedBox(height: 8),
+                const SizedBox(height: 16),
 
-              // Display selected date and time
-              Obx(
-                () =>
-                    preferredTimeDisplay.value.isNotEmpty
-                        ? Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColor.orangeCustomColor.withValues(
-                              alpha: 0.1,
+                // Preferred Date Selection
+                const Text(
+                  'Preferred Date & Time*',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.primaryText,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: Obx(
+                        () => OutlinedButton.icon(
+                          onPressed: () => selectPreferredDate(Get.context!),
+                          icon: const Icon(Icons.calendar_today, size: 18),
+                          label: Text(
+                            selectedDate.value != null
+                                ? DateFormat(
+                                  'MMM dd, yyyy',
+                                ).format(selectedDate.value!)
+                                : 'Select Date',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColor.primaryText,
+                            side: BorderSide(
+                              color:
+                                  selectedDate.value == null
+                                      ? Colors.red
+                                      : AppColor.primaryText,
                             ),
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
-                              color: AppColor.orangeCustomColor.withValues(
-                                alpha: 0.3,
-                              ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 8,
                             ),
                           ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.schedule,
-                                size: 16,
-                                color: AppColor.orangeCustomColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Obx(
+                        () => OutlinedButton.icon(
+                          onPressed: () => selectPreferredTime(Get.context!),
+                          icon: const Icon(Icons.access_time, size: 18),
+                          label: Text(
+                            selectedTime.value != null
+                                ? selectedTime.value!.format(Get.context!)
+                                : 'Select Time',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColor.primaryText,
+                            side: BorderSide(
+                              color:
+                                  selectedTime.value == null
+                                      ? Colors.red
+                                      : AppColor.primaryText,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 8,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                // Display selected date and time
+                Obx(
+                  () =>
+                      preferredTimeDisplay.value.isNotEmpty
+                          ? Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColor.orangeCustomColor.withValues(
+                                alpha: 0.1,
                               ),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  'Preferred: ${preferredTimeDisplay.value}',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: AppColor.primaryText,
-                                    fontWeight: FontWeight.w500,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: AppColor.orangeCustomColor.withValues(
+                                  alpha: 0.3,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.schedule,
+                                  size: 16,
+                                  color: AppColor.orangeCustomColor,
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    'Preferred: ${preferredTimeDisplay.value}',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: AppColor.primaryText,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                        : const SizedBox.shrink(),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Image Selection Section
-              const Text(
-                'Images (Optional)',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.primaryText,
+                              ],
+                            ),
+                          )
+                          : const SizedBox.shrink(),
                 ),
-              ),
-              const SizedBox(height: 8),
 
-              // Add Images Button
-              OutlinedButton.icon(
-                onPressed: () => selectImages(),
-                icon: const Icon(Icons.add_photo_alternate, size: 18),
-                label: const Text('Add Images', style: TextStyle(fontSize: 14)),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColor.primaryText,
-                  side: const BorderSide(color: AppColor.primaryText),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
+                const SizedBox(height: 16),
+
+                // Image Selection Section
+                const Text(
+                  'Images (Optional)',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.primaryText,
                   ),
                 ),
-              ),
+                const SizedBox(height: 8),
 
-              const SizedBox(height: 8),
+                // Add Images Button
+                OutlinedButton.icon(
+                  onPressed: () => selectImages(),
+                  icon: const Icon(Icons.add_photo_alternate, size: 18),
+                  label: const Text(
+                    'Add Images',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColor.primaryText,
+                    side: const BorderSide(color: AppColor.primaryText),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                  ),
+                ),
 
-              // Display selected images
-              Obx(
-                () =>
-                    selectedImages.isNotEmpty
-                        ? SizedBox(
-                          height: 100,
-                          width: Get.width,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: selectedImages.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                height: 80,
-                                width: 80,
-                                margin: const EdgeInsets.only(right: 8),
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: Colors.grey.shade300,
-                                        ),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(7),
-                                        child: Image.file(
-                                          File(selectedImages[index].path),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      right: -5,
-                                      top: -5,
-                                      child: IconButton(
-                                        onPressed: () => removeImage(index),
-                                        icon: Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red,
-                                            shape: BoxShape.circle,
+                const SizedBox(height: 8),
+
+                // Display selected images
+                Obx(
+                  () =>
+                      selectedImages.isNotEmpty
+                          ? SizedBox(
+                            height: 100,
+                            width: Get.width,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: selectedImages.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  height: 80,
+                                  width: 80,
+                                  margin: const EdgeInsets.only(right: 8),
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
                                           ),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.white,
-                                            size: 14,
+                                          border: Border.all(
+                                            color: Colors.grey.shade300,
                                           ),
                                         ),
-                                        padding: EdgeInsets.zero,
-                                        constraints: const BoxConstraints(),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            7,
+                                          ),
+                                          child: Image.file(
+                                            File(selectedImages[index].path),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        )
-                        : const SizedBox.shrink(),
-              ),
-
-              const SizedBox(height: 16),
-
-              TextField(
-                controller: notesController,
-                decoration: const InputDecoration(
-                  labelText: 'Additional Notes (Optional)',
-                  labelStyle: TextStyle(color: AppColor.primaryText),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColor.primaryText),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColor.primaryText),
-                  ),
-                  disabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColor.primaryText),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColor.primaryText),
-                  ),
+                                      Positioned(
+                                        right: -5,
+                                        top: -5,
+                                        child: IconButton(
+                                          onPressed: () => removeImage(index),
+                                          icon: Container(
+                                            padding: const EdgeInsets.all(2),
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.close,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                          ),
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                          : const SizedBox.shrink(),
                 ),
-                maxLines: 3,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              resetPreferredTime();
-              resetImageSelection();
-              Get.back();
-            },
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColor.primaryText),
-            ),
-          ),
-          Obx(
-            () => ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    isLoading.value ? Colors.grey : AppColor.orangeCustomColor,
-              ),
-              onPressed:
-                  isLoading.value
-                      ? null
-                      : () async {
-                        // Validate preferred time before proceeding
-                        if (!validatePreferredTime()) {
-                          return;
-                        }
 
-                        JobPostController controller = Get.find();
-                        final success = await createBooking(
-                          traderId: traderId,
-                          category: category,
-                          service: service,
-                          jobType: jobType,
-                          notes: notesController.text.trim(),
-                          preferredTime:
-                              preferredDateTime, // Pass the preferred time
-                          latitude: controller.selectedLat.value,
-                          longitude: controller.selectedLon.value,
-                          price: price,
-                        );
+                const SizedBox(height: 16),
 
-                        print('🔍 Booking creation result: $success');
-
-                        if (success) {
+                TextField(
+                  controller: notesController,
+                  decoration: const InputDecoration(
+                    labelText:
+                        "Anything else you'd like the trader to know? (Optional)",
+                    labelStyle: TextStyle(color: AppColor.primaryText),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColor.primaryText),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColor.primaryText),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColor.primaryText),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColor.primaryText),
+                    ),
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
                           resetPreferredTime();
                           resetImageSelection();
-                          // Close the dialog immediately
                           Get.back();
-                        }
-                      },
-              child:
-                  isLoading.value
-                      ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                      : const Text('Confirm Booking'),
+                        },
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(color: AppColor.primaryText),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Obx(
+                        () => ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                isLoading.value
+                                    ? Colors.grey
+                                    : AppColor.orangeCustomColor,
+                          ),
+                          onPressed:
+                              isLoading.value
+                                  ? null
+                                  : () async {
+                                    // Validate preferred time before proceeding
+                                    if (!validatePreferredTime()) {
+                                      return;
+                                    }
+
+                                    JobPostController controller = Get.find();
+                                    final success = await createBooking(
+                                      traderId: traderId,
+                                      category: category,
+                                      service: service,
+                                      jobType: jobType,
+                                      notes: notesController.text.trim(),
+                                      preferredTime:
+                                          preferredDateTime, // Pass the preferred time
+                                      latitude: controller.selectedLat.value,
+                                      longitude: controller.selectedLon.value,
+                                      price: price,
+                                    );
+
+                                    print(
+                                      '🔍 Booking creation result: $success',
+                                    );
+
+                                    if (success) {
+                                      resetPreferredTime();
+                                      resetImageSelection();
+                                      // Close the dialog immediately
+                                      Get.back();
+                                    }
+                                  },
+                          child:
+                              isLoading.value
+                                  ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : const Text('Confirm Booking'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -1016,7 +1029,7 @@ class BookingController extends GetxController {
     switch (jobType.toLowerCase()) {
       case 'small':
       case 'smalljob':
-        return 'Small Job';
+        return 'Quick Job';
       case 'large':
       case 'largejob':
         return 'Large Job';

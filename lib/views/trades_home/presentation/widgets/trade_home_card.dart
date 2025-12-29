@@ -76,50 +76,55 @@ class TradeHomeCard extends StatelessWidget {
                         maxLines: 1,
                       ),
                       const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          SvgPicture.asset(
-                            Assets.svgsPound,
-                            width: 16,
-                            height: 16,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text:
-                                        '${HelperService.formattedJobType(job.jobType)}\nFixed Price: ',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'openSans',
-
-                                      color: AppColor.primaryText,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: '£${job.price}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.secondaryText,
-                                      fontFamily: 'openSans',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        job.customer?.email ?? "",
+                        style: TextStyle(
+                          color: AppColor.primaryText,
+                          fontFamily: 'openSans',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 12),
                 _buildStatusBadge(job, isCompleted),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                SvgPicture.asset(Assets.svgsPound, width: 16, height: 16),
+                const SizedBox(width: 4),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '${HelperService.formattedJobType(job.jobType)} ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'openSans',
+
+                          color: AppColor.primaryText,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '£${job.price}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
+                        ),
+                      ),
+                    ],
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
               ],
             ),
             const SizedBox(height: 12),

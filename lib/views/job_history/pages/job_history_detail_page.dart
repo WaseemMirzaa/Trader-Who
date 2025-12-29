@@ -327,9 +327,21 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
             widget.job.jobType.toLowerCase() == 'largejob')) {
       // Check for quotes using FutureBuilder
       return FutureBuilder<int>(
-        future: Get.find<QuoteController>().getQuoteCountForBooking(
-          widget.job.bookingId,
-        ),
+        future: () async {
+          try {
+            QuoteController quoteController;
+            try {
+              quoteController = Get.find<QuoteController>();
+            } catch (e) {
+              quoteController = Get.put(QuoteController());
+            }
+            return await quoteController.getQuoteCountForBooking(
+              widget.job.bookingId,
+            );
+          } catch (e) {
+            return 0;
+          }
+        }(),
         builder: (context, snapshot) {
           final quoteCount = snapshot.data ?? 0;
           final displayStatus =
@@ -395,227 +407,268 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
 
   /// Show quotes bottom sheet for customer to view and accept quotes
   Future<void> _showQuotesBottomSheet() async {
-    final quoteController = Get.find<QuoteController>();
-    final quotes = await quoteController.getQuotesForBooking(
-      widget.job.bookingId,
-    );
+    try {
+      // Initialize QuoteController if not already initialized
+      QuoteController quoteController;
+      try {
+        quoteController = Get.find<QuoteController>();
+      } catch (e) {
+        quoteController = Get.put(QuoteController());
+      }
 
-    if (!mounted) return;
+      final quotes = await quoteController.getQuotesForBooking(
+        widget.job.bookingId,
+      );
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.7,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            children: [
-              // Header
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColor.primaryButton,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
+      if (!mounted) return;
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColor.primaryButton,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Quotes Received (${quotes.length})',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Quotes Received (${quotes.length})',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              ),
-              // Quotes list
-              Expanded(
-                child:
-                    quotes.isEmpty
-                        ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.request_quote,
-                                size: 64,
-                                color: AppColor.grey,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No quotes yet',
-                                style: TextStyle(
-                                  fontSize: 16,
+                // Quotes list
+                Expanded(
+                  child:
+                      quotes.isEmpty
+                          ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.request_quote,
+                                  size: 64,
                                   color: AppColor.grey,
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                        : ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: quotes.length,
-                          itemBuilder: (context, index) {
-                            final quote = quotes[index];
-                            return FutureBuilder<DocumentSnapshot>(
-                              future:
-                                  FirebaseFirestore.instance
-                                      .collection('users')
-                                      .doc(quote.traderId)
-                                      .get(),
-                              builder: (context, snapshot) {
-                                String traderName = 'Trader';
-                                String traderImage =
-                                    'assets/images/chat-avatar.png';
-
-                                if (snapshot.hasData && snapshot.data!.exists) {
-                                  final traderData =
-                                      snapshot.data!.data()
-                                          as Map<String, dynamic>;
-                                  traderName =
-                                      traderData['name'] ?? 'Unknown Trader';
-                                  traderImage =
-                                      traderData['image'] ?? traderImage;
-                                }
-
-                                return Card(
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  elevation: 2,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No quotes yet',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: AppColor.grey,
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Trader info
-                                        Row(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 24,
-                                              backgroundImage:
-                                                  traderImage.startsWith('http')
-                                                      ? CachedNetworkImageProvider(
-                                                        traderImage,
-                                                      )
-                                                      : AssetImage(traderImage)
-                                                          as ImageProvider,
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    traderName,
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: AppColor.darkBlue,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'Quote #${index + 1}',
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: AppColor.grey,
-                                                    ),
-                                                  ),
-                                                ],
+                                ),
+                              ],
+                            ),
+                          )
+                          : ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: quotes.length,
+                            itemBuilder: (context, index) {
+                              final quote = quotes[index];
+                              return FutureBuilder<DocumentSnapshot>(
+                                future:
+                                    FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(quote.traderId)
+                                        .get(),
+                                builder: (context, snapshot) {
+                                  String traderName = 'Trader';
+                                  String traderImage =
+                                      'assets/images/chat-avatar.png';
+
+                                  if (snapshot.hasData &&
+                                      snapshot.data!.exists) {
+                                    final traderData =
+                                        snapshot.data!.data()
+                                            as Map<String, dynamic>;
+                                    traderName =
+                                        traderData['name'] ?? 'Unknown Trader';
+                                    traderImage =
+                                        traderData['image'] ?? traderImage;
+                                  }
+
+                                  return Card(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Trader info
+                                          Row(
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 24,
+                                                backgroundImage:
+                                                    traderImage.startsWith(
+                                                          'http',
+                                                        )
+                                                        ? CachedNetworkImageProvider(
+                                                          traderImage,
+                                                        )
+                                                        : AssetImage(
+                                                              traderImage,
+                                                            )
+                                                            as ImageProvider,
                                               ),
-                                            ),
-                                            // Price badge
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 6,
-                                                  ),
-                                              decoration: BoxDecoration(
-                                                color: AppColor.green
-                                                    .withOpacity(0.1),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: Text(
-                                                '£${quote.quotedPrice.toStringAsFixed(2)}',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppColor.green,
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      traderName,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            AppColor.darkBlue,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'Quote #${index + 1}',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: AppColor.grey,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
+                                              ),
+                                              // Price badge
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 6,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColor.green
+                                                      .withOpacity(0.1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Text(
+                                                  '£${quote.quotedPrice.toStringAsFixed(2)}',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColor.green,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          // Quote details
+                                          if (quote.details.isNotEmpty) ...[
+                                            const SizedBox(height: 12),
+                                            Text(
+                                              'Details:',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColor.grey,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              quote.details,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: AppColor.darkBlue,
                                               ),
                                             ),
                                           ],
-                                        ),
-                                        // Quote details
-                                        if (quote.details.isNotEmpty) ...[
                                           const SizedBox(height: 12),
-                                          Text(
-                                            'Details:',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColor.grey,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            quote.details,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColor.darkBlue,
-                                            ),
+                                          // Accept and Decline buttons
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: CustomButton(
+                                                  text: 'Decline',
+                                                  onTap: () async {
+                                                    Navigator.pop(context);
+                                                    await _declineQuote(quote);
+                                                  },
+                                                  height: 40,
+                                                  color: Colors.red,
+                                                  textColor: Colors.white,
+                                                  radius: 20,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: CustomButton(
+                                                  text: 'Accept',
+                                                  onTap: () async {
+                                                    Navigator.pop(context);
+                                                    await _acceptQuote(quote);
+                                                  },
+                                                  height: 40,
+                                                  color: AppColor.green,
+                                                  textColor: Colors.white,
+                                                  radius: 20,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
-                                        const SizedBox(height: 12),
-                                        // Accept button
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: CustomButton(
-                                            text: 'Accept Quote',
-                                            onTap: () async {
-                                              Navigator.pop(context);
-                                              await _acceptQuote(quote);
-                                            },
-                                            height: 40,
-                                            color: AppColor.primaryButton,
-                                            textColor: Colors.white,
-                                            radius: 20,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-              ),
-            ],
-          ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        Get.snackbar(
+          'Error',
+          'Failed to load quotes: ${e.toString()}',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
-      },
-    );
+      }
+    }
   }
 
   /// Accept a quote
@@ -626,11 +679,24 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
         builder:
             (context) => AlertDialog(
               title: const Text('Confirm Quote Acceptance'),
-              content: Text(
-                'Accept quote of £${quote.quotedPrice.toStringAsFixed(2)}?\n\nThis will assign the trader to your booking and update the price.',
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Accept quote of £${quote.quotedPrice.toStringAsFixed(2)}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'By confirming, you agree to assign this tradesperson to your job. The quoted amount will be reserved from your payment method and held securely in escrow. Once accepted, cancellation may not be possible. Please ensure you are happy to proceed before confirming',
+                  ),
+                ],
               ),
               actions: [
-                TextButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.red,
+                  ),
                   onPressed: () => Navigator.pop(context, false),
                   child: const Text('Cancel'),
                 ),
@@ -646,7 +712,14 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
       );
 
       if (confirmed == true) {
-        final quoteController = Get.find<QuoteController>();
+        // Initialize QuoteController if not already initialized
+        QuoteController quoteController;
+        try {
+          quoteController = Get.find<QuoteController>();
+        } catch (e) {
+          quoteController = Get.put(QuoteController());
+        }
+
         final success = await quoteController.acceptQuote(quote.id!);
 
         if (success && mounted) {
@@ -659,6 +732,59 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
       Get.snackbar(
         'Error',
         'Failed to accept quote: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  /// Decline a quote
+  Future<void> _declineQuote(QuoteModel quote) async {
+    try {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Decline Quote'),
+              content: Text(
+                'Are you sure you want to decline this quote of £${quote.quotedPrice.toStringAsFixed(2)}?',
+              ),
+              actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.primaryButton,
+                  ),
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Decline'),
+                ),
+              ],
+            ),
+      );
+
+      if (confirmed == true) {
+        // Initialize QuoteController if not already initialized
+        QuoteController quoteController;
+        try {
+          quoteController = Get.find<QuoteController>();
+        } catch (e) {
+          quoteController = Get.put(QuoteController());
+        }
+
+        final success = await quoteController.rejectQuote(quote.id!);
+
+        if (success && mounted) {
+          setState(() {});
+        }
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to decline quote: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -815,14 +941,35 @@ class _JobHistoryDetailPageState extends State<JobHistoryDetailPage> {
                   Row(
                     spacing: 8.0,
                     children: [
-                      for (var imageUrl in widget.job.images)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            width: 70,
-                            height: 60,
-                            fit: BoxFit.cover,
+                      for (int i = 0; i < widget.job.images.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => ImagePreviewScreen(
+                                        imageUrls: widget.job.images,
+                                        initialIndex: i,
+                                        heroTag: 'job_image',
+                                      ),
+                                ),
+                              );
+                            },
+                            child: Hero(
+                              tag: 'job_image_$i',
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.job.images[i],
+                                  width: 70,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                     ],

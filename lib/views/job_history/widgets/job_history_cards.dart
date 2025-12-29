@@ -69,58 +69,52 @@ class JobHistoryCard extends StatelessWidget {
                         ),
                       ],
                       const SizedBox(height: 2),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SvgPicture.asset(
-                            Assets.svgsPound,
-                            width: 14,
-                            height: 14,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _formatJobType(job.jobType),
-                                  style: TextStyle(
-                                    color: AppColor.primaryText,
-                                    fontFamily: 'openSans',
-                                    fontSize: 12,
-
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  overflow:
-                                      TextOverflow
-                                          .ellipsis, // Truncate long text
-                                  maxLines: 1, // Limit to one line
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Fixed Price: \$${job.price}',
-                                  style: TextStyle(
-                                    color: AppColor.primaryText,
-                                    fontFamily: 'openSans',
-                                    fontSize: 12,
-
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  overflow:
-                                      TextOverflow
-                                          .ellipsis, // Truncate long text
-                                  maxLines: 1, // Limit to one line
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                      Text(
+                        job.tradesPerson.title ?? "Quote Based",
+                        style: const TextStyle(
+                          color: AppColor.secondaryText,
+                          fontFamily: 'openSans',
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 12),
                 _buildStatusBadge(job),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SvgPicture.asset(Assets.svgsPound, width: 14, height: 14),
+                const SizedBox(width: 4),
+                Text(
+                  _formatJobType(job.jobType),
+                  style: TextStyle(
+                    color: AppColor.primaryText,
+                    fontFamily: 'openSans',
+                    fontSize: 14,
+
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis, // Truncate long text
+                  maxLines: 1, // Limit to one line
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  ' \$${job.price}',
+                  style: TextStyle(
+                    color: AppColor.primaryText,
+                    fontFamily: 'openSans',
+                    fontSize: 12,
+
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis, // Truncate long text
+                  maxLines: 1, // Limit to one line
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -198,10 +192,10 @@ class JobHistoryCard extends StatelessWidget {
   String _formatJobType(String jobType) {
     if (jobType.toLowerCase() == 'smalljob' ||
         jobType.toLowerCase() == 'small') {
-      return 'Small Job';
+      return 'Instant Book';
     } else if (jobType.toLowerCase() == 'largejob' ||
         jobType.toLowerCase() == 'large') {
-      return 'Large Job';
+      return 'Quote Based Job';
     } else if (jobType.toLowerCase() == 'custom') {
       return 'Custom Job';
     }

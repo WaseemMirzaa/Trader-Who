@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:traderou/core/shared_widgets/custom_time_picker.dart';
 
 /// A [TimeUtils] class for handling time-related operations.
 class TimeUtils {
@@ -8,22 +9,9 @@ class TimeUtils {
     required TimeOfDay initialTime,
     Color? primaryColor,
   }) async {
-    final TimeOfDay? picked = await showTimePicker(
+    final TimeOfDay? picked = await showCustomTimePicker(
       context: context,
       initialTime: initialTime,
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: primaryColor ?? Theme.of(context).primaryColor,
-            ),
-            buttonTheme: const ButtonThemeData(
-              textTheme: ButtonTextTheme.primary,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (picked != null) {
